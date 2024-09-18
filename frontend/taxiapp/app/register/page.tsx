@@ -24,6 +24,14 @@ export default function register() {
                         />
                     </label>
                     <label className="flex flex-col">
+                        Email:
+                        <input
+                            type="email"
+                            name="email"
+                            className="border rounded p-2 mt-1"
+                        />
+                    </label>
+                    <label className="flex flex-col">
                         Usuario:
                         <input
                             type="text"

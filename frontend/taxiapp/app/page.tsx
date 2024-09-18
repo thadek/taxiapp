@@ -8,7 +8,7 @@ export default function Home() {
       <div>
           <Header />
           <div className="flex flex-col gap-4">
-              <div className="flex flex-col items-center justify-center h-screen">
+              <div className="flex flex-col items-center justify-center h-screen pt-4">
 
                   <h1>Bienvenido a la taxiApp</h1>
                   <p>La mejor app de taxis del mercado!</p>
@@ -20,8 +20,17 @@ export default function Home() {
                       className=""
                   />
                   <section className="flex bg-basil h-screen w-9/12 rounded-full items-center justify-center">
-                      <p>Somos tu comodidad</p>
+                      <p className="text-5xl font-bold">Somos tu comodidad</p>
                   </section>
+
+                  <div className="flex h-screen items-center justify-center ">
+                      <div>
+                          <p>Sos un conductor?</p>
+                      </div>
+                      <div>
+                          <p>Sos un usuario?</p>
+                      </div>
+                  </div>
               </div>
           </div>
       </div>
