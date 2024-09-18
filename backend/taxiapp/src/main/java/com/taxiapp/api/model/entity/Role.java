@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class Role {
 
-
     @Id
     private Integer Id;
 

@@ -44,4 +44,8 @@ public class User implements Serializable {
     )
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "user")
+    @JoinColumn(name="user_id")
+    private List<Ride> rides;
+
 }
