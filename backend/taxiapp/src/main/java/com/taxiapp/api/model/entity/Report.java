@@ -22,9 +22,6 @@ public class Report implements Serializable {
     private String description;
 
     @Column(nullable = false, length = 50)
-    private String ride_id;
-
-    @Column(nullable = false, length = 50)
     private String last_location;
 
     @ManyToOne

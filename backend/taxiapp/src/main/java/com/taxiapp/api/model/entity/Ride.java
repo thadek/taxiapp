@@ -17,12 +17,6 @@ public class Ride {
     private String id;
 
     @Column(nullable = false, length = 50)
-    private String client_id;
-
-    @Column(nullable = false, length = 50)
-    private String vehicle_id;
-
-    @Column(nullable = false, length = 50)
     private String pickup_location;
 
     @Column(nullable = false, length = 50)
@@ -49,14 +43,10 @@ public class Ride {
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    private User user;
+    private User client;
 
     @OneToMany(mappedBy = "ride")
-    @JoinColumn(name="ride_id")
     private List<Report> reports;
 
-    @OneToMany(mappedBy = "ride")
-    @JoinColumn(name="ride_id")
-    private List<RideHistory> rideHistoryList;
 
 }

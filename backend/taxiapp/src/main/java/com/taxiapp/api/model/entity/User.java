@@ -62,8 +62,7 @@ public class User  {
     )
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "user")
-    @JoinColumn(name="user_id")
+    @OneToMany(mappedBy = "client")
     private List<Ride> rides;
 
 }

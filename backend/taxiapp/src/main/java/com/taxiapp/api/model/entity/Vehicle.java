@@ -16,9 +16,6 @@ public class Vehicle implements Serializable {
     private String id;
 
     @Column(nullable = false, length = 50)
-    private String driver_id;
-
-    @Column(nullable = false, length = 50)
     private String brand;
 
     @Column(nullable = false, length = 50)
@@ -39,8 +36,11 @@ public class Vehicle implements Serializable {
     @Column(nullable = false, length = 50)
     private String license_plate;
 
+    @ManyToOne
+    @JoinColumn(name="driver_id")
+    private Driver driver;
+
     @OneToMany(mappedBy = "vehicle")
-    @JoinColumn(name="vehicle_id")
     private List<Ride> rides;
 
 }
