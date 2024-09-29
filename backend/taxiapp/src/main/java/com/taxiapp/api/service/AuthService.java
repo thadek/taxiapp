@@ -4,6 +4,7 @@ package com.taxiapp.api.service;
 import com.taxiapp.api.controller.auth.AuthResponse;
 import com.taxiapp.api.controller.auth.LoginRequest;
 import com.taxiapp.api.controller.auth.RegisterRequest;
+import com.taxiapp.api.exception.auth.AuthException;
 import com.taxiapp.api.model.dto.impl.UserDTOImpl;
 import com.taxiapp.api.model.entity.Role;
 import com.taxiapp.api.model.entity.User;
@@ -35,17 +36,14 @@ public class AuthService {
 
             Optional<User> user = userRepository.findByEmail(request.getEmail());
             if(user.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuario no encontrado");
+                throw new AuthException("Usuario no encontrado", HttpStatus.NOT_FOUND);
             }
 
             if(!passwordEncoder.matches(request.getPassword(),user.get().getPassword())){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Contraseña incorrecta",new Exception("Contraseña incorrecta"));
+                throw new AuthException("Contraseña incorrecta", HttpStatus.UNAUTHORIZED);
             }
 
             User userDB = user.get();
-
-
-
 
 
             UserDTOImpl userDTO = UserDTOImpl.builder().id(userDB.getId().toString())
@@ -64,7 +62,7 @@ public class AuthService {
 
             try{
                 if(!roleRepository.findByName("ROLE_USER").isPresent()){
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Error al buscar el rol");
+                   throw new AuthException("Error al registrar el usuario",HttpStatus.INTERNAL_SERVER_ERROR);
                 }
 
 
@@ -84,13 +82,13 @@ public class AuthService {
             user.setRoles(Set.of(role));
             //Guardar si el usuario no existe
             if(!userRepository.findByUsernameAndEmail(request.getUsername(),request.getEmail()).isEmpty()){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El usuario ya existe");
+                throw new AuthException("Usuario ya registrado",HttpStatus.BAD_REQUEST);
             }
 
             User userCreated = userRepository.save(user);
 
             if(userCreated == null){
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Error al guardar el usuario");
+                throw new AuthException("Error al registrar el usuario",HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             UserDTOImpl userDTO = UserDTOImpl.builder().id(userCreated.getId().toString())
@@ -106,7 +104,7 @@ public class AuthService {
             return new AuthResponse(token);
 
             }catch (Exception e){
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Error al registrar el usuario",e);
+               throw new AuthException("Error al registrar el usuario",HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
         }

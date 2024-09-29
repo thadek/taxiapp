@@ -17,7 +17,7 @@ import java.util.List;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
-    private final List<String> urlskipped = List.of("/auth/login","/auth/register","/test/test");
+    private final List<String> urlskipped = List.of("/auth/login","/auth/register");
 
     public JwtAuthenticationFilter(JwtAuthenticationProvider jwtAuthenticationProvider) {
         this.jwtAuthenticationProvider = jwtAuthenticationProvider;
