@@ -1,14 +1,14 @@
 package com.taxiapp.api.controller.auth;
 
-import com.taxiapp.api.exception.auth.AuthException;
+import com.taxiapp.api.service.exception.auth.AuthException;
+import com.taxiapp.api.model.dto.impl.UserDTOImpl;
 import com.taxiapp.api.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -27,6 +27,7 @@ public class AuthController {
                 AuthException ex = (AuthException) e;
                 throw new ResponseStatusException(ex.getStatusCode(),ex.getMessage());
             }
+            System.out.println(e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Error interno");
         }
 
@@ -46,5 +47,22 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<String> me(Authentication auth) {
+
+        try{
+
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            UserDTOImpl user = (UserDTOImpl) userDetails;
+
+            return ResponseEntity.ok("asd");
+        }catch(Exception e){
+            if(e instanceof AuthException){
+                AuthException ex = (AuthException) e;
+                throw new ResponseStatusException(ex.getStatusCode(),ex.getMessage());
+            }
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Error interno");
+        }
+    }
 
 }

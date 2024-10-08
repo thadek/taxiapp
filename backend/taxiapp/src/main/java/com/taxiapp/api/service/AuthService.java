@@ -1,25 +1,22 @@
 package com.taxiapp.api.service;
 
 
+import com.taxiapp.api.config.security.InternalAuth;
 import com.taxiapp.api.controller.auth.AuthResponse;
 import com.taxiapp.api.controller.auth.LoginRequest;
 import com.taxiapp.api.controller.auth.RegisterRequest;
-import com.taxiapp.api.exception.auth.AuthException;
+import com.taxiapp.api.service.exception.auth.AuthException;
 import com.taxiapp.api.model.dto.impl.UserDTOImpl;
 import com.taxiapp.api.model.entity.Role;
 import com.taxiapp.api.model.entity.User;
 import com.taxiapp.api.repository.RoleRepository;
 import com.taxiapp.api.repository.UserRepository;
-import com.taxiapp.api.security.JwtAuthenticationProvider;
+import com.taxiapp.api.config.security.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,6 +30,9 @@ public class AuthService {
         private final JwtAuthenticationProvider jwtAuthenticationProvider;
         private final PasswordEncoder passwordEncoder;
         public AuthResponse login(LoginRequest request) {
+
+            //Seteo el contexto de seguridad en operacion interna privilegiada para acceder a los datos del usuario
+            InternalAuth.performInternalTask();
 
             Optional<User> user = userRepository.findByEmail(request.getEmail());
             if(user.isEmpty()){
@@ -60,7 +60,9 @@ public class AuthService {
 
         public AuthResponse register(RegisterRequest request)  {
 
-            try{
+            //Seteo el contexto de seguridad en operacion interna privilegiada para acceder a los datos del usuario
+            InternalAuth.performInternalTask();
+
                 if(!roleRepository.findByName("ROLE_USER").isPresent()){
                    throw new AuthException("Error al registrar el usuario",HttpStatus.INTERNAL_SERVER_ERROR);
                 }
@@ -102,10 +104,6 @@ public class AuthService {
             String token =  jwtAuthenticationProvider.createToken(userDTO);
 
             return new AuthResponse(token);
-
-            }catch (Exception e){
-               throw new AuthException("Error al registrar el usuario",HttpStatus.INTERNAL_SERVER_ERROR);
-            }
 
         }
 

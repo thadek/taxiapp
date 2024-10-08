@@ -1,5 +1,6 @@
-package com.taxiapp.api.security;
+package com.taxiapp.api.config.security;
 
+import com.taxiapp.api.service.exception.auth.AuthException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.server.ResponseStatusException;
 
 
 import java.io.IOException;
@@ -32,21 +32,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if(header == null || !header.startsWith("Bearer ")){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Token no proporcionado");
+            throw new AuthException("Token no enviado", HttpStatus.UNAUTHORIZED);
         }
         String token = header.substring(7);
-        try{
+
             //Traigo el objeto auth que tiene el user con los roles(authorities) cargados  y lo seteo al contexto de seguridad
             Authentication authentication = jwtAuthenticationProvider.validateToken(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
            // System.out.println(SecurityContextHolder.getContext());
-        }catch (Exception e){
-            SecurityContextHolder.clearContext();
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Token no válido");
-        }
-        
-        filterChain.doFilter(request,response);
+
+            filterChain.doFilter(request,response);
     }
 
 }

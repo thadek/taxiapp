@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.IdGeneratorType;
 import org.hibernate.annotations.NotFound;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -54,12 +55,13 @@ public class User  {
 
     private Timestamp is_disabled;
 
-    @ManyToMany(fetch=FetchType.EAGER,cascade = CascadeType.MERGE)
+    @ManyToMany(fetch=FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @RestResource(exported = false)
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "client")

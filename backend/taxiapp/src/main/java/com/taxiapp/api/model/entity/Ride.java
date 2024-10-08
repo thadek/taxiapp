@@ -1,5 +1,6 @@
 package com.taxiapp.api.model.entity;
 
+import com.taxiapp.api.enums.RideStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,6 +24,9 @@ public class Ride {
     private String dropoff_location;
 
     @Column(nullable = false)
+    private Boolean is_booked;
+
+    @Column(nullable = false)
     private Date ride_start;
 
     @Column(nullable = false)
@@ -32,7 +36,7 @@ public class Ride {
     private Float price;
 
     @Column(nullable = false, length = 50)
-    private String status;
+    private RideStatus status;
 
     @Column(nullable = false)
     private Integer rating;
@@ -48,5 +52,10 @@ public class Ride {
     @OneToMany(mappedBy = "ride")
     private List<Report> reports;
 
+    @Column(nullable = false)
+    private Date created_at;
+
+    @Column(nullable = false)
+    private Date updated_at;
 
 }

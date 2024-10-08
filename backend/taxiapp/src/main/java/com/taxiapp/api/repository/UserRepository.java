@@ -14,10 +14,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RepositoryRestResource(excerptProjection= IUserDTO.class,path = "users")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public interface UserRepository extends PagingAndSortingRepository<User, UUID>, CrudRepository<User,UUID> {
 
     Optional<User> findByUsername(@Param("username") String username);
-
 
     Optional<User> findByEmail(@Param("email") String email);
 

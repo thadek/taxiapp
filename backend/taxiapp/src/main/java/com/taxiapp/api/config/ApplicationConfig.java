@@ -1,8 +1,8 @@
 package com.taxiapp.api.config;
 
 
-import com.taxiapp.api.security.JwtAuthenticationFilter;
-import com.taxiapp.api.security.JwtAuthenticationProvider;
+import com.taxiapp.api.config.security.JwtAuthenticationFilter;
+import com.taxiapp.api.config.security.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
