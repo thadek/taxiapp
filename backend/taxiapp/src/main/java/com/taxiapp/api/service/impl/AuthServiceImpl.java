@@ -1,19 +1,22 @@
-package com.taxiapp.api.service;
+package com.taxiapp.api.service.impl;
 
 
 import com.taxiapp.api.config.security.InternalAuth;
-import com.taxiapp.api.controller.auth.AuthResponse;
-import com.taxiapp.api.controller.auth.LoginRequest;
-import com.taxiapp.api.controller.auth.RegisterRequest;
-import com.taxiapp.api.service.exception.auth.AuthException;
-import com.taxiapp.api.model.dto.impl.UserDTOImpl;
-import com.taxiapp.api.model.entity.Role;
-import com.taxiapp.api.model.entity.User;
+import com.taxiapp.api.controller.auth.dto.AuthResponse;
+import com.taxiapp.api.controller.auth.dto.LoginRequest;
+import com.taxiapp.api.controller.auth.dto.RegisterRequest;
+import com.taxiapp.api.controller.user.dto.UserDTO;
+import com.taxiapp.api.exception.auth.AuthException;
+
+import com.taxiapp.api.model.Role;
+import com.taxiapp.api.model.User;
 import com.taxiapp.api.repository.RoleRepository;
 import com.taxiapp.api.repository.UserRepository;
 import com.taxiapp.api.config.security.JwtAuthenticationProvider;
+import com.taxiapp.api.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +25,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthServiceImpl implements IAuthService {
 
 
         private final RoleRepository roleRepository;
@@ -46,7 +49,7 @@ public class AuthService {
             User userDB = user.get();
 
 
-            UserDTOImpl userDTO = UserDTOImpl.builder().id(userDB.getId().toString())
+            UserDTO userDTO = UserDTO.builder().id(userDB.getId())
                     .name(userDB.getName())
                     .lastname(userDB.getLastname())
                     .username(userDB.getUsername())
@@ -84,7 +87,7 @@ public class AuthService {
             user.setRoles(Set.of(role));
             //Guardar si el usuario no existe
             if(!userRepository.findByUsernameAndEmail(request.getUsername(),request.getEmail()).isEmpty()){
-                throw new AuthException("Usuario ya registrado",HttpStatus.BAD_REQUEST);
+                throw new AuthException("Usuario ya registrado",HttpStatus.CONFLICT);
             }
 
             User userCreated = userRepository.save(user);
@@ -93,7 +96,7 @@ public class AuthService {
                 throw new AuthException("Error al registrar el usuario",HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            UserDTOImpl userDTO = UserDTOImpl.builder().id(userCreated.getId().toString())
+            UserDTO userDTO = UserDTO.builder().id(userCreated.getId())
                     .name(userCreated.getName())
                     .lastname(userCreated.getLastname())
                     .username(userCreated.getUsername())
@@ -107,4 +110,24 @@ public class AuthService {
 
         }
 
+
+        public UserDTO getMe(Authentication auth) {
+            //Seteo el contexto de seguridad en operacion interna privilegiada para acceder a los datos del usuario
+            InternalAuth.performInternalTask();
+
+            Optional<User> user = userRepository.findByEmail(auth.getPrincipal().toString());
+            if(user.isEmpty()){
+                throw new AuthException("Usuario no encontrado", HttpStatus.NOT_FOUND);
+            }
+
+            User userDB = user.get();
+            return UserDTO.builder().id(userDB.getId())
+                    .name(userDB.getName())
+                    .lastname(userDB.getLastname())
+                    .username(userDB.getUsername())
+                    .email(userDB.getEmail())
+                    .roles(userDB.getRoles())
+                    .build();
+
+        }
 }

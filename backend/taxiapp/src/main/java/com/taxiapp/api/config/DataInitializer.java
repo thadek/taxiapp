@@ -1,25 +1,32 @@
 package com.taxiapp.api.config;
 
-import com.taxiapp.api.service.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.taxiapp.api.config.security.InternalAuth;
+import com.taxiapp.api.service.impl.RoleServiceImpl;
+import com.taxiapp.api.service.impl.UserServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
- /*
+
 @Component
 public class DataInitializer implements CommandLineRunner {
 
-   private final RoleService roleService;
+   private final RoleServiceImpl roleServiceImpl;
+   private final UserServiceImpl userServiceImpl;
 
-    public DataInitializer(RoleService roleService) {
-        this.roleService = roleService;
+    public DataInitializer(RoleServiceImpl roleServiceImpl, UserServiceImpl userServiceImpl) {
+        this.roleServiceImpl = roleServiceImpl;
+        this.userServiceImpl = userServiceImpl;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        roleService.createRoleIfNotFound("ROLE_USER");
-        roleService.createRoleIfNotFound("ROLE_ADMIN");
-        roleService.createRoleIfNotFound("ROLE_DRIVER");
-        roleService.createRoleIfNotFound("ROLE_OPERATOR");
+        InternalAuth.performInternalTask();
+        roleServiceImpl.createRoleIfNotFound("ROLE_USER");
+        roleServiceImpl.createRoleIfNotFound("ROLE_ADMIN");
+        roleServiceImpl.createRoleIfNotFound("ROLE_DRIVER");
+        roleServiceImpl.createRoleIfNotFound("ROLE_OPERATOR");
+        userServiceImpl.createDefaultAdminUserIfNotFound();
+
     }
+
+
 }
-        */

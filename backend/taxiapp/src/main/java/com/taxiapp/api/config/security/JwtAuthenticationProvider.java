@@ -1,12 +1,14 @@
 package com.taxiapp.api.config.security;
 
-import com.taxiapp.api.model.dto.impl.UserDTOImpl;
-import com.taxiapp.api.model.entity.Role;
+import com.taxiapp.api.controller.user.dto.UserDTO;
+import com.taxiapp.api.exception.auth.AuthException;
+
+import com.taxiapp.api.model.Role;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.Data;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,12 +29,12 @@ public class JwtAuthenticationProvider {
     @Value("${jwt.token.validity}")
     private Integer tokenValidity;
 
-    public String createToken(UserDTOImpl user) {
+    public String createToken(UserDTO user) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + tokenValidity); // 24 horas
         return Jwts.builder()
-                .setSubject(user.getEmail())
-                .claim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.joining(",")))
+                .setSubject(user.email())
+                .claim("roles", user.roles().stream().map(Role::getName).collect(Collectors.joining(",")))
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -59,8 +61,10 @@ public class JwtAuthenticationProvider {
 
           return  new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
 
-        } catch (JwtException e) {
-            throw new JwtException("Token no válido");
+         } catch (ExpiredJwtException e) {
+            throw new AuthException( "Expired JWT Token", HttpStatus.UNAUTHORIZED);
+         } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthException("Invalid JWT token", HttpStatus.UNAUTHORIZED);
         }
 
 

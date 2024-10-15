@@ -1,4 +1,4 @@
-package com.taxiapp.api.controller.auth;
+package com.taxiapp.api.controller.auth.dto;
 
 
 import jakarta.validation.constraints.NotBlank;

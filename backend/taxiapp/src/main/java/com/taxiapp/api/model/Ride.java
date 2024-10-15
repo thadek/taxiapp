@@ -1,4 +1,4 @@
-package com.taxiapp.api.model.entity;
+package com.taxiapp.api.model;
 
 import com.taxiapp.api.enums.RideStatus;
 import jakarta.persistence.*;

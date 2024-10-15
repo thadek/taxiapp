@@ -1,4 +1,4 @@
-package com.taxiapp.api.controller.auth;
+package com.taxiapp.api.controller.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

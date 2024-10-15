@@ -1,7 +1,7 @@
-package com.taxiapp.api.service;
+package com.taxiapp.api.service.impl;
 
 import com.taxiapp.api.enums.RideStatus;
-import com.taxiapp.api.model.entity.Ride;
+import com.taxiapp.api.model.Ride;
 import com.taxiapp.api.repository.RideRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

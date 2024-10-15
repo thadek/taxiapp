@@ -1,4 +1,4 @@
-package com.taxiapp.api.service.exception.auth;
+package com.taxiapp.api.exception.auth;
 
 
 import lombok.*;

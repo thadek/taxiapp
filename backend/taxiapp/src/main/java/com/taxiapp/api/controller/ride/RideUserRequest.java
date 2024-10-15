@@ -1,11 +1,9 @@
 package com.taxiapp.api.controller.ride;
 
-import com.taxiapp.api.model.entity.User;
+import com.taxiapp.api.model.User;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
-import java.util.Date;
 
 public class RideUserRequest {
 

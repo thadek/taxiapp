@@ -1,13 +1,16 @@
 package com.taxiapp.api.controller.auth;
 
-import com.taxiapp.api.service.exception.auth.AuthException;
-import com.taxiapp.api.model.dto.impl.UserDTOImpl;
-import com.taxiapp.api.service.AuthService;
+import com.taxiapp.api.controller.user.dto.UserDTO;
+import com.taxiapp.api.exception.auth.AuthException;
+import com.taxiapp.api.controller.auth.dto.AuthResponse;
+import com.taxiapp.api.controller.auth.dto.LoginRequest;
+import com.taxiapp.api.controller.auth.dto.RegisterRequest;
+
+import com.taxiapp.api.service.impl.AuthServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
@@ -48,14 +51,10 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<String> me(Authentication auth) {
+    public ResponseEntity<UserDTO> me(Authentication auth) {
 
         try{
-
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            UserDTOImpl user = (UserDTOImpl) userDetails;
-
-            return ResponseEntity.ok("asd");
+            return ResponseEntity.ok(authService.getMe(auth));
         }catch(Exception e){
             if(e instanceof AuthException){
                 AuthException ex = (AuthException) e;
