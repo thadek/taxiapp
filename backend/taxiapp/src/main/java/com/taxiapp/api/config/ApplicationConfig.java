@@ -4,6 +4,8 @@ package com.taxiapp.api.config;
 import com.taxiapp.api.config.security.JwtAuthenticationFilter;
 import com.taxiapp.api.config.security.JwtAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.record.RecordModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,5 +33,10 @@ public class ApplicationConfig {
         return new JwtAuthenticationFilter(jwtAuthenticationProvider);
     }
 
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
 }

@@ -39,14 +39,18 @@ public class AuthServiceImpl implements IAuthService {
 
             Optional<User> user = userRepository.findByEmail(request.getEmail());
             if(user.isEmpty()){
-                throw new AuthException("Usuario no encontrado", HttpStatus.NOT_FOUND);
+                throw new AuthException("User not found", HttpStatus.NOT_FOUND);
             }
 
             if(!passwordEncoder.matches(request.getPassword(),user.get().getPassword())){
-                throw new AuthException("Contraseña incorrecta", HttpStatus.UNAUTHORIZED);
+                throw new AuthException("Incorrect password", HttpStatus.UNAUTHORIZED);
             }
 
             User userDB = user.get();
+
+            if(userDB.getIs_disabled() != null){
+                throw new AuthException("User disabled", HttpStatus.UNAUTHORIZED);
+            }
 
 
             UserDTO userDTO = UserDTO.builder().id(userDB.getId())

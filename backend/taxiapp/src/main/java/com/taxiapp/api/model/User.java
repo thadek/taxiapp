@@ -27,7 +27,6 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 @SQLDelete(sql = "UPDATE user SET deleted = true WHERE id = ?")
 @DynamicUpdate
-@Where(clause = "deleted=false")
 public class User  {
 
     @Id
@@ -62,7 +61,7 @@ public class User  {
     )
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client",fetch = FetchType.LAZY)
     private List<Ride> rides;
 
 }

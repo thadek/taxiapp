@@ -8,9 +8,10 @@ import java.util.List;
 public interface IRoleService {
     void createRoleIfNotFound(String name);
     Role create(RoleCreateRequest role);
-    Role update(Role role, int id);
+    Role update(RoleCreateRequest role, int id);
     void delete(int id);
     Role findById(int id);
     List<Role> findAll();
+
 
 }

@@ -7,10 +7,13 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Data
 @RequiredArgsConstructor
 public class RideService {
+
 
     private final RideRepository rideRepository;
 
@@ -51,6 +54,15 @@ public class RideService {
         ride.setStatus(RideStatus.STARTED);
         return rideRepository.save(ride);
     }
+
+
+    /**
+     * Obtener las solicitudes de viaje pendientes (operador base)
+     */
+    public List<Ride> getPendingRide() {
+        return rideRepository.findByStatus(RideStatus.PENDING);
+    }
+
 
 
 

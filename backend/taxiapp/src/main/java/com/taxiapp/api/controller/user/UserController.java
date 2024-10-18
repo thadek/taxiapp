@@ -7,6 +7,7 @@ import com.taxiapp.api.controller.user.dto.UserUpdateRequest;
 import com.taxiapp.api.controller.user.mapper.UserMapper;
 import com.taxiapp.api.model.User;
 import com.taxiapp.api.service.impl.UserServiceImpl;
+import com.taxiapp.api.utils.ResultResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_DRIVER','ROLE_OPERATOR')")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 public class UserController {
 
     private final UserServiceImpl userServiceImpl;
@@ -31,20 +32,27 @@ public class UserController {
 
     /**
      * Get all users
-     * @param pageable
-     * @return
+     * @param pageable Pageable
+     * @return PagedModel<UserDTO>
      */
     @GetMapping
     public PagedModel<UserDTO> getAllUsers(
-      @PageableDefault(page=0,size=10) Pageable pageable
+      @PageableDefault() Pageable pageable,
+      @RequestParam(required = false, value = "deleted") boolean deleted
     ) {
-        Page<User> users = userServiceImpl.findAll(pageable);
+        Page<User> users;
+        if(deleted){
+            users = userServiceImpl.findAllDeleted(pageable);
+        }else{
+            users = userServiceImpl.findAll(pageable);
+        }
         return new PagedModel<>(users.map(UserMapper::toUserDTO));
+
     }
 
     /**
      * Create a new user
-     * @param user
+     * @param user UserCreateRequest
      * @return UserDTO
      */
     @PostMapping()
@@ -54,7 +62,7 @@ public class UserController {
 
     /**
      *
-     * @param id
+     * @param id User id
      * @return UserDTO
      */
     @GetMapping("/{id}")
@@ -65,7 +73,7 @@ public class UserController {
 
     /**
      * Update a user
-     * @param user
+     * @param user UserUpdateRequest
      * @return UserDTO
      */
     @PatchMapping("/{id}")
@@ -76,12 +84,25 @@ public class UserController {
 
     /**
      * Delete a user
-     * @param id
-     * @return
+     * @param id User id
+     * @return ResponseEntity<Void>
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userServiceImpl.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+
+    /**
+     * Restore a user
+     * @param id User id
+     * @return ResponseEntity<Void>
+     */
+    @PatchMapping("/{id}/restore")
+    public ResponseEntity<ResultResponse> restoreUser(@PathVariable UUID id) {
+        ResultResponse result = userServiceImpl.restore(id);
+        return ResponseEntity.status(result.status()).body(result);
     }
 }

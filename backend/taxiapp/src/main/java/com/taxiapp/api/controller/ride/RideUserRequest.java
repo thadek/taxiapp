@@ -16,7 +16,7 @@ public class RideUserRequest {
     @NotNull
     @NotBlank
     private Boolean is_booked;
-    @Valid
-    private User client;
+
+
 
 }

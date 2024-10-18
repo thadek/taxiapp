@@ -1,19 +1,27 @@
 package com.taxiapp.api.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Data
+@SQLDelete(sql = "UPDATE user SET deleted = true WHERE id = ?")
+@DynamicUpdate
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Vehicle {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, length = 36)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Integer id;
 
     @Column(nullable = false, length = 50)
     private String brand;
@@ -27,14 +35,17 @@ public class Vehicle {
     @Column(nullable = false, length = 50)
     private String details;
 
-    @Column()
-    private Date is_disabled;
+    @Column(name = "is_disabled")
+    private Date isDisabled;
+
+    @Column(nullable = false)
+    private boolean deleted = Boolean.FALSE;
 
     @Column(nullable = false, length = 50)
     private Integer year;
 
-    @Column(unique = true,nullable = false, length = 50)
-    private String license_plate;
+    @Column(unique = true,nullable = false, length = 50,name = "license_plate")
+    private String licensePlate;
 
     @ManyToOne
     @JoinColumn(name="driver_id")

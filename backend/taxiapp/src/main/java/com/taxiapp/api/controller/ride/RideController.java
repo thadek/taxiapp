@@ -19,11 +19,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class RideController {
 
     @PostMapping
-    public ResponseEntity<RideUserResponse> createRide(@RequestBody @Valid RideUserRequest request, BindingResult result) {
+    public ResponseEntity<RideUserResponse> createRide(@RequestBody @Valid RideUserRequest request) {
 
-        if(result.hasErrors()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,result.getAllErrors().toString());
-        }
+
 
         return ResponseEntity.ok().build();
 

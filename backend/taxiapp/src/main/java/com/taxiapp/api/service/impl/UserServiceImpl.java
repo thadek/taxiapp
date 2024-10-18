@@ -9,10 +9,12 @@ import com.taxiapp.api.model.User;
 import com.taxiapp.api.repository.RoleRepository;
 import com.taxiapp.api.repository.UserRepository;
 import com.taxiapp.api.service.IUserService;
+import com.taxiapp.api.utils.ResultResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -133,10 +135,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
             throw new EntityNotFoundException("User", "id", id.toString());
         }
 
-        //Hash password si corresponde
-        if(user.password() != null){
-            usr.setPassword(passwordEncoder.encode(user.password()));
-        }
+
 
         //Si trae cambios en roles los busco en db
         if(user.roles() != null && !user.roles().isEmpty()){
@@ -145,6 +144,27 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
                             .orElseThrow(() -> new EntityNotFoundException("Role","id" ,role.getId().toString())))
                     .collect(Collectors.toSet());
             usr.setRoles(roles);
+        }
+
+        //Seteo los campos que pueden ser modificados
+        if(user.name() != null){
+            usr.setName(user.name());
+        }
+        if(user.lastname() != null){
+            usr.setLastname(user.lastname());
+        }
+        if(user.username() != null){
+            usr.setUsername(user.username());
+        }
+        if(user.email() != null){
+            usr.setEmail(user.email());
+        }
+        if(user.is_disabled() != null){
+            usr.setIs_disabled(user.is_disabled());
+        }
+        //Hash password si corresponde
+        if(user.password() != null){
+            usr.setPassword(passwordEncoder.encode(user.password()));
         }
 
         return userRepository.save(usr);
@@ -175,6 +195,44 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     @Override
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public ResultResponse restore(UUID id) {
+        User usr = userRepository.findById(id).orElse(null);
+        String message = "";
+        if(usr == null){
+            throw new EntityNotFoundException("User", "id", id.toString());
+        }
+        if(!usr.isDeleted()){
+            return new ResultResponse("User " +usr.getId()+ " is not deleted", HttpStatus.NOT_MODIFIED);
+        }
+        usr.setDeleted(false);
+        userRepository.save(usr);
+        return new ResultResponse("User " +usr.getId()+ " restored successfully", HttpStatus.OK);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<User> findAllDeleted(Pageable pageable) {
+        return userRepository.findDeletedUsers(pageable);
+
+    }
+
+    @Override
+    public ResultResponse assignDriverRole(UUID id) {
+        User usr = userRepository.findById(id).orElse(null);
+        if(usr == null){
+            throw new EntityNotFoundException("User", "id", id.toString());
+        }
+        Role role = roleRepository.findByName("ROLE_DRIVER").orElse(null);
+        if(role == null){
+            throw new EntityNotFoundException("Role", "name", "ROLE_DRIVER");
+        }
+        usr.getRoles().add(role);
+        userRepository.save(usr);
+        return new ResultResponse("Role assigned successfully", HttpStatus.OK);
+
     }
 
     /**
