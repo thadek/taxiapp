@@ -6,6 +6,7 @@ import L from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 
+
 const icon = L.icon({
   iconUrl: "/lib/images/mapMarker.png",
   iconSize: [35, 46],
@@ -18,18 +19,23 @@ interface MarkerProps {
   display_name: string;
 }
 
+
+
 interface MapComponentProps {
   markers: MarkerProps[];
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ markers }) => {
+const MapComponent: React.FC<any> = ({ markers, center }) => {
+
+ 
+  
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100vh", width: "100%" }}>
+    <MapContainer center={center} zoom={13}  className="w-full h-[100vh] z-10">
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {markers.map((marker, index) => (
+      {markers.map((marker:any, index:any) => (
         <Marker key={index} position={[marker.lat, marker.lng]} icon={icon}>
           <Popup>{marker.display_name}</Popup>
         </Marker>

@@ -20,11 +20,14 @@
   border-image-repeat: repeat;
 }
 
+
+
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  width:100vw;
   background-color: #f0f0f0; /* Color de fondo opcional */
 }
 

@@ -1,5 +1,5 @@
 package com.taxiapp.api.inicial;
-
+/*
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +13,7 @@ import java.util.List;
 import com.taxiapp.api.model.Coordenada;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+
 public class CommandLineInit implements CommandLineRunner {
 
     private final RestTemplate restTemplate;
@@ -56,4 +56,4 @@ public class CommandLineInit implements CommandLineRunner {
             System.out.println("Error al enviar coordenada: " + coordenada);
         }
     }
-}
+}*/
