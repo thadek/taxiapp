@@ -82,6 +82,7 @@ public class AuthServiceImpl implements IAuthService {
                     .username(request.getUsername())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .email(request.getEmail())
+                    .phone(request.getPhone())
                     .name(request.getName())
                     .lastname(request.getLastname())
                     .is_disabled(null)
@@ -104,6 +105,7 @@ public class AuthServiceImpl implements IAuthService {
                     .name(userCreated.getName())
                     .lastname(userCreated.getLastname())
                     .username(userCreated.getUsername())
+                    .phone(userCreated.getPhone())
                     .email(userCreated.getEmail())
                     .roles(userCreated.getRoles())
                     .build();
@@ -129,6 +131,7 @@ public class AuthServiceImpl implements IAuthService {
                     .name(userDB.getName())
                     .lastname(userDB.getLastname())
                     .username(userDB.getUsername())
+                    .phone(userDB.getPhone())
                     .email(userDB.getEmail())
                     .roles(userDB.getRoles())
                     .build();

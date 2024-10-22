@@ -122,7 +122,7 @@ public class VehicleController {
      * @param id String
      * @return ResponseEntity<ResultResponse>
      */
-    @PatchMapping("/restore/{id}")
+    @PatchMapping("/{id}/restore")
     public ResponseEntity<ResultResponse> restoreVehicle(@PathVariable String id) {
         return new ResponseEntity<>(vehicleServiceImpl.restore(id), HttpStatus.OK);
     }

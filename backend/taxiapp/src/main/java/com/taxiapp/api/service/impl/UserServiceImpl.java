@@ -73,6 +73,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         if (userRepository.findByUsername(defaultAdminUsername).isEmpty() && roleAdmin.isPresent()) {
             User user = User.builder().name("Admin")
                     .lastname("Admin")
+                    .phone("+542994420000")
                     .username(defaultAdminUsername)
                     .password(passwordEncoder.encode(defaultAdminPassword))
                     .email(defaultAdminEmail).build();
@@ -156,9 +157,15 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         if(user.username() != null){
             usr.setUsername(user.username());
         }
+
+        if(user.phone() != null){
+            usr.setPhone(user.phone());
+        }
+
         if(user.email() != null){
             usr.setEmail(user.email());
         }
+
         if(user.is_disabled() != null){
             usr.setIs_disabled(user.is_disabled());
         }

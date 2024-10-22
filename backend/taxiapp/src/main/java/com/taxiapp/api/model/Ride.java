@@ -26,19 +26,22 @@ public class Ride {
     @Column(nullable = false)
     private Boolean is_booked;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Date ride_start;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Date ride_end;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
+    private String comments;
+
+    @Column(nullable = true)
     private Float price;
 
     @Column(nullable = false, length = 50)
     private RideStatus status;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Integer rating;
 
     @ManyToOne

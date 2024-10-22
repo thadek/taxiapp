@@ -27,4 +27,10 @@ public class RegisterRequest
     @NotNull(message = "Lastname cannot be null")
     @NotBlank(message = "Lastname cannot be blank")
     private String lastname;
+
+    @NotNull(message = "Phone cannot be null")
+    @NotBlank(message = "Phone cannot be blank")
+    private String phone;
+
+
 }

@@ -1,5 +1,6 @@
 package com.taxiapp.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -52,6 +53,7 @@ public class Vehicle {
     private Driver driver;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "vehicle")
+    @JsonIgnore
     private List<Ride> rides;
 
 }

@@ -7,6 +7,7 @@ import com.taxiapp.api.controller.auth.dto.LoginRequest;
 import com.taxiapp.api.controller.auth.dto.RegisterRequest;
 
 import com.taxiapp.api.service.impl.AuthServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class AuthController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
         try{
             return ResponseEntity.ok(authService.login(request));
         }catch(Exception e){
@@ -41,7 +42,7 @@ public class AuthController {
 
     @CrossOrigin(origins = "*")
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {
         try{
             return ResponseEntity.ok(authService.register(request));
         }catch(Exception e){

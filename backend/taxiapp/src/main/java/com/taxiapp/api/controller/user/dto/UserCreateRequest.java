@@ -17,7 +17,9 @@ public record UserCreateRequest(
   @NotNull(message = "email cannot be null")String email,
   @NotNull(message="array of roles cannot be null") Set<Role> roles,
         Timestamp is_disabled
-) {
+,
+  @NotNull(message = "phone cannot be null") String phone)
+{
 
 
 }
