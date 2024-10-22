@@ -1,16 +1,22 @@
 package com.taxiapp.api.exception.auth;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 
-@AllArgsConstructor
+
 @Builder
-@Data
-public class AuthException extends RuntimeException {
+@Getter
+@Setter
+public class AuthException extends AuthenticationException {
     String message;
     HttpStatus statusCode;
+
+    public AuthException(String message, HttpStatus statusCode) {
+        super(message);
+        this.message = message;
+        this.statusCode = statusCode;
+    }
 
 }
