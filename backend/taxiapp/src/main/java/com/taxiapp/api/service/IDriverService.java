@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface IDriverService {
 
     public Driver createDriver(Driver driver);
-    public void createDriverFromExistingUser(UUID userId, String licenseid, Boolean is_available);
+    public Driver createDriverFromExistingUser(UUID userId, String licenseid, Boolean is_available);
     public Driver getDriver(UUID driverId);
     public Page<Driver>getDrivers(Pageable pageable);
 }

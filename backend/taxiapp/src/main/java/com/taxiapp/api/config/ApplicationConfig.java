@@ -3,6 +3,7 @@ package com.taxiapp.api.config;
 
 import com.taxiapp.api.config.security.JwtAuthenticationFilter;
 import com.taxiapp.api.config.security.JwtAuthenticationProvider;
+import com.taxiapp.api.config.security.websocket.JWTHandShakeInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.record.RecordModule;
@@ -33,6 +34,11 @@ public class ApplicationConfig {
         return new JwtAuthenticationFilter(jwtAuthenticationProvider);
     }
 
+
+    @Bean
+    public JWTHandShakeInterceptor jwtHandShakeInterceptor() {
+        return new JWTHandShakeInterceptor(jwtAuthenticationProvider);
+    }
 
     @Bean
     public ModelMapper modelMapper() {

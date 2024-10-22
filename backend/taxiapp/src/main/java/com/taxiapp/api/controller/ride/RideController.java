@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +19,15 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/rides")
 public class RideController {
 
+    /**
+     * Create a new ride from a user request
+     * @param request
+     * @return ResponseEntity<RideUserResponse>
+     */
     @PostMapping
-    public ResponseEntity<RideUserResponse> createRide(@RequestBody @Valid RideUserRequest request) {
+    public ResponseEntity<RideUserResponse> createRide(@RequestBody @Valid RideUserRequest request, Authentication auth) {
+
+
 
 
 

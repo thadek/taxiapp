@@ -1,6 +1,9 @@
 package com.taxiapp.api.config;
 
+import com.taxiapp.api.config.security.websocket.JWTHandShakeInterceptor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -19,6 +22,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private final JWTHandShakeInterceptor jwtHandShakeInterceptor;
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
@@ -27,8 +32,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").withSockJS();
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:5500");
+        registry.addEndpoint("/ws").addInterceptors(jwtHandShakeInterceptor).setAllowedOriginPatterns("*").withSockJS();;
+      //  registry.addEndpoint("/ws").setAllowedOriginPatterns("*")
+
+
     }
 
 

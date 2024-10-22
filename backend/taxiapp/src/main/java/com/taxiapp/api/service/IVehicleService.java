@@ -2,6 +2,7 @@ package com.taxiapp.api.service;
 
 import com.taxiapp.api.controller.vehicle.dto.VehicleCreateRequest;
 import com.taxiapp.api.controller.vehicle.dto.VehicleUpdateRequest;
+import com.taxiapp.api.model.Driver;
 import com.taxiapp.api.model.Vehicle;
 import com.taxiapp.api.utils.ResultResponse;
 import org.springframework.data.domain.Page;
@@ -24,5 +25,7 @@ public interface IVehicleService {
 
     //Metodo para listar vehiculos eliminados por softdelete
     Page<Vehicle> findAllDeleted(Pageable pageable);
+
+    Vehicle setDriver(String vehicleId, UUID driverId);
 
 }

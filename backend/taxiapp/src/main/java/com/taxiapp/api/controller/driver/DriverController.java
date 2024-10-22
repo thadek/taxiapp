@@ -30,8 +30,7 @@ public class DriverController {
 
     @PostMapping()
     public ResponseEntity<DriverDTO> createDriver(@RequestBody @Valid DriverCreateRequest driver) {
-        driverService.createDriverFromExistingUser(driver.userId(), driver.licenseId(), driver.isAvailable());
-            Driver driverCreated =  driverService.getDriverByLicenseId(driver.licenseId());
+        Driver driverCreated  = driverService.createDriverFromExistingUser(driver.userId(), driver.licenseId(), driver.isAvailable());
          return ResponseEntity.ok(modelMapper.map(driverCreated, DriverDTO.class));
     }
 

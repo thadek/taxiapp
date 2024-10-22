@@ -21,6 +21,8 @@ public class AuthController {
 
     private final AuthServiceImpl authService;
 
+
+    @CrossOrigin(origins = "*")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         try{
@@ -37,6 +39,7 @@ public class AuthController {
     }
 
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         try{

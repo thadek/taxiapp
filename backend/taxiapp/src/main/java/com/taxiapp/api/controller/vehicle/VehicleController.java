@@ -8,6 +8,7 @@ import com.taxiapp.api.controller.vehicle.dto.VehicleUpdateRequest;
 import com.taxiapp.api.model.User;
 import com.taxiapp.api.model.Vehicle;
 import com.taxiapp.api.service.impl.VehicleServiceImpl;
+import com.taxiapp.api.utils.ResultResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/vehicles")
@@ -98,6 +101,30 @@ public class VehicleController {
     public ResponseEntity<Void> deleteVehicle(@PathVariable String id) {
         vehicleServiceImpl.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    /**
+     * Assign a driver to a vehicle
+     * @param vehicleId String vehicleId
+     * @param driverId UUID driverId
+     * @return ResponseEntity<VehicleDTO>
+     */
+    @PatchMapping("/{vehicleId}/driver/{driverId}")
+    public ResponseEntity<VehicleDTO> setDriver(@PathVariable String vehicleId, @PathVariable UUID driverId) {
+        Vehicle vehicle = vehicleServiceImpl.setDriver(vehicleId, driverId);
+        return new ResponseEntity<>(modelMapper.map(vehicle, VehicleDTO.class), HttpStatus.OK);
+    }
+
+
+    /**
+     * Restore a deleted vehicle
+     * @param id String
+     * @return ResponseEntity<ResultResponse>
+     */
+    @PatchMapping("/restore/{id}")
+    public ResponseEntity<ResultResponse> restoreVehicle(@PathVariable String id) {
+        return new ResponseEntity<>(vehicleServiceImpl.restore(id), HttpStatus.OK);
     }
 
 

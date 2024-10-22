@@ -4,6 +4,7 @@ import com.taxiapp.api.controller.vehicle.dto.VehicleCreateRequest;
 import com.taxiapp.api.controller.vehicle.dto.VehicleUpdateRequest;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
+import com.taxiapp.api.model.Driver;
 import com.taxiapp.api.model.Vehicle;
 import com.taxiapp.api.repository.DriverRepository;
 import com.taxiapp.api.repository.VehicleRepository;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class VehicleServiceImpl implements IVehicleService {
 
     private final VehicleRepository vehicleRepository;
+    private final DriverRepository driverRepository;
 
 
     @Transactional
@@ -117,4 +119,22 @@ public class VehicleServiceImpl implements IVehicleService {
     public Page<Vehicle> findAllDeleted(Pageable pageable) {
         return vehicleRepository.findDeletedVehicles(pageable);
     }
+
+
+    /**
+     * Set driver to vehicle
+     */
+    @Transactional
+    @Override
+    public Vehicle setDriver(String vehicleId, UUID driverId) {
+        Vehicle vehicle = vehicleRepository.findById(vehicleId).
+                orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", vehicleId));
+
+        Driver driver = driverRepository.findById(driverId).
+                orElseThrow(() -> new EntityNotFoundException("Driver", "id", driverId.toString()));
+
+        vehicle.setDriver(driver);
+        return vehicleRepository.save(vehicle);
+    }
+
 }

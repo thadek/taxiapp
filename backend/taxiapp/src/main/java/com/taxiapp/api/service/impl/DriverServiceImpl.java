@@ -2,6 +2,7 @@ package com.taxiapp.api.service.impl;
 
 
 import com.taxiapp.api.controller.driver.dto.DriverCreateRequest;
+import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
 import com.taxiapp.api.model.Driver;
 import com.taxiapp.api.model.Role;
@@ -17,6 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -26,6 +30,7 @@ public class DriverServiceImpl implements IDriverService {
 
     private final DriverRepository driverRepository;
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
 
 
@@ -41,23 +46,39 @@ public class DriverServiceImpl implements IDriverService {
      * @return  Driver
      */
     @Transactional
-    public void createDriverFromExistingUser(UUID userId, String licenseid, Boolean is_available){
+    public Driver createDriverFromExistingUser(UUID userId, String licenseid, Boolean is_available){
 
-        Driver newDriver = driverRepository.findById(userId).orElse(null);
-        if (newDriver == null) {
-            throw new EntityNotFoundException("Driver", "id", userId.toString());
+        // Buscar el usuario existente
+        User existingUser = userRepository.findById(userId).orElse(null);
+        if (existingUser == null) {
+            throw new EntityNotFoundException("User", "id", userId.toString());
         }
 
+        // Verificar si ya es un driver
+        boolean existingDriver = driverRepository.existsById(userId);
+        if (existingDriver) {
+            throw new DuplicatedEntityException("Driver", "id", userId.toString());
+        }
 
+        // Verificar y agregar el rol de DRIVER si no existe
         Role driverRole = roleRepository.findByName("ROLE_DRIVER").orElse(null);
         if (driverRole == null) {
             throw new EntityNotFoundException("Role", "name", "ROLE_DRIVER");
         }
-        newDriver.getRoles().add(driverRole);
-        driverRepository.save(newDriver);
+        existingUser.getRoles().add(driverRole);
 
-       // driverRepository.create(userId, licenseid, is_available);
+        // Crear un nuevo Driver y asociarlo al usuario existente
+        Driver newDriver = new Driver();
+        newDriver.setId(existingUser.getId()); // Usar la misma clave primaria
+        newDriver.setLicenseId(licenseid);
+        newDriver.setIsAvailable(is_available);
 
+        // Guardar roles
+        userRepository.save(existingUser);
+        // Guardar el nuevo conductor
+        driverRepository.create(userId, licenseid, is_available);
+
+        return driverRepository.findById(userId).orElse(null);
     }
 
 
@@ -88,11 +109,23 @@ public class DriverServiceImpl implements IDriverService {
 
     public void deleteDriver(UUID driverId) {
 
-        boolean exists = driverRepository.existsById(driverId);
-        if(!exists){
+        Driver driver = driverRepository.findById(driverId).orElse(null);
+        if(driver== null){
             throw new EntityNotFoundException("Driver","id",driverId.toString());
         }
-        driverRepository.deleteById(driverId);
+       Set<Role> roles =  driver.getRoles();
+        for(Role role: roles){
+            if(role.getName().equals("ROLE_DRIVER")){
+                roles.remove(role);
+                break;
+            }
+        }
+        driver.setRoles(roles);
+        driverRepository.save(driver);
+
+
+       driverRepository.deleteById(driverId);
+
 
     }
 
@@ -104,7 +137,19 @@ public class DriverServiceImpl implements IDriverService {
         return driver;
     }
 
-    public Iterable<Driver> getAvailableDrivers() {
+    @Transactional
+    public Boolean setDriverStatus(UUID driverId, Boolean isAvailable) {
+        Driver driver = driverRepository.findById(driverId).orElse(null);
+        if (driver == null) {
+            throw new EntityNotFoundException("Driver", "id", driverId.toString());
+        }
+        driver.setIsAvailable(isAvailable);
+        driverRepository.save(driver);
+        return true;
+    }
+
+
+    public List<Driver> getAvailableDrivers() {
         return driverRepository.findByIsAvailable(true);
     }
 
