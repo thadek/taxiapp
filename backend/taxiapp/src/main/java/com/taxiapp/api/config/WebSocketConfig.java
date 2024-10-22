@@ -1,5 +1,6 @@
 package com.taxiapp.api.config;
 
+
 import com.taxiapp.api.config.security.websocket.JWTHandShakeInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
@@ -28,16 +30,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
+
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").addInterceptors(jwtHandShakeInterceptor).setAllowedOriginPatterns("*").withSockJS();;
-      //  registry.addEndpoint("/ws").setAllowedOriginPatterns("*")
-
-
+     //  registry.addEndpoint("/ws").addInterceptors(jwtHandShakeInterceptor).setAllowedOriginPatterns("*");
+       registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
     }
 
 
 
 }
+
