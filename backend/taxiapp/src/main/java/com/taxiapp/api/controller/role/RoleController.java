@@ -40,7 +40,7 @@ public class RoleController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Role> updateRole(@PathVariable int id, @RequestBody Role role) {
+    public ResponseEntity<Role> updateRole(@PathVariable int id, @RequestBody @Valid RoleCreateRequest role) {
         Role updatedRole = roleService.update(role,id);
         return ResponseEntity.ok(updatedRole);
     }

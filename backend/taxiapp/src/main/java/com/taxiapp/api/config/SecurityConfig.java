@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,10 +36,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
-        http.csrf(csrf->csrf.disable())
-
+        http
+                .csrf(AbstractHttpConfigurer::disable)
                  .authorizeHttpRequests(authorize->
-                    authorize.requestMatchers("/auth/*","/error","/docs/**","/v3/api-docs/**","/v3/api-docs").permitAll()
+                    authorize.requestMatchers("/auth/*","/error","/docs/**","/v3/api-docs/**","/v3/api-docs","/ws/**").permitAll()
                                     .anyRequest().authenticated())
 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -46,7 +47,6 @@ public class SecurityConfig {
                     ex.authenticationEntryPoint(jwtAuthEntryPoint);
                     ex.accessDeniedHandler(jwtAccessDeniedHandler);
                 })
-
                 .sessionManagement((session)-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();

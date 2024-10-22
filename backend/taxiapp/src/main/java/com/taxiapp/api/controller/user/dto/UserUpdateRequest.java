@@ -16,6 +16,7 @@ public record UserUpdateRequest(
         String lastname,
         String username,
         String email,
+        String phone,
         Set<Role> roles,
         Timestamp is_disabled
 ) {

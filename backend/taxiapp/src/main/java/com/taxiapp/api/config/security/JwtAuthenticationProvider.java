@@ -70,4 +70,23 @@ public class JwtAuthenticationProvider {
 
     }
 
+
+    public String getUserFromToken(String token) {
+        try {
+            Jws<Claims
+                    > claimsJws = Jwts.parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token);
+            Claims claims = claimsJws.getBody();
+            return claims.getSubject();
+        } catch (ExpiredJwtException e) {
+            throw new AuthException("Expired JWT Token", HttpStatus.UNAUTHORIZED);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthException("Invalid JWT token", HttpStatus.UNAUTHORIZED);
+
+        }
+    }
+
+
 }

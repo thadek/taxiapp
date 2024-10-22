@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Data
 @AllArgsConstructor
+
 @RequiredArgsConstructor
 public class Driver extends User {
 

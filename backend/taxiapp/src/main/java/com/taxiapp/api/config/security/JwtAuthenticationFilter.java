@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     @Override
     public boolean shouldNotFilter(HttpServletRequest request) {
-        List<String> pathsToSkip = List.of("/auth/login", "/auth/register","/docs/", "/v3/api-docs/","/v3/api-docs");
+        List<String> pathsToSkip = List.of("/auth/login", "/auth/register","/docs/", "/v3/api-docs/","/v3/api-docs","/ws/","/ws");
         return pathsToSkip.stream().anyMatch(path -> request.getRequestURI().contains(path));
 
     }

@@ -47,9 +47,9 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public Role update(Role role, int id) {
+    public Role update(RoleCreateRequest role, int id) {
         String ROLE_PREFIX = "ROLE_";
-        String name= ROLE_PREFIX+role.getName().toUpperCase();
+        String name= ROLE_PREFIX+role.name().toUpperCase();
         //Check if role already exists
         Role roleUpdate = roleRepository.findById(id).orElse(null);
         if (roleUpdate == null)  {
@@ -67,7 +67,7 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public void delete(int id) {
         //Check if role exists
-        if(roleRepository.existsById(id)){
+        if(!roleRepository.existsById(id)){
             throw new EntityNotFoundException("Role","id",String.valueOf(id));
         }
         roleRepository.deleteById(id);
