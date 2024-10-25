@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MapComponent from "../MapComponent/page";
 import SearchComponent from "../SearchComponent/page";
 
@@ -11,8 +11,15 @@ interface SearchResult {
   lon: string;
 }
 
+interface LatLong {
+  lat: number;
+  lng: number;
+}
+
 const MapWithSearch: React.FC = () => {
   const [markers, setMarkers] = useState<{ lat: number; lng: number; display_name: string }[]>([]);
+  const [center, setCenter] = React.useState<LatLong>({lat: -38.952531, lng: -68.059168});
+
 
   const handleSearchResult = (results: SearchResult[]) => {
     const newMarkers = results.map((result) => ({
@@ -26,7 +33,7 @@ const MapWithSearch: React.FC = () => {
   return (
     <div>
       <SearchComponent onSearchResult={handleSearchResult} />
-      <MapComponent markers={markers} />
+      <MapComponent markers={markers} center={center}/>
     </div>
   );
 };
