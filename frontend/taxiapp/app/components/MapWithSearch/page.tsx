@@ -3,6 +3,10 @@
 import React, { useEffect, useState } from "react";
 import MapComponent from "../MapComponent/page";
 import SearchComponent from "../SearchComponent/page";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Map } from "lucide-react";
+
 
 interface SearchResult {
   place_id: string;
@@ -18,7 +22,7 @@ interface LatLong {
 
 const MapWithSearch: React.FC = () => {
   const [markers, setMarkers] = useState<{ lat: number; lng: number; display_name: string }[]>([]);
-  const [center, setCenter] = React.useState<LatLong>({lat: -38.952531, lng: -68.059168});
+  const [center, setCenter] = React.useState<LatLong>({ });
 
 
   const handleSearchResult = (results: SearchResult[]) => {
@@ -31,10 +35,22 @@ const MapWithSearch: React.FC = () => {
   };
 
   return (
-    <div>
-      <SearchComponent onSearchResult={handleSearchResult} />
-      <MapComponent markers={markers} center={center}/>
-    </div>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="flex gap-3"><Map/>Mapa</CardTitle>
+        <Separator className="my-4" />
+      </CardHeader>
+      <CardContent>
+        <MapComponent/>
+      </CardContent>
+      <Separator className="my-4" />
+      <CardContent>
+        <SearchComponent/>
+      </CardContent>
+      
+    </Card>
+
+
   );
 };
 

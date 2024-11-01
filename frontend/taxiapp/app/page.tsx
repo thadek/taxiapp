@@ -29,7 +29,7 @@ const Home = () => {
       )}
 
       {/* Contenedor encima del video */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white bg-black bg-opacity-50">
+      <div className="relative z-1 flex flex-col items-center justify-center h-full text-center text-white bg-black bg-opacity-50">
         <h1 className={`${myFont.className} text-7xl  mb-4`}>TaxiApp</h1>
         <p className="text-xl mb-6">
           La solución para la gestión eficiente de taxis, desde la solicitud hasta la asignación en tiempo real.

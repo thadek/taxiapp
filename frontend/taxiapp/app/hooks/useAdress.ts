@@ -1,6 +1,6 @@
 // ../../hooks/useAddress.ts
 export const useAddress = () => {
-  const baseURL = 'http://tpf.gpamic.ar:8080';
+  const baseURL = process.env.NEXT_PUBLIC_NOMINATIM_URL+'/:8080';
 
   async function searchAddress(query: string) {
       try {
