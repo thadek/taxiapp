@@ -10,6 +10,7 @@ const RegisterPage = () => {
   const [lastname, setLastname] = useState<string>("test");
   const [username, setUsername] = useState<string>("test");
   const [email, setEmail] = useState<string>("test@test.com");
+  const [phone, setPhone] = useState<string>("+54299424");
   const [password, setPassword] = useState<string>("123123");
   const router = useRouter();
 
@@ -29,6 +30,7 @@ const RegisterPage = () => {
           lastname,
           username,
           password,
+          phone,
           email,
         }),
       }
@@ -110,12 +112,23 @@ const RegisterPage = () => {
             />
           </div>
           <div>
+            <label className=" text-sm mb-2 block">Phone number</label>
+            <input
+              type="text"
+              placeholder="+54 9 11 1234-5678"
+              name="phone"
+              className=" bg-white border text-gray-800 border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+            />
+          </div>
+          <div>
             <label className=" text-sm mb-2 block">Email</label>
             <input
               type="email"
               placeholder="email@ejemplo.com"
               name="email"
-              className=" bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
+              className=" bg-white border text-gray-800 border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
             />
@@ -126,7 +139,7 @@ const RegisterPage = () => {
         </div>
       </form>
 
-      {errors.length > 0 && (
+      {Array.isArray(errors) && errors.length > 0 && (
         <div className="alert alert-danger mt-2">
           <ul className="mb-0">
             {errors.map((error) => (

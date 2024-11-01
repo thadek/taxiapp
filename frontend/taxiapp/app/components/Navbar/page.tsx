@@ -1,10 +1,10 @@
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { ImageResponse } from 'next/server';
 import localFont from 'next/font/local'
 import React, { useEffect } from 'react';
 import LoginContainer from '../LoginContainer/LoginContainer';
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 const myFont = localFont({ src: '../../fonts/Speeday-Bold-FFP.ttf' })
 
@@ -28,9 +28,25 @@ const Navbar = () => {
                         </svg>
                     </button>
                 </div>
-                
-        <LoginContainer />
-                
+            <div>
+            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+                <Link href="/pages/taxiRealTimeLocation">Gestión Taxis</Link>
+            </Button>
+            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+                <Link href="/dashboard">Buscar Dirección</Link>
+            </Button>
+            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+                <Link href="/pages/abm/abmUser">ABM Usuarios</Link>
+            </Button>
+            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+                <Link href="/pages/abm/abmDriver">ABM Conductores</Link>
+            </Button>
+            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+                <Link href="/pages/abm/abmVehicle">ABM Vehículos</Link>
+            </Button>
+            </div>
+            <LoginContainer />   
+
             </nav>
             <div className="navbar-menu relative z-50 hidden">
                 <div className="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>
@@ -48,23 +64,7 @@ const Navbar = () => {
                         </button>
                     </div>
                     <div>
-                        <ul>
-                            <li className="mb-1">
-                                <a className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Home</a>
-                            </li>
-                            <li className="mb-1">
-                                <a className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">About Us</a>
-                            </li>
-                            <li className="mb-1">
-                                <a className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Services</a>
-                            </li>
-                            <li className="mb-1">
-                                <a className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Pricing</a>
-                            </li>
-                            <li className="mb-1">
-                                <a className="block p-4 text-sm font-semibold text-gray-400 hover:bg-blue-50 hover:text-blue-600 rounded" href="#">Contact</a>
-                            </li>
-                        </ul>
+                        
                     </div>
                     <div className="mt-auto">
                         <Link href="/pages/login">

@@ -10,7 +10,7 @@ export default function LoginContainer({ children }: any) {
     return (<>
 
         {session ? (
-            <button className="hidden lg:inline-block lg:ml-auto lg:mr-3 py-2 px-6 bg-gray-300 hover:bg-gray-100 text-sm text-gray-900 font-bold  rounded-xl transition duration-200" onClick={() => signOut()} >
+            <button className="hidden lg:inline-block lg:ml-3 lg:mr-3 py-2 px-6 bg-gray-300 hover:bg-gray-100 text-sm text-gray-900 font-bold  rounded-xl transition duration-200" onClick={() => signOut()} >
               Cerrar sesión
             </button>
         ) : (
