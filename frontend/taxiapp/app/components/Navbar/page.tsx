@@ -15,8 +15,8 @@ const Navbar = () => {
 
 
     return (
-        <div id="fondocarton">
-            <nav className=" bg-contain relative p-3 flex justify-between items-center bg-white  ">
+        <div className='geist-sans-font border-b-2 drop-shadow-md'>
+            <nav className="bg-contain relative p-3 flex justify-between items-center bg-secondary  ">
                 <Link className=" font-bold leading-none" href="/">
                  <h1 className={`font-bold text-3xl text-black ${myFont.className} `}>TaxiApp</h1>
                 </Link>
@@ -29,19 +29,19 @@ const Navbar = () => {
                     </button>
                 </div>
             <div>
-            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+            <Button variant={'ghost'} className='bg-secondary hover:bg-gray-300 text-black py-2 px-4 mx-1' asChild>
                 <Link href="/pages/taxiRealTimeLocation">Gestión Taxis</Link>
             </Button>
-            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+            <Button variant={'ghost'} className='bg-secondary hover:bg-gray-300 text-black  py-2 px-4 mx-1' asChild>
                 <Link href="/dashboard">Buscar Dirección</Link>
             </Button>
-            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+            <Button variant={'ghost'} className='bg-secondary hover:bg-gray-300 text-black py-2 px-4 mx-1' asChild>
                 <Link href="/pages/abm/abmUser">ABM Usuarios</Link>
             </Button>
-            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+            <Button variant={'ghost'} className='bg-secondary hover:bg-gray-300 text-black  py-2 px-4 mx-1' asChild>
                 <Link href="/pages/abm/abmDriver">ABM Conductores</Link>
             </Button>
-            <Button variant={'ghost'} className='bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 mx-1' asChild>
+            <Button variant={'ghost'} className='bg-secondary hover:bg-gray-300 text-black py-2 px-4 mx-1' asChild>
                 <Link href="/pages/abm/abmVehicle">ABM Vehículos</Link>
             </Button>
             </div>

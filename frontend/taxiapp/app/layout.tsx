@@ -1,3 +1,4 @@
+"use client";
 import localFont from "next/font/local";
 import "./global.css";
 import Navbar from "./components/Navbar/page";
@@ -35,8 +36,18 @@ export default function RootLayout({
           crossOrigin=""
           async
         ></script>
+        <style jsx global>{`
+          :root {
+            --font-geist-sans: 'Geist Sans', sans-serif;
+            --font-geist-mono: 'Geist Mono', monospace;
+          }
+
+          body {
+            font-family: var(--font-geist-sans);
+          }
+        `}</style>
       </Head>
-      <body>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <main>
           <SessionAuthProvider>
             <Navbar />
