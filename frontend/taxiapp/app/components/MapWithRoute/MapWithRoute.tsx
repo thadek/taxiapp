@@ -4,46 +4,65 @@ import { MapContainer, TileLayer, Polyline, Marker, Popup } from 'react-leaflet'
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import { useQuery } from '@tanstack/react-query';
+import { getDirection } from '@/app/queries/maps';
+import { Progress } from '@nextui-org/progress';
+import { toast } from 'sonner';
+import { Spinner } from '@nextui-org/react';
+import EstimationCard from '../EstimationCard/EstimationCard';
 
-const MapWithRoute = ({ start, end }:{start:any,end:any}) => {
+
+const MapWithRoute = ({ start, end, turno }: { start: any, end: any, turno: any }) => {
   const [route, setRoute] = useState([]);
-  const [data, setData] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const getRoute = async () => {
-      const response = await fetch(`/api/maps/directions?start=${start[1]},${start[0]}&end=${end[1]},${end[0]}`);
-      const data = await response.json();
-      setData(data);
-      setIsLoading(false);
-    };
-    getRoute();
-  }, [start, end]);
 
+  const { data, isSuccess, isLoading, error } = useQuery({ queryKey: ['routecalc',start,end], queryFn: () => getDirection(start, end) });
+
+  
   useEffect(() => {
-    if (data.routes && data.routes.length > 0) {
-      const coordinates = data.routes[0].geometry.coordinates.map((coord:any) => [coord[1], coord[0]]);
+   
+    if (!isLoading &&data.routes && data.routes.length > 0) {
+      const coordinates = data.routes[0].geometry.coordinates.map((coord: any) => [coord[1], coord[0]]);
       setRoute(coordinates);
     }
-  }, [data]);
+  }, [isSuccess]);
 
- 
 
-  return (
-    <MapContainer center={start} zoom={13} className="w-full h-[100vh] z-10">
-    <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {(route.length > 0) && <Polyline positions={route} pathOptions={{color:'blue'}} />}
-      <Marker position={start}>
-        <Popup>Origen</Popup>
-      </Marker>
-      <Marker position={end}>
-        <Popup>Destino</Popup>
-      </Marker>
-    </MapContainer>
-  );
+
+
+
+
+
+  if (isLoading) {
+  return (<div className="w-full h-[20vh] flex justify-center items-center">
+    <Spinner />
+  </div>)
+  }
+  
+    if (data.error || error) {
+      toast.error('Error al calcular ruta');
+      return (<></>)
+    }
+  
+    return (isSuccess && !data.error &&  <>
+      <MapContainer center={[start[1], start[0]]} zoom={13} className="w-full h-[20vh] z-10">
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        {(route.length > 0) && <Polyline positions={route} pathOptions={{ color: 'blue' }} />}
+        <Marker position={[start[1], start[0]]}>
+          <Popup>Origen</Popup>
+        </Marker>
+        <Marker position={[end[1], end[0]]}>
+          <Popup>Destino</Popup>
+        </Marker>
+      </MapContainer>
+      
+      <EstimationCard start={start} end={end} distance={data.routes[0].distance} shift={turno} />
+    
+      </>
+    )
 };
 
 export default MapWithRoute;

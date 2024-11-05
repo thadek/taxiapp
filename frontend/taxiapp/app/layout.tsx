@@ -6,6 +6,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
+import Providers from "./providers";
 
 
 export default function RootLayout({
@@ -16,6 +17,8 @@ export default function RootLayout({
   return (
     <html>
       <body>
+        <Providers>
+        
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -26,14 +29,15 @@ export default function RootLayout({
             <AppSidebar />
             <main className="h-screen w-screen">
               <SessionAuthProvider>
-
                 <Navbar />
+               
                 {children}
                 <Toaster richColors position="bottom-center" closeButton/>
               </SessionAuthProvider>
             </main>
           </SidebarProvider>
         </ThemeProvider>
+               </Providers>
       </body>
     </html>
   );

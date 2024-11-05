@@ -34,9 +34,7 @@ const Home = () => {
         <p className="text-xl mb-6">
           La solución para la gestión eficiente de taxis, desde la solicitud hasta la asignación en tiempo real.
         </p>
-        <button className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg">
-          Descubre más
-        </button>
+       
       </div>
     </div>
   );

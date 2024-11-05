@@ -1,0 +1,64 @@
+'use client'
+
+import React from "react";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { useInfiniteScroll } from "@nextui-org/use-infinite-scroll";
+import { useAsyncList } from 'react-stately'
+
+
+type LocationResult = {
+  place_id: string;
+  lat: string;
+  lon: string;
+  display_name: string;
+}
+
+type FieldState = {
+  selectedKey: React.Key | null;
+};
+
+
+export default function AsyncSearchDirectionBox({ text, setFieldState, onSelectionChange }: { text: string, setFieldState: React.Dispatch<React.SetStateAction<FieldState>>, onSelectionChange: (key: React.Key | null) => void }) {
+
+
+
+
+  
+
+  let list = useAsyncList<LocationResult>({
+    async load({ signal, filterText }) {
+      let res = await fetch( `http://tpf.gpamic.ar:8080/search?q=${filterText}`, { signal });
+      let json = await res.json();
+      return {
+        items: json,
+       
+      };
+    },
+  });
+
+
+
+  return (<>
+    <Autocomplete
+      className="w-full"
+      inputValue={list.filterText}
+      isLoading={list.isLoading}
+      items={list.items}
+      label={text}
+      placeholder="Escribí para buscar..."
+      variant="underlined"
+      onSelectionChange={onSelectionChange}
+      onInputChange={list.setFilterText}
+    >
+      {(item) => ( 
+        <AutocompleteItem key={`${(Math.round(Math.random()*10 * 100) / 100)}/${item.lat},${item.lon}`}  className="capitalize">
+          {item.display_name}
+        </AutocompleteItem>
+      )}
+    </Autocomplete>
+
+  </>
+  );
+
+  
+}

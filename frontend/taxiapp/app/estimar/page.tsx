@@ -4,8 +4,7 @@ export default function Estimar() {
 
   return (
     <div className=" min-h-full content-center ">
-      <main className="flex flex-col items-center  gap-3 p-3 ">
-        
+      <main className="flex flex-col items-center  gap-3 p-3 ">      
         <EstimarViajeCard />
       </main>
     </div>

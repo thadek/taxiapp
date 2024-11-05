@@ -1,5 +1,8 @@
-import { Calendar, Home, LayoutDashboard, Search, Settings } from "lucide-react"
+import { Calendar, Home, LayoutDashboard, LogIn, Search, Settings,UserPlus,LogOut, User } from "lucide-react"
 import { Logo } from "@/components/ui/logo"
+
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 import {
   Sidebar,
@@ -25,6 +28,50 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
+import { checkMultipleRoles, checkRole } from "@/app/utils/role-check"
+
+
+
+
+const itemsWithoutLogin = [
+  {
+    title: "Inicio",
+    url: "/",
+    icon: Home,
+  },
+  {
+    title: "Iniciar sesión",
+    url: "/login",
+    icon: LogIn,
+  },
+  {
+    title: "Registrarse",
+    url: "/register",
+    icon: UserPlus,
+  }
+]
+
+
+const itemsUser = [
+  {
+    title: "Inicio",
+    url: "/",
+    icon: Home,
+  },
+  {
+    title: "Perfil",
+    url: "/profile",
+    icon: User,
+  },
+  {
+    title:"Cerrar sesión",
+    url:"/api/auth/signout",
+    icon: LogOut
+  }
+
+
+]
+
 // Menu items.
 const items = [
   {
@@ -49,12 +96,21 @@ const items = [
   },
   {
     title: "Configuración",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
 ]
 
-export function AppSidebar() {
+export async function AppSidebar() {
+
+
+  const session = await getServerSession(authOptions);
+
+  const isOperatorOrAdmin = session && checkMultipleRoles(["ROLE_ADMIN","ROLE_OPERATOR"], session.user.roles);
+
+
+
+
   return (
     <Sidebar>
       <Dialog>
@@ -66,7 +122,7 @@ export function AppSidebar() {
 
             <SidebarGroupContent>
               <SidebarMenu>
-                {items.map((item) => (
+                {isOperatorOrAdmin && items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link href={item.url}>
@@ -77,14 +133,29 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 ))}
 
-                {/*<SidebarMenuItem key={"Calcular estimado"}>
-                  <SidebarMenuButton asChild>
-                    <DialogTrigger>
-                      <Calendar />
-                      <span>Calcular costo estimado de viaje</span>
-                    </DialogTrigger>
-                  </SidebarMenuButton>
-                </SidebarMenuItem> */}
+                {!session && itemsWithoutLogin.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+
+              {session && checkMultipleRoles(["ROLE_USER"],session.user?.roles) && itemsUser.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+
+                
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

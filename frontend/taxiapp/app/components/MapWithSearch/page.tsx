@@ -6,6 +6,7 @@ import SearchComponent from "../SearchComponent/page";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Map } from "lucide-react";
+import AsyncSearchDirectionBox from "../AsyncSearchDirectionBox/AsyncSearchDirectionBox";
 
 
 interface SearchResult {
@@ -24,6 +25,14 @@ const MapWithSearch: React.FC = () => {
   const [markers, setMarkers] = useState<{ lat: number; lng: number; display_name: string }[]>([]);
   const [center, setCenter] = React.useState<LatLong>({ });
 
+  const [fieldState, setFieldState] = useState({
+    
+  });
+
+  const onSelectionChange = (key:any) => {
+    console.log(key)
+    //setCenter({ lat: parseFloat(selection.lat), lng: parseFloat(selection.lon) });
+  }
 
   const handleSearchResult = (results: SearchResult[]) => {
     const newMarkers = results.map((result) => ({
@@ -45,7 +54,7 @@ const MapWithSearch: React.FC = () => {
       </CardContent>
       <Separator className="my-4" />
       <CardContent>
-        <SearchComponent/>
+        <AsyncSearchDirectionBox text="Buscar dirección" onSelectionChange={onSelectionChange} setFieldState={setFieldState}/>
       </CardContent>
       
     </Card>

@@ -1,0 +1,7 @@
+ /__  ___/                    // | |
+   / /   ___             ( ) //__| |     ___      ___
+  / /  //   ) ) \\ / /  / / / ___  |   //   ) ) //   ) )
+ / /  //   / /   \/ /  / / //    | |  //___/ / //___/ /
+/ /  ((___( (    / /\ / / //     | | //       //
+${application.title} ${application.version}
+Spring Boot ${spring-boot.version}
