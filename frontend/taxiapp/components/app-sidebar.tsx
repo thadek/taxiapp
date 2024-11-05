@@ -1,8 +1,9 @@
+'use client'
+
 import { Calendar, Home, LayoutDashboard, LogIn, Search, Settings,UserPlus,LogOut, User } from "lucide-react"
 import { Logo } from "@/components/ui/logo"
 
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { useSession, signIn, signOut } from "next-auth/react"
 
 import {
   Sidebar,
@@ -101,14 +102,17 @@ const items = [
   },
 ]
 
-export async function AppSidebar() {
+export  function AppSidebar() {
 
 
-  const session = await getServerSession(authOptions);
+  const { data: session, status } = useSession();
 
   const isOperatorOrAdmin = session && checkMultipleRoles(["ROLE_ADMIN","ROLE_OPERATOR"], session.user.roles);
 
 
+  if(status === "loading") {
+    return <></>
+  }
 
 
   return (

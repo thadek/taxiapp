@@ -17,7 +17,6 @@ export default function WeatherCard({ coords, text }: { coords: string, text: st
 
     const { data, isLoading, isError, isSuccess, status } = useQuery({ queryKey: ['weather', coords], queryFn: async () => getWeather(coords) })
 
-    console.log(status,data)
 
     if (isLoading) {
         return (<div className="w-full h-[20vh] flex justify-center items-center">

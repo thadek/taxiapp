@@ -18,6 +18,14 @@ type FieldState = {
 };
 
 
+
+function generateRandomLetters() {
+    const letters = "abcdefghijklmnopqrstuvwxyz";
+    const firstLetter = letters[Math.floor(Math.random() * letters.length)];
+    const secondLetter = letters[Math.floor(Math.random() * letters.length)];
+    return firstLetter + secondLetter;
+}
+
 export default function AsyncSearchDirectionBox({ text, setFieldState, onSelectionChange }: { text: string, setFieldState: React.Dispatch<React.SetStateAction<FieldState>>, onSelectionChange: (key: React.Key | null) => void }) {
 
 
@@ -51,7 +59,7 @@ export default function AsyncSearchDirectionBox({ text, setFieldState, onSelecti
       onInputChange={list.setFilterText}
     >
       {(item) => ( 
-        <AutocompleteItem key={`${(Math.round(Math.random()*10 * 100) / 100)}/${item.lat},${item.lon}`}  className="capitalize">
+        <AutocompleteItem key={`${item.lat},${item.lon}`}  className="capitalize">
           {item.display_name}
         </AutocompleteItem>
       )}

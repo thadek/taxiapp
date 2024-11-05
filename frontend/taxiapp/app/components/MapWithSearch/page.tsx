@@ -29,8 +29,21 @@ const MapWithSearch: React.FC = () => {
     
   });
 
+  const [fieldState2, setFieldState2] = useState({
+      
+    });
+
   const onSelectionChange = (key:any) => {
     console.log(key)
+
+    //console.log("cadena cortada", key.slice(3, key.length))
+    //setCenter({ lat: parseFloat(selection.lat), lng: parseFloat(selection.lon) });
+  }
+
+  const onSelectionChange2 = (key:any) => {
+    console.log(key)
+
+    //console.log("cadena cortada", key.slice(3, key.length))
     //setCenter({ lat: parseFloat(selection.lat), lng: parseFloat(selection.lon) });
   }
 
@@ -55,6 +68,7 @@ const MapWithSearch: React.FC = () => {
       <Separator className="my-4" />
       <CardContent>
         <AsyncSearchDirectionBox text="Buscar dirección" onSelectionChange={onSelectionChange} setFieldState={setFieldState}/>
+        <AsyncSearchDirectionBox text="Buscar dirección 2" onSelectionChange={onSelectionChange2} setFieldState={setFieldState2}/>
       </CardContent>
       
     </Card>

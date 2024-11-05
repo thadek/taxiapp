@@ -17,6 +17,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
+        <SessionAuthProvider>
         <Providers>
         
         <ThemeProvider
@@ -28,16 +29,17 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar />
             <main className="h-screen w-screen">
-              <SessionAuthProvider>
+              
                 <Navbar />
                
                 {children}
                 <Toaster richColors position="bottom-center" closeButton/>
-              </SessionAuthProvider>
+           
             </main>
           </SidebarProvider>
         </ThemeProvider>
-               </Providers>
+               </Providers>   
+               </SessionAuthProvider>
       </body>
     </html>
   );

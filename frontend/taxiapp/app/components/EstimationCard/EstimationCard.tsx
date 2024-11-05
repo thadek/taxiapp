@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card"
 import { Divider } from "@nextui-org/react"
 import { Label } from "@radix-ui/react-dropdown-menu"
+import { Info } from "lucide-react"
 
 
 
@@ -40,37 +41,55 @@ export default function EstimationCard({ start, end, distance, shift }: { start:
 
                 <div className="flex w-full items-center ">
 
-                    <div className="flex flex-col w-1/2">
-                        <div className="text-xl  p-2   border-white ">
-                            <div className="flex items-center gap-1 ">
+                    <div className="w-full h-full flex items-center justify-center">
+                        <Card className='w-3/6 p-2'>
+                            <CardHeader className="p-2">
+                                <CardTitle>Resumen</CardTitle>
+                            </CardHeader>
+                            <Divider />
+                            <CardContent className="p-2 flex">
+                                <div className="text-xs">
 
-                                <MapPin size={15} className="text-red-500" />
+                                    <div className="flex flex-col w-1/2">
+                                        <div className="text-xl  p-2   border-white ">
+                                            <div className="flex items-center gap-1 ">
 
-                                <hr
-                                    style={{
-                                        color: 'white',
-                                        backgroundColor: 'white',
-                                        padding: 0.5,
-                                        width: '5%',
+                                                <MapPin size={15} className="text-red-500" />
 
-                                    }}
-                                />
-                                <MapPinCheck size={15} className="text-emerald-400" />
-                            </div>
-                            <Label className="text-xs">Distancia estimada</Label>
-                            {normalizeKm(distance)} km
-                        </div>
+                                                <hr
+                                                    style={{
+                                                        color: 'white',
+                                                        backgroundColor: 'white',
+                                                        padding: 0.5,
+                                                        width: '5%',
+
+                                                    }}
+                                                />
+                                                <MapPinCheck size={15} className="text-emerald-400" />
+                                            </div>
+                                            <Label className="text-xs">Distancia estimada</Label>
+                                            {normalizeKm(distance)} km
+                                        </div>
 
 
-                        <div className="text-xl  p-2   border-white ">
-                            <Label className="text-xs">Costo estimado</Label>
-                            ${normalizeCost(distance, shift.costoporKm)}
-                        </div>
-                        <div className="text-xl  p-2   border-white ">
-                            <Label className="text-xs">Turno</Label>
-                            {shift.name.toUpperCase()}
-                        </div>
+                                        <div className="text-xl  p-2   border-white ">
+                                            <Label className="text-xs">Costo estimado</Label>
+                                            ${normalizeCost(distance, shift.costoporKm)}
+                                        </div>
+                                        <div className="text-xl  p-2   border-white ">
+                                            <Label className="text-xs">Turno</Label>
+                                            {shift.name.toUpperCase()}
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+                            </CardContent>
+                        </Card>
                     </div>
+
 
                     <div className="flex flex-col w-1/2 gap-3 p-3">
                         <WeatherCard text={"Origen"} coords={start[1] + "," + start[0]} />
@@ -91,13 +110,7 @@ export default function EstimationCard({ start, end, distance, shift }: { start:
 
 
 
-/**
- *  return (  <div className="flex flex-col ">
-        <div className="flex flex-col gap-2">
-          <span>Distancia: {distance/1000} kilómetros</span>
-          <span>Costo estimado: ${distance/1000*shift.costoporKm} (Turno: {shift.name}) </span>
-        </div>
-        </div>);
- */
+
+
 
 
