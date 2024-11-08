@@ -20,26 +20,24 @@ type FieldState = {
 
 
 function generateRandomLetters() {
-    const letters = "abcdefghijklmnopqrstuvwxyz";
-    const firstLetter = letters[Math.floor(Math.random() * letters.length)];
-    const secondLetter = letters[Math.floor(Math.random() * letters.length)];
-    return firstLetter + secondLetter;
+  const letters = "abcdefghijklmnopqrstuvwxyz";
+  const firstLetter = letters[Math.floor(Math.random() * letters.length)];
+  const secondLetter = letters[Math.floor(Math.random() * letters.length)];
+  return firstLetter + secondLetter;
 }
 
-export default function AsyncSearchDirectionBox({ text, setFieldState, onSelectionChange }: { text: string, setFieldState: React.Dispatch<React.SetStateAction<FieldState>>, onSelectionChange: (key: React.Key | null) => void }) {
+export default function AsyncSearchDirectionBox({ text, onSelectionChange }: { text: string, onSelectionChange: (key: React.Key | null) => void }) {
 
 
-
-
-  
+  const nominatimUrl = process.env.NEXT_PUBLIC_NOMINATIM_URL;
 
   let list = useAsyncList<LocationResult>({
     async load({ signal, filterText }) {
-      let res = await fetch( `http://tpf.gpamic.ar:8080/search?q=${filterText}`, { signal });
+      let res = await fetch(`${nominatimUrl}:8080/search?q=${filterText}`, { signal });
       let json = await res.json();
       return {
         items: json,
-       
+
       };
     },
   });
@@ -58,8 +56,8 @@ export default function AsyncSearchDirectionBox({ text, setFieldState, onSelecti
       onSelectionChange={onSelectionChange}
       onInputChange={list.setFilterText}
     >
-      {(item) => ( 
-        <AutocompleteItem key={`${item.lat},${item.lon}`}  className="capitalize">
+      {(item) => (
+        <AutocompleteItem key={`${item.lat},${item.lon}`} className="capitalize">
           {item.display_name}
         </AutocompleteItem>
       )}
@@ -68,5 +66,5 @@ export default function AsyncSearchDirectionBox({ text, setFieldState, onSelecti
   </>
   );
 
-  
+
 }

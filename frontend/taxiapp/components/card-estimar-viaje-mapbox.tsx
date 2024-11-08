@@ -33,7 +33,7 @@ type MapBoxResponse = {
   }
 }
 
-export default function EstimarViajeCard() {
+export default function EstimarViajeCardMapbox() {
 
   //const Map = dynamic(() => import("@/app/components/MapWithRoute/MapWithRoute"), { ssr: false });
 
@@ -46,35 +46,8 @@ export default function EstimarViajeCard() {
 
 
 
-  const onSelectionChange = (key: any) => {
-
-    if (key === null) {
-      return;
-    }
-
-    const coords = parseCoords(key);
-    /*@ts-ignore */
-    const coordParsed = { geometry: { coordinates: [coords[1], coords[0]] } };
-
-    setOrigen(coordParsed);
 
 
-  }
-
-  const onSelectionChange2 = (key: any) => {
-
-    if (key === null) {
-      return;
-    }
-
-    const coords = parseCoords(key);
-    /*@ts-ignore */
-    const coordParsed = { geometry: { coordinates: [coords[1], coords[0]] } };
-
-    setDestino(coordParsed);
-
-
-  }
 
 
   const handleCalcularRuta = () => {
@@ -111,12 +84,11 @@ export default function EstimarViajeCard() {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5 gap-3">
 
-              {/* <SearchMapBox text="Origen" setRetrieve={setOrigen} />
+              <SearchMapBox text="Origen" setRetrieve={setOrigen} />
 
-              <SearchMapBox text="Destino" setRetrieve={setDestino} /> */}
+              <SearchMapBox text="Destino" setRetrieve={setDestino} /> 
 
-              <AsyncSearchDirectionBox text="Origen" onSelectionChange={onSelectionChange} />
-              <AsyncSearchDirectionBox text="Destino" onSelectionChange={onSelectionChange2} />
+             
 
 
 

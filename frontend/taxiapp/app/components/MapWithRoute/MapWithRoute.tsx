@@ -10,6 +10,7 @@ import { Progress } from '@nextui-org/progress';
 import { toast } from 'sonner';
 import { Spinner } from '@nextui-org/react';
 import EstimationCard from '../EstimationCard/EstimationCard';
+import TaxiAppSkeleton from '@/components/taxiapp-skeleton';
 
 
 const MapWithRoute = ({ start, end, turno }: { start: any, end: any, turno: any }) => {
@@ -35,7 +36,7 @@ const MapWithRoute = ({ start, end, turno }: { start: any, end: any, turno: any 
 
   if (isLoading) {
   return (<div className="w-full h-[20vh] flex justify-center items-center">
-    <Spinner />
+    <TaxiAppSkeleton/>
   </div>)
   }
   
@@ -44,8 +45,8 @@ const MapWithRoute = ({ start, end, turno }: { start: any, end: any, turno: any 
       return (<></>)
     }
   
-    return (isSuccess && !data.error &&  <>
-      <MapContainer center={[start[1], start[0]]} zoom={13} className="w-full h-[20vh] z-10">
+    return (isSuccess && !data.error &&  <div className="flex flex-col w-full h-full relative">
+      <MapContainer center={[start[1], start[0]]} zoom={13} className="w-full h-[80vh] z-10">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -61,7 +62,7 @@ const MapWithRoute = ({ start, end, turno }: { start: any, end: any, turno: any 
       
       <EstimationCard start={start} end={end} distance={data.routes[0].distance} shift={turno} />
     
-      </>
+      </div>
     )
 };
 

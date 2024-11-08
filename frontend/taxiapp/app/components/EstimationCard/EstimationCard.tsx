@@ -17,19 +17,28 @@ import WeatherCard from "../WeatherCard/WeatherCard"
 
 
 
+const formatMoney = (amount: number): string => {
+    return amount
+        .toFixed(2) 
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ".") 
+        .replace(".", ",") 
+}
+
 const normalizeKm = (distance: number) => {
     return Math.floor(distance / 1000);
 }
 
 const normalizeCost = (distance: number, cost: number) => {
-    return Math.floor(distance / 1000 * cost);
+    return formatMoney(Math.floor(distance / 1000 * cost));
 }
+
+
 
 
 export default function EstimationCard({ start, end, distance, shift }: { start: any, end: any, distance: number, shift: any }) {
 
     return (
-        <Card className="w-full bg-slate-700 rounded-none ">
+        <Card className="w-[20vw] m-3 dark:bg-slate-700  absolute right-0 z-10">
             <CardHeader>
                 <CardTitle className="gap-3 flex items-center">
                     <MapPinned size={30} />
@@ -37,16 +46,13 @@ export default function EstimationCard({ start, end, distance, shift }: { start:
                 </CardTitle>
             </CardHeader>
             <Divider />
-            <CardContent className="">
+            <CardContent className="p-0">
 
-                <div className="flex w-full items-center ">
+                <div className="flex w-full flex-col p-3">
 
-                    <div className="w-full h-full flex items-center justify-center">
-                        <Card className='w-3/6 p-2'>
-                            <CardHeader className="p-2">
-                                <CardTitle>Resumen</CardTitle>
-                            </CardHeader>
-                            <Divider />
+                    <div className="w-full h-full flex ">
+                        <Card className='p-2 w-full dark:bg-slate-800'>
+                            
                             <CardContent className="p-2 flex">
                                 <div className="text-xs">
 
@@ -91,7 +97,7 @@ export default function EstimationCard({ start, end, distance, shift }: { start:
                     </div>
 
 
-                    <div className="flex flex-col w-1/2 gap-3 p-3">
+                    <div className="flex w-full gap-1">
                         <WeatherCard text={"Origen"} coords={start[1] + "," + start[0]} />
                         <WeatherCard text={"Destino"} coords={end[1] + "," + end[0]} />
                     </div>

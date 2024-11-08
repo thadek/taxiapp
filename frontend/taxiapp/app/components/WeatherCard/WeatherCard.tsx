@@ -10,6 +10,7 @@ import { Divider } from '@nextui-org/react'
 
 import { Spinner } from '@nextui-org/react';
 import Image from 'next/image'
+import { Logo } from '@/components/ui/logo'
 
 
 
@@ -20,6 +21,7 @@ export default function WeatherCard({ coords, text }: { coords: string, text: st
 
     if (isLoading) {
         return (<div className="w-full h-[20vh] flex justify-center items-center">
+            
             <Spinner />
         </div>)
     }
@@ -36,21 +38,21 @@ export default function WeatherCard({ coords, text }: { coords: string, text: st
         isSuccess && 
 
 
-        <div className="w-full h-full flex items-center justify-center">
-            <Card className='w-3/6 p-2'>
+        <div className="w-full h-full pt-1  flex items-center justify-center max-h-[500px]">
+            <Card className='w-full p-2 dark:bg-slate-800'>
                 <CardHeader className="p-2">
                     <CardTitle className="text-sm font-bold flex gap-2 items-center">
                         <Info size={15} /> Clima en {text}
                     </CardTitle>
                 </CardHeader>
                 <Divider />
-                <CardContent className="p-2 flex">
+                <CardContent className="p-2 flex ">
 
                     <div className="flex w-2/6">
                     <Image src={`https:${data.current.condition.icon}`}  alt={"weather-icon"} width={100} height={100} />
                     </div>
                     <div className="flex w-4/6">  <div className="text-xs">
-                        <p>Localidad: {data.location.name}, {data.location.region}, {data.location.country}</p>
+                        <p>{data.location.name}, {data.location.region}</p>
                         <p>Temperatura: {data.current.temp_c}°C</p>
                         <p>Condición: {data.current.condition.text}</p>
                         <p>Humedad: {data.current.humidity}%</p>
