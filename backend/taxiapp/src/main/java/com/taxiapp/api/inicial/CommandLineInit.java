@@ -1,5 +1,5 @@
 package com.taxiapp.api.inicial;
-/*
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import com.taxiapp.api.model.Coordenada;
 import org.springframework.web.client.RestTemplate;
+/*
 
-
+@Component
 public class CommandLineInit implements CommandLineRunner {
 
     private final RestTemplate restTemplate;
-    private final String url = "http://localhost:8080/api/v1/send-coordenada";
+    private final String url = "http://localhost:8080/api/v1/ws";
 
     public CommandLineInit() {
         this.restTemplate = new RestTemplate();
@@ -26,7 +27,7 @@ public class CommandLineInit implements CommandLineRunner {
 
     public void run(String... args) throws Exception {
         List<Coordenada> coordenadas = new ArrayList<>();
-        coordenadas.add(new Coordenada(0.0, 0.0)); // Reemplaza con valores reales o variables
+        coordenadas.add(new Coordenada(0.0, 0.0));
 
         enviarCoordenadasPeriodicamente(coordenadas);
     }

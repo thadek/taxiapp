@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import CarSVG from "../carSVG";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import useWebSocketSubscription from '@/app/hooks/useSocket';
 
 interface MarkerProps {
     lat: number;
@@ -13,13 +14,9 @@ interface MarkerProps {
     display_name: string;
 }
 
-interface RTLMapComponentProps {
-    markers: MarkerProps[];
-}
-
 function EvtClickMapa({ onClick }: { onClick: (latlng: L.LatLng) => void }) {
     useMapEvents({
-        click (e) {
+        click(e) {
             onClick(e.latlng);
         }
     });
@@ -27,62 +24,46 @@ function EvtClickMapa({ onClick }: { onClick: (latlng: L.LatLng) => void }) {
 }
 
 export default function RTLMapComponent() {
-    const position = [51.505, -0.09];
+    const position = [-38.951155, -68.065541];
+    const { message } = useWebSocketSubscription('http://localhost:8080/api/v1/ws', '/topic/locations');
 
-    const [carPosition, setCarPosition] = useState<[number, number]>([0, 0]);
-    const [previousPosition, setPreviousPosition] = useState<[number, number]>([0, 0]);
+    const [carPosition, setCarPosition] = useState<[number, number]>([-38.951155, -68.065541]);
+    const [previousPosition, setPreviousPosition] = useState<[number, number]>([-38.951155, -68.065541]);
     const [carAngle, setCarAngle] = useState(0);
 
     const svgCar = L.divIcon({
-        html:`<div class='svg-icon' style="transform: rotate(${carAngle}deg);">${CarSVG}</div>`,
+        html: `<div class='svg-icon' style="transform: rotate(${carAngle}deg);">${CarSVG}</div>`,
         className: "car-icon",
     });
 
     const gpsDirectionAngleCalc = (currentPoint: [number, number], newPoint: [number, number]) => {
-        const [lat1, lon1] = currentPoint
-        const [lat2, lon2] = newPoint
-
+        const [lat1, lon1] = currentPoint;
+        const [lat2, lon2] = newPoint;
         const deltaX = lat2 - lat1;
         const deltaY = lon2 - lon1;
-        const angle = Math.atan2(deltaY, deltaY) * 180 / Math.PI;
+        const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
         return angle;
-    }
+    };
 
     useEffect(() => {
-        const client = new WebSocket("ws://localhost:8080/websocket");
-        client.onopen = () => {
-            console.log("Connected");
-            client.send(JSON.stringify({ subscribe: '/taxi/position' }));
-            const newPoint: [number, number] = [0, 0]; // Define newPoint before using it
-            setPreviousPosition(newPoint);
-        };
-
-        client.onmessage = (message) => {
-            const coordinate = JSON.parse(message.data);
-            const position = JSON.parse(message.data);
-            const newPoint: [number, number] = [position.x, position.y];
+        if (message) {
+            const newPoint: [number, number] = [message.x, message.y];
             const newAngle = gpsDirectionAngleCalc(previousPosition, newPoint);
 
             setPreviousPosition(newPoint);
-            setCarPosition([coordinate.x, coordinate.y]);
+            setCarPosition(newPoint);
             setCarAngle(newAngle);
-        };
-        return () => {
-            if (client) {
-                client.close();
-            }
-        };
-    }, [previousPosition]);
+        }
+    }, [message, previousPosition]);
 
     return (
-        <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100vh", width: "100%" }}>
+        <MapContainer center={position} zoom={13} style={{ height: "100vh", width: "100%" }}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            <EvtClickMapa onClick={(c)=>console.log("coordenadas.add(new Coordenada(0, 0));")} />
+            <EvtClickMapa onClick={(coords) => console.log("Coordinates:", coords)} />
             <Marker position={carPosition} icon={svgCar} />
-                
         </MapContainer>
-    )
+    );
 }
