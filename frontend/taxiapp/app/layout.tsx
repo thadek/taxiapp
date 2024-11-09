@@ -1,19 +1,13 @@
-import localFont from "next/font/local";
-import "./global.css";
-import Navbar from "./components/Navbar/page";
-import Head from "next/head";
-import SessionAuthProvider from "@/context/SessionAuthProvider";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import "./global.css";
+import Navbar from "./components/Navbar/Navbar";
+import SessionAuthProvider from "@/context/SessionAuthProvider";
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
+import Providers from "./providers";
+
 
 export default function RootLayout({
   children,
@@ -22,27 +16,30 @@ export default function RootLayout({
 }>) {
   return (
     <html>
-      <Head>
-        <link
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          rel="stylesheet"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossOrigin=""
-        />
-        <script
-          src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-          crossOrigin=""
-          async
-        ></script>
-      </Head>
       <body>
-        <main>
-          <SessionAuthProvider>
-            <Navbar />
-            {children}
-          </SessionAuthProvider>
-        </main>
+        <SessionAuthProvider>
+        <Providers>
+        
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
+            <AppSidebar />
+            <main className="h-screen w-screen">
+              
+                <Navbar />
+               
+                {children}
+                <Toaster richColors position="bottom-center" closeButton/>
+           
+            </main>
+          </SidebarProvider>
+        </ThemeProvider>
+               </Providers>   
+               </SessionAuthProvider>
       </body>
     </html>
   );

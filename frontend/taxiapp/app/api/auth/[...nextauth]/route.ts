@@ -1,7 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-const handler = NextAuth({
+
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -21,24 +22,50 @@ const handler = NextAuth({
             headers: { "Content-Type": "application/json" },
           }
         );
-        const user = await res.json();
+        const response = await res.json();
+        
+        if (response.error) throw response;
 
-        if (user.error) throw user;
+        // Uso el token para obtener la información del usuario
+        if(response.token){
+          const account = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`, {
+            headers: {
+              Authorization: `Bearer ${response.token}`,
+            },
+          });
+          const profile = await account.json();
+          return { ...response, user:profile }
+        }
 
-        return user;
+        return response;
       }
       
     })
   ],
   callbacks: {
     async jwt({ token, user }) {
-      return { ...token, ...user };
+      // Guardamos el token JWT en el objeto token para usar en `session`
+      if (user) {
+        token.user = user;
+        token.token = user.token;
+      }
+      return token;
     },
-    async session({ session, token }) {
-      session.user = token as any;
+    async session({ session, user, token }) {
+      // Pasamos el objeto usuario y el token a la sesión
+      session.user = token.user.user;
+      session.token = token.token;
       return session;
-    },
+    }
   },
-})
+  pages:{
+    signIn:"/login"
+  }
+}
+
+const handler = NextAuth(authOptions)
+
 
 export { handler as GET, handler as POST };
+
+export { authOptions };

@@ -49,7 +49,6 @@ public class User  {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(unique = true)
     private String phone;
 
     private Timestamp is_disabled;

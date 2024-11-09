@@ -2,6 +2,8 @@
 "use client";
 import React, { useState } from "react";
 import { useAddress } from "../../hooks/useAdress";
+import { useMapState } from "../../hooks/useMapState";
+import { Button } from "@/components/ui/button";
 
 interface SearchResult {
   place_id: string;
@@ -10,38 +12,45 @@ interface SearchResult {
   lon: string;
 }
 
-interface SearchComponentProps {
-  onSearchResult: (results: SearchResult[]) => void;
-}
 
-const SearchComponent: React.FC<SearchComponentProps> = ({ onSearchResult }) => {
+
+const SearchComponent: React.FC = () => {
   const [query, setQuery] = useState("");
-  const { searchAddress } = useAddress();
+  const { setMapCenter, addMarker, clearMarkers } = useMapState();
+  const { searchAddress } = useAddress(); // Asumo que tienes esta función de búsqueda
 
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const results = await searchAddress(query);
-    onSearchResult(results);
+
+    // Limpia marcadores anteriores y centra el mapa en el primer resultado
+    clearMarkers();
+    if (results.length > 0) {
+      const { lat, lon, display_name } = results[0];
+      setMapCenter(parseFloat(lat), parseFloat(lon));
+
+      // Agrega marcadores para cada resultado de búsqueda
+      results.forEach((result:any) => {
+        addMarker({
+          lat: parseFloat(result.lat),
+          lng: parseFloat(result.lon),
+          display_name: display_name,
+        });
+      });
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSearch}
-      className="absolute top-60 z-20 left-5 bg-white shadow-lg rounded-lg p-4 w-96 "
-    >
+    <form onSubmit={handleSearch} className="shadow-lg rounded-lg p-4 w-full">
       <input
-        className="p-3 w-full border text-black border-gray-300 rounded-md mb-2"
+        className="p-3 w-full border  rounded-md mb-2"
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Buscar dirección..."
       />
-      <button
-        type="submit"
-        className="w-full bg-green-600 p-3 hover:bg-green-800 duration-150 text-white font-semibold rounded-md"
-      >
-        Buscar
-      </button>
+      
+     <Button type="submit">Buscar</Button>
     </form>
   );
 };

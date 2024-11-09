@@ -25,8 +25,6 @@ public class WebSocketTestController {
     @MessageMapping("/location")
     @SendTo("/topic/locations")
     public Location sendCoords(Location coords, Map<String, Object> attributes) throws Exception {
-
-        System.out.println("attributes: " + attributes);
         return coords;
     }
 
