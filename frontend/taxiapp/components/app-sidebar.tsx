@@ -100,6 +100,11 @@ const items = [
     url: "/settings",
     icon: Settings,
   },
+  {
+    title: "Vehiculos", // New page item
+    url: "pages/soap",
+    icon: Home, // Replace with an appropriate icon
+  }
 ]
 
 export  function AppSidebar() {
