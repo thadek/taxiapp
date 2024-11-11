@@ -1,5 +1,5 @@
 'use client'
-import AsyncSearchDirectionBox from "@/app/components/AsyncSearchDirectionBox/AsyncSearchDirectionBox"
+import AsyncSearchDirectionBox from "@/components/AsyncSearchDirectionBox/AsyncSearchDirectionBox"
 import { useState } from "react"
 import {
   Card,
@@ -12,12 +12,12 @@ import {
 import { Button } from "@nextui-org/button";
 import { useMemo } from "react";
 import dynamic from "next/dynamic";
-import SearchMapBox from "@/app/components/SearchMapBox/SearchMapBox";
+import SearchMapBox from "@/components/SearchMapBox/SearchMapBox";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 
-import MapWithRoute from "@/app/components/MapWithRoute/MapWithRoute";
+import MapWithRoute from "@/components/MapWithRoute/MapWithRoute";
 
 
 

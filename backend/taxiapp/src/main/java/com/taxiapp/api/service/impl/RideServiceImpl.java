@@ -36,6 +36,7 @@ public class RideServiceImpl implements IRideService {
     private final RideRepository rideRepository;
     private final UserRepository userRepository;
     private final VehicleRepository vehicleRepository;
+    private final NotificationServiceImpl notificationService;
 
 
     /**
@@ -262,9 +263,14 @@ public class RideServiceImpl implements IRideService {
 
         //Seteo el estado del viaje a DRIVER_ASSIGNED
         ride.setStatus(RideStatus.DRIVER_ASSIGNED);
-        //Notificar a subscriptores DEL CAMBIO DE ESTADO DE RIDE
 
-        return rideRepository.save(ride);
+
+        Ride updated = rideRepository.save(ride);
+
+        //Notificar a subscriptores DEL CAMBIO DE ESTADO DE RIDE
+        notificationService.sendRideNotification(updated);
+
+        return updated;
     }
 
 

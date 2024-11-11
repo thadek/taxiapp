@@ -24,7 +24,7 @@ const MapComponent: React.FC = () => {
   const { center, zoom, markers, route, addMarker } = useMapState();
 
   return (
-    <MapContainer center={center} zoom={zoom} className="w-full h-96">
+    <MapContainer center={center} zoom={zoom} className="w-full h-full">
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

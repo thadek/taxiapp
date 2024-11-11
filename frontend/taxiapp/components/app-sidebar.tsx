@@ -82,7 +82,7 @@ const items = [
   },
   {
     title: "Dashboard",
-    url: "/dashboard",
+    url: "/dash",
     icon: LayoutDashboard,
   },
   {

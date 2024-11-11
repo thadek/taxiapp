@@ -12,7 +12,7 @@ export const generateMetadata = () => {
 
 export default function Dashboard() {
 
-  const Map = useMemo(() => dynamic(() => import("@/app/components/MapWithSearch/page"), { ssr: false }), []);
+  const Map = useMemo(() => dynamic(() => import("@/components/MapWithSearch/page"), { ssr: false }), []);
   
   
   return (

@@ -1,5 +1,5 @@
 "use client";
-import ButtonAuth from "../../components/ButtonAuth/page";
+import ButtonAuth from "../../../components/ButtonAuth/page";
 const authTest = () => {
     return (
         <div>

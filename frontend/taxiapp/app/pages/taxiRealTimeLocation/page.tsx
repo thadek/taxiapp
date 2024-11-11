@@ -1,7 +1,7 @@
 import React from "react";
-import MapComponent from "../../components/RTLMapComponent/page";
+import MapComponent from "../../../components/RTLMapComponent/page";
 import "leaflet/dist/leaflet.css";
-import RTLMapComponent from "../../components/RTLMapComponent/page";
+import RTLMapComponent from "../../../components/RTLMapComponent/page";
 
 const TaxiRealTimeLocation: React.FC = () => {
   const markers = [

@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import MapComponent from "../MapComponent/page";
-import SearchComponent from "../SearchComponent/page";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Map } from "lucide-react";
 import AsyncSearchDirectionBox from "../AsyncSearchDirectionBox/AsyncSearchDirectionBox";
 
+import RTLMapComponent from "../RTLMapComponent/page";
 
 interface SearchResult {
   place_id: string;
@@ -47,17 +47,13 @@ const MapWithSearch: React.FC = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="flex gap-3"><Map/>Mapa</CardTitle>
+        <CardTitle className="flex gap-3"><Map/>Mapa en vivo</CardTitle>
         <Separator className="my-4" />
       </CardHeader>
-      <CardContent>
-        <MapComponent/>
+      <CardContent className="h-96">
+       {/**<MapComponent/> */} 
+       <RTLMapComponent />
       </CardContent>
-      <Separator className="my-4" />
-      <CardContent>
-       
-      </CardContent>
-      
     </Card>
 
 
