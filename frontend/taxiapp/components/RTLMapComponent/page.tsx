@@ -6,7 +6,8 @@ import L from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import CarSVG from "../carSVG";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-import useWebSocketSubscription from '@/app/hooks/useSocket';
+import useWebSocketSubscription from '@/hooks/useSocket';
+import { toast } from "sonner";
 
 interface MarkerProps {
     lat: number;
@@ -26,6 +27,12 @@ function EvtClickMapa({ onClick }: { onClick: (latlng: L.LatLng) => void }) {
 export default function RTLMapComponent() {
     const position = [-38.951155, -68.065541];
     const { message } = useWebSocketSubscription('http://localhost:8080/api/v1/ws', '/topic/locations');
+
+    const {message:msj} = useWebSocketSubscription('http://localhost:8080/api/v1/ws', '/topic/rides');    
+    
+    useEffect(() => {
+    toast.info("TOPIC-RIDES: "+msj);
+    }, [msj]);
 
     const [carPosition, setCarPosition] = useState<[number, number]>([-38.951155, -68.065541]);
     const [previousPosition, setPreviousPosition] = useState<[number, number]>([-38.951155, -68.065541]);
@@ -57,7 +64,7 @@ export default function RTLMapComponent() {
     }, [message, previousPosition]);
 
     return (
-        <MapContainer center={position} zoom={13} style={{ height: "100vh", width: "100%" }}>
+        <MapContainer center={position} zoom={13} className="w-full h-full z-10" >
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

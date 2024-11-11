@@ -1,4 +1,4 @@
-import useWebSocketSubscription from '@/app/hooks/useSocket';
+import useWebSocketSubscription from '@/hooks/useSocket';
 
 const RealTimeStatus = () => {
   const { status, message } = useWebSocketSubscription('http://localhost:8080/api/v1/ws', '/topic/locations');
@@ -18,3 +18,4 @@ const RealTimeStatus = () => {
 };
 
 export default RealTimeStatus;
+
