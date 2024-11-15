@@ -1,6 +1,6 @@
 package com.taxiapp.api.config.security;
 
-import com.taxiapp.api.controller.user.dto.UserDTO;
+import com.taxiapp.api.controller.rest.user.dto.UserDTO;
 import com.taxiapp.api.exception.auth.AuthException;
 
 import com.taxiapp.api.model.Role;

@@ -30,9 +30,8 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
             if (token != null) {
                 // Autenticar el usuario y establecer el contexto de seguridad
                 Authentication auth = jwtTokenProvider.validateToken(token);
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            } else {
-                throw new IllegalArgumentException("Invalid or missing token");
+                //SecurityContextHolder.getContext().setAuthentication(auth);
+                accessor.setUser(auth);
             }
         }
 

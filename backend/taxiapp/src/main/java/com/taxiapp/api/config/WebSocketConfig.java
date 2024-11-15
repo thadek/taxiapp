@@ -19,8 +19,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker("/topic"); // Esto es para los mensajes que se envían desde el servidor al cliente
+        config.setUserDestinationPrefix("/user");
+        config.setApplicationDestinationPrefixes("/app"); // Esto es para los mensajes que se envían desde el cliente al servidor
 
     }
 
@@ -34,6 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(authChannelInterceptor);
     }
+
 
 
 }

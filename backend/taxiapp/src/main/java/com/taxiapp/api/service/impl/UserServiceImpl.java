@@ -1,7 +1,7 @@
 package com.taxiapp.api.service.impl;
 
-import com.taxiapp.api.controller.user.dto.UserCreateRequest;
-import com.taxiapp.api.controller.user.dto.UserUpdateRequest;
+import com.taxiapp.api.controller.rest.user.dto.UserCreateRequest;
+import com.taxiapp.api.controller.rest.user.dto.UserUpdateRequest;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
 import com.taxiapp.api.model.Role;
@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
                 .name(user.name())
                 .lastname(user.lastname())
                 .username(user.username())
+                .phone(user.phone())
                 .email(user.email())
                 .is_disabled(user.is_disabled())
                 .password(passwordEncoder.encode(user.password()))
@@ -279,6 +280,15 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         return userRepository.findByEmail(email).orElse(null);
     }
 
+
+    /**
+     * Find by phone
+     * @param phone
+     */
+    @Transactional(readOnly = true)
+    public User findByPhone(String phone) {
+        return userRepository.findByPhone(phone).orElseThrow(() -> new EntityNotFoundException("User", "phone", phone));
+    }
 
 
 }

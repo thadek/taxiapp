@@ -1,6 +1,6 @@
 package com.taxiapp.api.service.impl;
 
-import com.taxiapp.api.controller.role.RoleCreateRequest;
+import com.taxiapp.api.controller.rest.role.RoleCreateRequest;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
 import com.taxiapp.api.model.Role;
@@ -8,13 +8,10 @@ import com.taxiapp.api.repository.RoleRepository;
 import com.taxiapp.api.service.IRoleService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 @Data

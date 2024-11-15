@@ -1,9 +1,12 @@
 package com.taxiapp.api.service.impl;
 
-import com.taxiapp.api.controller.vehicle.dto.VehicleCreateRequest;
-import com.taxiapp.api.controller.vehicle.dto.VehicleUpdateRequest;
+import com.taxiapp.api.controller.rest.vehicle.dto.VehicleCreateRequest;
+import com.taxiapp.api.controller.rest.vehicle.dto.VehicleUpdateRequest;
+import com.taxiapp.api.enums.VehicleStatus;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
+import com.taxiapp.api.exception.ride.RideException;
+import com.taxiapp.api.exception.vehicle.VehicleException;
 import com.taxiapp.api.model.Driver;
 import com.taxiapp.api.model.Vehicle;
 import com.taxiapp.api.repository.DriverRepository;
@@ -17,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,6 +47,12 @@ public class VehicleServiceImpl implements IVehicleService {
                 .details(vehicle.details())
                 .build();
 
+        if(vehicle.status() == null) {
+            newVehicle.setStatus(VehicleStatus.AVAILABLE);
+        } else {
+            newVehicle.setStatus(vehicle.status());
+        }
+
         return vehicleRepository.save(newVehicle);
 
     }
@@ -65,6 +73,7 @@ public class VehicleServiceImpl implements IVehicleService {
         if(vehicle.model() != null){
             vehicleToUpdate.setModel(vehicle.model());
         }
+
         if(vehicle.year() != null){
             vehicleToUpdate.setYear(vehicle.year());
         }
@@ -76,6 +85,27 @@ public class VehicleServiceImpl implements IVehicleService {
         }
 
         return vehicleRepository.save(vehicleToUpdate);
+    }
+
+
+    @Transactional
+    public Vehicle updateStatusByOperator(String id, VehicleStatus status) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id));
+        vehicle.setStatus(status);
+        return vehicleRepository.save(vehicle);
+    }
+
+    @Transactional
+    public Vehicle updateStatusByDriver(String id, VehicleStatus status) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id));
+        if(vehicle.getDriver() == null){
+            throw new VehicleException("You can't change the status of a vehicle that doesn't have a driver");
+        }
+        if(vehicle.getStatus() == VehicleStatus.ON_TRIP){
+            throw new VehicleException("You can't change the status of a vehicle that is on trip");
+        }
+        vehicle.setStatus(status);
+        return vehicleRepository.save(vehicle);
     }
 
 
@@ -133,8 +163,23 @@ public class VehicleServiceImpl implements IVehicleService {
         Driver driver = driverRepository.findById(driverId).
                 orElseThrow(() -> new EntityNotFoundException("Driver", "id", driverId.toString()));
 
+        if(vehicle.getDriver() != null){
+            throw new VehicleException("The vehicle already has a driver");
+        }
         vehicle.setDriver(driver);
         return vehicleRepository.save(vehicle);
     }
+
+
+    @Transactional(readOnly = true)
+    public Vehicle findByDriverId(UUID driverId) {
+        return vehicleRepository.findByDriverId(driverId).orElseThrow(() -> new EntityNotFoundException("Vehicle and Driver", "driverId", driverId.toString()));
+    }
+
+    @Transactional(readOnly = true)
+    public Vehicle findByDriverEmail(String email) {
+        return vehicleRepository.findByDriverEmail(email).orElseThrow(() -> new EntityNotFoundException("Vehicle and Driver", "driverEmail", email));
+    }
+
 
 }
