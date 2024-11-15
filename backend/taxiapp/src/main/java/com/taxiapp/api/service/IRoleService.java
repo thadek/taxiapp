@@ -1,6 +1,6 @@
 package com.taxiapp.api.service;
 
-import com.taxiapp.api.controller.role.RoleCreateRequest;
+import com.taxiapp.api.controller.rest.role.RoleCreateRequest;
 import com.taxiapp.api.model.Role;
 import java.util.List;
 

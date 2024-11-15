@@ -2,10 +2,10 @@ package com.taxiapp.api.service.impl;
 
 
 import com.taxiapp.api.config.security.InternalAuth;
-import com.taxiapp.api.controller.auth.dto.AuthResponse;
-import com.taxiapp.api.controller.auth.dto.LoginRequest;
-import com.taxiapp.api.controller.auth.dto.RegisterRequest;
-import com.taxiapp.api.controller.user.dto.UserDTO;
+import com.taxiapp.api.controller.rest.auth.dto.AuthResponse;
+import com.taxiapp.api.controller.rest.auth.dto.LoginRequest;
+import com.taxiapp.api.controller.rest.auth.dto.RegisterRequest;
+import com.taxiapp.api.controller.rest.user.dto.UserDTO;
 import com.taxiapp.api.exception.auth.AuthException;
 
 import com.taxiapp.api.model.Role;

@@ -42,6 +42,10 @@ const authOptions = {
       
     })
   ],
+  session:{
+    strategy: 'jwt',
+    maxAge: 24 * 60 * 60,
+  },
   callbacks: {
     async jwt({ token, user }) {
       // Guardamos el token JWT en el objeto token para usar en `session`
@@ -53,6 +57,9 @@ const authOptions = {
     },
     async session({ session, user, token }) {
       // Pasamos el objeto usuario y el token a la sesión
+     console.log("session",session);
+     console.log("user",user);
+      console.log("token",token);
       session.user = token.user.user;
       session.token = token.token;
       return session;

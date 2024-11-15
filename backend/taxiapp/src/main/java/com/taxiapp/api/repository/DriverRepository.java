@@ -26,4 +26,8 @@ public interface DriverRepository extends PagingAndSortingRepository<Driver, UUI
     @Modifying
     @Query(value="DELETE FROM driver  WHERE id = :id",nativeQuery = true)
     void deleteById(UUID id);
+
+
+    Optional<Driver> findByEmail(String email);
+
 }

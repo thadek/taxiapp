@@ -1,7 +1,7 @@
 package com.taxiapp.api.service.impl;
 
 
-import com.taxiapp.api.controller.driver.dto.DriverCreateRequest;
+import com.taxiapp.api.controller.rest.driver.dto.DriverCreateRequest;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
 import com.taxiapp.api.model.Driver;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -148,6 +147,10 @@ public class DriverServiceImpl implements IDriverService {
         return true;
     }
 
+    @Transactional
+    public Driver getDriverByEmail(String email) {
+        return driverRepository.findByEmail(email).orElse(null);
+    }
 
     public List<Driver> getAvailableDrivers() {
         return driverRepository.findByIsAvailable(true);

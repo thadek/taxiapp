@@ -1,6 +1,7 @@
 package com.taxiapp.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.taxiapp.api.enums.VehicleStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -38,6 +39,9 @@ public class Vehicle {
 
     @Column(name = "is_disabled")
     private Date isDisabled;
+
+    @Column(name="status")
+    private VehicleStatus status;
 
     @Column(nullable = false)
     private boolean deleted = Boolean.FALSE;

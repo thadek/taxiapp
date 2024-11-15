@@ -38,4 +38,5 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID>, 
     @Query("UPDATE User u SET u.deleted = false WHERE u.id = :id")
     void restoreById(UUID id);
 
+    Optional<User> findByPhone(String phone);
 }
