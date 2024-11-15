@@ -2,6 +2,7 @@ package com.taxiapp.api.service.impl;
 
 
 import com.taxiapp.api.controller.driver.dto.DriverCreateRequest;
+import com.taxiapp.api.controller.driver.dto.DriverUpdateRequest;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
 import com.taxiapp.api.model.Driver;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -90,20 +92,26 @@ public class DriverServiceImpl implements IDriverService {
         return driverRepository.findAll(pageable);
     }
 
-    @Transactional(readOnly = true)
-    public Driver updateDriver(UUID driverId, DriverCreateRequest driver) {
-        Driver driverToUpdate = driverRepository.findById(driverId).orElse(null);
-        if (driverToUpdate == null) {
+
+
+    @Transactional
+    @Override
+    public Driver updateDriver(UUID driverId, DriverUpdateRequest driverUpdateRequest) {
+        // Check if the driver exists
+        Driver driver = driverRepository.findById(driverId).orElse(null);
+        if (driver == null) {
             throw new EntityNotFoundException("Driver", "id", driverId.toString());
         }
-        if(!driverToUpdate.getLicenseId().equals(driver.licenseId())){
-            driverToUpdate.setLicenseId(driver.licenseId());
+
+        // Set the fields that can be modified
+        if (driverUpdateRequest.licenseId() != null) {
+            driver.setLicenseId(driverUpdateRequest.licenseId());
+        }
+        if (driverUpdateRequest.isAvailable() != null) {
+            driver.setIsAvailable(driverUpdateRequest.isAvailable());
         }
 
-        if(!driverToUpdate.getIsAvailable().equals(driver.isAvailable())){
-            driverToUpdate.setIsAvailable(driver.isAvailable());
-        }
-        return driverRepository.save(driverToUpdate);
+        return driverRepository.save(driver);
     }
 
 

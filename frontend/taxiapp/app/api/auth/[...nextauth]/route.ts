@@ -43,7 +43,7 @@ const authOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: any, user: any }) {
       // Guardamos el token JWT en el objeto token para usar en `session`
       if (user) {
         token.user = user;
@@ -51,7 +51,7 @@ const authOptions = {
       }
       return token;
     },
-    async session({ session, user, token }) {
+    async session({ session, user, token }: { session: any, user: any, token: any }) {
       // Pasamos el objeto usuario y el token a la sesión
       session.user = token.user.user;
       session.token = token.token;

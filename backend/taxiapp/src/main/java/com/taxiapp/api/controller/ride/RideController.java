@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/rides")
@@ -99,6 +101,16 @@ public class RideController {
     @PostMapping("/{rideId}/vehicle/{vehicleId}")
     public ResponseEntity<RideUserResponse> assignVehicleToRide(@PathVariable String rideId, @PathVariable String vehicleId) {
         return ResponseEntity.ok(modelMapper.map(rideService.assignVehicleToRide(rideId, vehicleId), RideUserResponse.class));
+    }
+
+    /**
+     * Obtener las solicitudes de viaje pendientes
+     * @return ResponseEntity<List<Ride>>
+     */
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('OPERATOR')")
+    public ResponseEntity<List<Ride>> getPendingRides() {
+        return ResponseEntity.ok(rideService.getPendingRides());
     }
 
 }

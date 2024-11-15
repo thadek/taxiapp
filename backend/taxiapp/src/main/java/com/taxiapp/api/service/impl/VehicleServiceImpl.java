@@ -75,6 +75,9 @@ public class VehicleServiceImpl implements IVehicleService {
             vehicleToUpdate.setDetails(vehicle.details());
         }
 
+        vehicleToUpdate.setIsDisabled(vehicle.isDisabled());
+
+
         return vehicleRepository.save(vehicleToUpdate);
     }
 

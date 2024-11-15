@@ -22,6 +22,7 @@ public class DriverDTO {
     String email;
     Set<Role> roles;
     Timestamp is_disabled;
+    String rating;
     String licenseId;
     Boolean isAvailable;
 

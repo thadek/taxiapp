@@ -20,7 +20,7 @@ export default function Login() {
     const responseNextAuth = await signIn("credentials", {
       email,
       password,
-      callbackUrl: searchParams.get("callbackUrl") || "/",
+      callbackUrl: "/",
       redirect:false,
     });
 

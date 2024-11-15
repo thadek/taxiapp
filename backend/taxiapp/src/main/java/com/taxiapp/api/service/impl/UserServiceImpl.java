@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
                 .name(user.name())
                 .lastname(user.lastname())
                 .username(user.username())
+                .phone(user.phone())
                 .email(user.email())
                 .is_disabled(user.is_disabled())
                 .password(passwordEncoder.encode(user.password()))

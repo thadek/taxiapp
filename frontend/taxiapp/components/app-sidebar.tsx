@@ -17,6 +17,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { ModeToggle } from "./mode-toggle"
 import Link from "next/link"
 
@@ -136,6 +142,29 @@ export  function AppSidebar() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+                <SidebarMenuItem>
+                  <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="abm">
+                      <AccordionTrigger>ABM</AccordionTrigger>
+                        <AccordionContent>
+                        <div className="flex flex-col">
+                          <Link className="m-1" href="/abm/abmUser">
+                          <span className="sidebar-subitem">ABM Usuario</span>
+                          </Link>
+                          <Link className="m-1" href="/abm/abmDriver">
+                          <span className="sidebar-subitem">ABM Driver</span>
+                          </Link>
+                          <Link className="m-1" href="/abm/abmVehicle">
+                          <span className="sidebar-subitem">ABM Vehicle</span>
+                          </Link>
+                          <Link className="m-1" href="/abm/abmRole">
+                          <span className="sidebar-subitem">ABM Role</span>
+                          </Link>
+                        </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </SidebarMenuItem>
 
                 {!session && itemsWithoutLogin.map((item) => (
                   <SidebarMenuItem key={item.title}>

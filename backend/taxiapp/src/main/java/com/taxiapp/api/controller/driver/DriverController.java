@@ -3,6 +3,7 @@ package com.taxiapp.api.controller.driver;
 
 import com.taxiapp.api.controller.driver.dto.DriverCreateRequest;
 import com.taxiapp.api.controller.driver.dto.DriverDTO;
+import com.taxiapp.api.controller.driver.dto.DriverUpdateRequest;
 import com.taxiapp.api.controller.vehicle.dto.VehicleDTO;
 import com.taxiapp.api.model.Driver;
 import com.taxiapp.api.model.Vehicle;
@@ -34,9 +35,13 @@ public class DriverController {
          return ResponseEntity.ok(modelMapper.map(driverCreated, DriverDTO.class));
     }
 
-
+    /**
+     * Update a driver
+     * @param driver UserUpdateRequest
+     * @return DriverDTO
+     */
     @PatchMapping("/{id}")
-    public ResponseEntity<DriverDTO> updateDriver(@PathVariable UUID id, @RequestBody @Valid DriverCreateRequest driver) {
+    public ResponseEntity<DriverDTO> updateDriver(@PathVariable UUID id, @RequestBody @Valid DriverUpdateRequest driver) {
         Driver driverUpdated = driverService.updateDriver(id, driver);
         return ResponseEntity.ok(modelMapper.map(driverUpdated, DriverDTO.class));
     }

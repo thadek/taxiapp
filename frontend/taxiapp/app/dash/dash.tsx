@@ -20,6 +20,8 @@ import { useMemo } from 'react'
 
 import Stats from '../../components/Dashboard/Stats'
 
+import RidesToConfirm from './RidesToConfirm';
+
 // Simulated data
 const taxisOnline = [
   { id: 1, lat: 40.7128, lng: -74.0060 },
@@ -284,6 +286,9 @@ export default function Dash({ }) {
                     onViewDetails={handleViewTripDetails}
                 />
                 <OnlineDrivers drivers={onlineDrivers} />
+            </div>
+            <div className="col-span-2">
+              <RidesToConfirm />
             </div>
         </div>
     )
