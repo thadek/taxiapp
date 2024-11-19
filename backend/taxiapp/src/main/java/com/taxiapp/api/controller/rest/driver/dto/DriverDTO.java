@@ -20,6 +20,7 @@ public class DriverDTO {
     String username;
     String email;
     Timestamp is_disabled;
+    String rating;
     String licenseId;
     Boolean isAvailable;
 

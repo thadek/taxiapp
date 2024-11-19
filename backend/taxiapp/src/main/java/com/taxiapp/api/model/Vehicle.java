@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Data
-@SQLDelete(sql = "UPDATE user SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE vehicle SET deleted = true WHERE id = ?")
 @DynamicUpdate
 @Builder
 @AllArgsConstructor

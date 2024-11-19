@@ -59,7 +59,7 @@ public class VehicleServiceImpl implements IVehicleService {
 
     @Transactional
     @Override
-    public Vehicle update(VehicleUpdateRequest vehicle, String id) {
+    public Vehicle update(VehicleUpdateRequest vehicle, Integer id) {
         // Check if the vehicle exists
         Vehicle vehicleToUpdate = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id.toString()));
 
@@ -83,6 +83,20 @@ public class VehicleServiceImpl implements IVehicleService {
         if(vehicle.details() != null){
             vehicleToUpdate.setDetails(vehicle.details());
         }
+
+        if (vehicle.driver_id() != null) {
+            if (vehicle.driver_id().equalsIgnoreCase("none")) {
+                vehicleToUpdate.setDriver(null);
+            } else {
+                UUID driverUUID = UUID.fromString(vehicle.driver_id());
+                Driver driver = driverRepository.findById(driverUUID)
+                        .orElseThrow(() -> new EntityNotFoundException("Driver", "id", vehicle.driver_id()));
+                vehicleToUpdate.setDriver(driver);
+            }
+        }
+
+        vehicleToUpdate.setIsDisabled(vehicle.isDisabled());
+
 
         return vehicleRepository.save(vehicleToUpdate);
     }
@@ -111,31 +125,27 @@ public class VehicleServiceImpl implements IVehicleService {
 
     @Transactional(readOnly = true)
     @Override
-    public Vehicle findById(String id) {
-        return vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id));
+    public Vehicle findById(Integer id) {
+        return vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id.toString()));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional (readOnly = true)
     @Override
     public Page<Vehicle> findAll(Pageable pageable) {
         return vehicleRepository.findAll(pageable);
     }
 
-    @Transactional
     @Override
-    public void delete(String id) {
-        boolean exists = vehicleRepository.existsById(id);
-        if(!exists){
-            throw new EntityNotFoundException("Vehicle","id",id);
-        }
-        vehicleRepository.deleteById(id);
-
+    @Transactional
+    public void delete(Integer id) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id.toString()));
+        vehicleRepository.delete(vehicle);
     }
 
     @Override
-    public ResultResponse restore(String id) {
+    public ResultResponse restore(Integer id) {
 
-        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id));
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id.toString()));
         if(!vehicle.isDeleted()){
             return new ResultResponse("Vehicle " +vehicle.getId()+ " is not deleted", HttpStatus.NOT_MODIFIED);
         }
@@ -156,9 +166,9 @@ public class VehicleServiceImpl implements IVehicleService {
      */
     @Transactional
     @Override
-    public Vehicle setDriver(String vehicleId, UUID driverId) {
+    public Vehicle setDriver(Integer vehicleId, UUID driverId) {
         Vehicle vehicle = vehicleRepository.findById(vehicleId).
-                orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", vehicleId));
+                orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", vehicleId.toString()));
 
         Driver driver = driverRepository.findById(driverId).
                 orElseThrow(() -> new EntityNotFoundException("Driver", "id", driverId.toString()));

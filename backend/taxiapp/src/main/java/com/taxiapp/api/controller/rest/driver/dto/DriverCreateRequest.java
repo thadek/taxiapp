@@ -5,5 +5,5 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record DriverCreateRequest(@NotNull UUID userId, @NotBlank @NotNull String licenseId,  @NotNull Boolean isAvailable) {
+public record DriverCreateRequest(@NotNull UUID userId, @NotNull String licenseId,  @NotNull Boolean isAvailable) {
 }

@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -17,5 +19,7 @@ public class VehicleDTO {
     String color;
     VehicleStatus status;
     Integer year;
+    String details;
+    Date isDisabled;
     DriverDTO driver;
 }

@@ -167,9 +167,8 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
             usr.setEmail(user.email());
         }
 
-        if(user.is_disabled() != null){
-            usr.setIs_disabled(user.is_disabled());
-        }
+        usr.setIs_disabled(user.is_disabled());
+
         //Hash password si corresponde
         if(user.password() != null){
             usr.setPassword(passwordEncoder.encode(user.password()));
