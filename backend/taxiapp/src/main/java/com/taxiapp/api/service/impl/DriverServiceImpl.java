@@ -1,8 +1,8 @@
 package com.taxiapp.api.service.impl;
 
 
-import com.taxiapp.api.controller.driver.dto.DriverCreateRequest;
-import com.taxiapp.api.controller.driver.dto.DriverUpdateRequest;
+import com.taxiapp.api.controller.rest.driver.dto.DriverCreateRequest;
+import com.taxiapp.api.controller.rest.driver.dto.DriverUpdateRequest;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
 import com.taxiapp.api.model.Driver;

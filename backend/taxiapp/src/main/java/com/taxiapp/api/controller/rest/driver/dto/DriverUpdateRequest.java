@@ -1,4 +1,4 @@
-package com.taxiapp.api.controller.driver.dto;
+package com.taxiapp.api.controller.rest.driver.dto;
 
 import lombok.Builder;
 

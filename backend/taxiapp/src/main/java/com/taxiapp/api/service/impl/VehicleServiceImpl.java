@@ -103,15 +103,15 @@ public class VehicleServiceImpl implements IVehicleService {
 
 
     @Transactional
-    public Vehicle updateStatusByOperator(String id, VehicleStatus status) {
-        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id));
+    public Vehicle updateStatusByOperator(Integer id, VehicleStatus status) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id.toString()));
         vehicle.setStatus(status);
         return vehicleRepository.save(vehicle);
     }
 
     @Transactional
-    public Vehicle updateStatusByDriver(String id, VehicleStatus status) {
-        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id));
+    public Vehicle updateStatusByDriver(Integer id, VehicleStatus status) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id.toString()));
         if(vehicle.getDriver() == null){
             throw new VehicleException("You can't change the status of a vehicle that doesn't have a driver");
         }

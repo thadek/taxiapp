@@ -6,15 +6,9 @@ const fetchWithAuth = async (url: string, token: string, options: RequestInit = 
     };
 
     const response = await fetch(url, { ...options, headers });
-    if (response.ok) {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return response.json();
-        }
-        return response.text(); // O devuelve un valor adecuado si no es JSON
-    } else {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    
+    return response.json();
+    
 };
 
 /**

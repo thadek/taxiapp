@@ -1,7 +1,7 @@
 package com.taxiapp.api.service;
 
-import com.taxiapp.api.controller.driver.dto.DriverCreateRequest;
-import com.taxiapp.api.controller.driver.dto.DriverUpdateRequest;
+import com.taxiapp.api.controller.rest.driver.dto.DriverCreateRequest;
+import com.taxiapp.api.controller.rest.driver.dto.DriverUpdateRequest;
 import com.taxiapp.api.model.Driver;
 import com.taxiapp.api.model.User;
 import org.springframework.data.domain.Page;
