@@ -62,6 +62,30 @@ public class RideController {
     }
 
 
+    /**
+     * Obtener los viajes asignados a un conductor por confirmar (driverassigned)
+     * @param pageable Pageable
+     * @return PagedModel<Ride>
+     */
+    @GetMapping("/driver/assigned")
+    @PreAuthorize("hasAnyRole('DRIVER')")
+    public PagedModel<Ride> getDriverAssignedRides(
+            @PageableDefault() Pageable pageable,
+            Principal principal
+    ) {
+        return new PagedModel<>(rideService.getRidesForDriverConfirm(principal.getName(), pageable));
+    }
+
+
+    /**
+     * Obtener el viaje actual en curso (conductor)
+     */
+    @GetMapping("/driver/current")
+    @PreAuthorize("hasAnyRole('DRIVER')")
+    public ResponseEntity<Ride> getCurrentRide(Principal principal) {
+        return ResponseEntity.ok(rideService.getCurrentRideForDriver(principal.getName()));
+    }
+
 
 
     /**
@@ -139,10 +163,20 @@ public class RideController {
     @PostMapping("/{rideId}/accept")
     @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
     public ResponseEntity<RideUserResponse> acceptRide(@PathVariable String rideId, Principal principal) {
-        return ResponseEntity.ok(modelMapper.map(rideService.acceptRide(rideId, principal), RideUserResponse.class));
+        return ResponseEntity.ok(modelMapper.map(rideService.acceptRide(rideId, principal.getName()), RideUserResponse.class));
     }
 
 
+    /**
+     * Completar un viaje (conductor)
+     * @param rideId
+     * @param principal
+     */
+    @PostMapping("/{rideId}/complete")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
+    public ResponseEntity<RideUserResponse> completeRide(@PathVariable String rideId, Principal principal) {
+        return ResponseEntity.ok(modelMapper.map(rideService.completeRide(rideId, principal.getName()), RideUserResponse.class));
+    }
 
 
 
@@ -163,12 +197,20 @@ public class RideController {
      * @param rideId
      * @return ResponseEntity<RideUserResponse>
      */
-    @PreAuthorize("hasAnyRole('ADMIN','DRIVER', 'OPERATOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     @PostMapping("/{rideId}/operator-cancel")
     public ResponseEntity<Ride> cancelRideFromOperator(@PathVariable String rideId) {
         return ResponseEntity.ok(rideService.cancelRideFromOperator(rideId));
     }
 
+    /**
+     * Cancelar viaje siendo conductor
+     */
+    @PreAuthorize("hasAnyRole('DRIVER')")
+    @PostMapping("/{rideId}/driver-cancel")
+    public ResponseEntity<RideUserResponse> cancelRideFromDriver(@PathVariable String rideId, Principal principal) {
+        return ResponseEntity.ok(modelMapper.map(rideService.cancelRideFromDriver(rideId, principal), RideUserResponse.class));
+    }
 
 
     /**
@@ -191,5 +233,9 @@ public class RideController {
     public ResponseEntity<RideUserResponse> assignVehicleToRide(@PathVariable String rideId, @PathVariable Integer vehicleId) {
         return ResponseEntity.ok(modelMapper.map(rideService.assignVehicleToRide(rideId, vehicleId), RideUserResponse.class));
     }
+
+
+
+
 
 }

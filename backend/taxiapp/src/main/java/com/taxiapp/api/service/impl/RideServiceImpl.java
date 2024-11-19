@@ -19,6 +19,7 @@ import com.taxiapp.api.repository.VehicleRepository;
 import com.taxiapp.api.service.IRideService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.dialect.function.CaseLeastGreatestEmulation;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,17 +60,35 @@ public class RideServiceImpl implements IRideService {
     }
 
 
+    /**
+     * Obtener TODOS mis viajes asignados (conductor)
+     */
+    @Transactional(readOnly = true)
+    public Page<Ride> getAllMyAssignedRides(Object principal, Pageable pageable) {
+        return rideRepository.findByVehicleDriverEmail(principal.toString(), pageable);
+    }
 
 
     /**
-     * Obtener los viajes asignados a un conductor
+     * Obtener los viajes asignados a un conductor POR CONFIRMAR (DRIVER_ASSIGNED)
      * @param driverEmail
      * @param pageable
      * @return Page<Ride>
      */
     @Transactional(readOnly = true)
-    public Page<Ride> getRidesByDriverEmail(String driverEmail, Pageable pageable) {
-        return rideRepository.findByVehicleDriverEmail(driverEmail,pageable);
+    public Page<Ride> getRidesForDriverConfirm(String driverEmail, Pageable pageable) {
+        return rideRepository.findByVehicleDriverEmailAndStatus(driverEmail,RideStatus.DRIVER_ASSIGNED,pageable);
+    }
+
+
+    /**
+     * Obtener el viaje actual en curso (conductor)
+     * @param driverEmail
+     * @return Ride
+     */
+    @Transactional(readOnly = true)
+    public Ride getCurrentRideForDriver(String driverEmail) {
+        return rideRepository.findFirstByVehicleDriverEmailAndStatusIn(driverEmail, List.of(RideStatus.ACCEPTED, RideStatus.STARTED)).orElse(null);
     }
 
 
@@ -182,7 +201,7 @@ public class RideServiceImpl implements IRideService {
      Este metodo recibe el id de un viaje y lo cambia a estado ACCEPTED, lo guarda en la base de datos y lo retorna.
      */
     @Transactional
-    public Ride acceptRide(String rideId, Object principal) {
+    public Ride acceptRide(String rideId, String driverEmail) {
         Ride ride = rideRepository.findById(rideId).orElse(null);
         if (ride == null) {
             throw new EntityNotFoundException("Ride", "id", rideId);
@@ -193,9 +212,14 @@ public class RideServiceImpl implements IRideService {
         }
 
         //Obtener el conductor logueado
-        if(!Objects.equals(ride.getVehicle().getDriver().getEmail(), principal.toString())) {
+        if(!Objects.equals(ride.getVehicle().getDriver().getEmail(), driverEmail)) {
             throw new RideException("No tienes permiso para aceptar este viaje.");
         }
+
+        if(ride.getVehicle().getStatus() != VehicleStatus.AVAILABLE){ //Esto se asegura de que el vehículo esté disponible y no se acepten dos viajes al mismo tiempo
+            throw new RideException("El auto no está disponible.");
+        }
+
 
         ride.setStatus(RideStatus.ACCEPTED);
 
@@ -216,7 +240,7 @@ public class RideServiceImpl implements IRideService {
      * @param rideId
      */
     @Transactional
-    public Ride completeRide(String rideId, Object principal) {
+    public Ride completeRide(String rideId, String driverEmail) {
         Ride ride = rideRepository.findById(rideId).orElse(null);
         if (ride == null) {
             throw new EntityNotFoundException("Ride", "id", rideId);
@@ -227,14 +251,14 @@ public class RideServiceImpl implements IRideService {
         }
 
         //Obtener el conductor logueado
-        if(!Objects.equals(ride.getVehicle().getDriver().getEmail(), principal.toString())) {
+        if(!Objects.equals(ride.getVehicle().getDriver().getEmail(), driverEmail)) {
             throw new RideException("No tienes permiso para completar este viaje.");
         }
 
         ride.setStatus(RideStatus.COMPLETED);
         ride.setRide_end(new Date());
         //Cambio el estado del vehículo a AVAILABLE
-        ride.getVehicle().setStatus(VehicleStatus.AVAILABLE); //TODO: Verificar si esto anda
+        ride.getVehicle().setStatus(VehicleStatus.AVAILABLE);
         Ride completedRide = rideRepository.save(ride);
 
         //Notificar a subscriptores DEL CAMBIO DE ESTADO DE RIDE
@@ -251,13 +275,7 @@ public class RideServiceImpl implements IRideService {
         return rideRepository.findByClient(user, pageable);
     }
 
-    /**
-     * Obtener mis viajes asignados (conductor)
-     */
-    @Transactional(readOnly = true)
-    public Page<Ride> getMyAssignedRides(Object principal, Pageable pageable) {
-        return rideRepository.findByVehicleDriverEmail(principal.toString(), pageable);
-    }
+
 
 
     /**
@@ -483,13 +501,39 @@ public class RideServiceImpl implements IRideService {
     }
 
 
+    /**
+     * Cancelar un viaje (conductor)
+     * @param rideId
+     * @param principal
+     * @return
+     */
+    public Ride cancelRideFromDriver(String rideId, Principal principal) {
 
+        Ride ride = rideRepository.findById(rideId).orElse(null);
+        if (ride == null) {
+            throw new EntityNotFoundException("Ride", "id", rideId);
+        }
 
+        if(ride.getStatus() != RideStatus.ACCEPTED && ride.getStatus() != RideStatus.STARTED && ride.getStatus() != RideStatus.DRIVER_ASSIGNED){
+            throw new RideException("No se puede cancelar un viaje que no está Aceptado, Iniciado o Asignado.");
+        }
 
+        //Obtener el conductor logueado
+        if(!Objects.equals(ride.getVehicle().getDriver().getEmail(), principal.getName())) {
+            throw new RideException("No tienes permiso para cancelar este viaje.");
+        }
 
+        ride.setStatus(RideStatus.CANCELLED);
+        ride.setRide_end(new Date());
+        //Cambio el estado del vehículo a AVAILABLE
+        ride.getVehicle().setStatus(VehicleStatus.AVAILABLE); //TODO: Verificar si esto anda
+        Ride cancelledRide = rideRepository.save(ride);
 
+        //Notificar a subscriptores DEL CAMBIO DE ESTADO DE RIDE
+        eventPublisher.publishEvent(new RideStatusChangeEvent(this, rideId, RideEvent.CANCELLED_BY_DRIVER,cancelledRide));
+        return cancelledRide;
 
-
+    }
 }
 
 
