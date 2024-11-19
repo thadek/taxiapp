@@ -99,7 +99,7 @@ public class RideController {
      */
     @PreAuthorize("hasAnyRole('ADMIN','OPERATOR')")
     @PostMapping("/{rideId}/vehicle/{vehicleId}")
-    public ResponseEntity<RideUserResponse> assignVehicleToRide(@PathVariable String rideId, @PathVariable String vehicleId) {
+    public ResponseEntity<RideUserResponse> assignVehicleToRide(@PathVariable String rideId, @PathVariable Integer vehicleId) {
         return ResponseEntity.ok(modelMapper.map(rideService.assignVehicleToRide(rideId, vehicleId), RideUserResponse.class));
     }
 

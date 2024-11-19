@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
+import { getUsers, createUser, updateUser, deleteUser } from '@/app/queries/abm';
+import { getRoles } from '@/app/queries/abm';
 import {
   Table,
   TableBody,
@@ -42,22 +44,14 @@ const ABMUser: React.FC = () => {
   useEffect(() => {
     // Realizar la solicitud al backend para obtener los usuarios
     const fetchUsers = async () => {
-      try {
-        const session = await getSession();
+      const session = await getSession();
         if (!session) {
           console.error('No session found');
           return;
         }
-
         const token = session.token;
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        const data = await response.json();
+      try {
+        const data = await getUsers(token);
         setUsers(data.content);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -65,23 +59,14 @@ const ABMUser: React.FC = () => {
     };
 
     const fetchRoles = async () => {
-      try {
-        const session = await getSession();
+      const session = await getSession();
         if (!session) {
           console.error('No session found');
           return;
         }
-
         const token = session.token;
-        console.log('Token:', token);
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/roles`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        const data = await response.json();
+      try {
+        const data = await getRoles(token);
         setAvailableRoles(data);
       } catch (error) {
         console.error('Error fetching roles:', error);
@@ -146,28 +131,17 @@ const ABMUser: React.FC = () => {
 
   const handleSaveNewUser = async () => {
     const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-
-    const token = session.token;
-
+        if (!session) {
+          console.error('No session found');
+          return;
+        }
+        const token = session.token;
     try {
-      console.log(newUser);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newUser),
-      });
-      const savedUser = await response.json();
-      setUsers([...users, savedUser]);
+      const createdUser = await createUser(newUser, token);
+      setUsers([...users, createdUser]);
       setNewUser(null);
     } catch (error) {
-      console.error('Error saving new user:', error);
+      console.error('Error creating user:', error);
     }
   };
 
@@ -190,29 +164,21 @@ const ABMUser: React.FC = () => {
 
   const handleSaveEdit = async (userId: string) => {
     const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-  
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
     const token = session.token;
-  
+
     const userToUpdate = users.find(user => user.id === userId);
     if (userToUpdate) {
       userToUpdate.roles = selectedRoles.map(roleId => availableRoles.find(role => role.id === roleId)).filter((role): role is Role => role !== undefined);
   
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userToUpdate),
-        });
-        const updatedUser = await response.json();
+        const updatedUser = await updateUser(userId, userToUpdate, token);
         setUsers(users.map(user => user.id === userId ? updatedUser : user));
         setEditingUserId(null);
+        setEditingUserData(null);
       } catch (error) {
         console.error('Error updating user:', error);
       }
@@ -221,21 +187,13 @@ const ABMUser: React.FC = () => {
 
   const handleDelete = async (userId: string) => {
     const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
     const token = session.token;
-
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      await deleteUser(userId, token);
       setUsers(users.map(user => user.id === userId ? { ...user, deleted: true } : user));
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -243,28 +201,18 @@ const ABMUser: React.FC = () => {
   };
 
   const handleDisable = async (userId: string) => {
-    const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-
-    const token = session.token;
-
     const userToDisable = users.find(user => user.id === userId);
+    const session = await getSession();
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
+    const token = session.token;
     if (userToDisable) {
       userToDisable.is_disabled = new Date().toISOString();
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userToDisable),
-        });
-        const updatedUser = await response.json();
-        setUsers(users.map(user => user.id === userId ? updatedUser : user));
+        const disabledUser = await updateUser(userId, userToDisable, token);
+        setUsers(users.map(user => user.id === userId ? disabledUser : user));
       } catch (error) {
         console.error('Error disabling user:', error);
       }
@@ -272,28 +220,18 @@ const ABMUser: React.FC = () => {
   };
 
   const handleEnable = async (userId: string) => {
-    const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-
-    const token = session.token;
-
     const userToEnable = users.find(user => user.id === userId);
+    const session = await getSession();
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
+    const token = session.token;
     if (userToEnable) {
       userToEnable.is_disabled = null;
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userToEnable),
-        });
-        const updatedUser = await response.json();
-        setUsers(users.map(user => user.id === userId ? updatedUser : user));
+        const enabledUser = await updateUser(userId, userToEnable, token);
+        setUsers(users.map(user => user.id === userId ? enabledUser : user));
       } catch (error) {
         console.error('Error enabling user:', error);
       }
@@ -333,7 +271,7 @@ const ABMUser: React.FC = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users?.map(user => (
+          {Array.isArray(users) && users.map(user =>(
             <TableRow key={user.id} className={user.deleted ? 'deleted' : ''}>
               <TableCell>{user.id}</TableCell>
               <TableCell>

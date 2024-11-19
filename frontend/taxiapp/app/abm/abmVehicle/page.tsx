@@ -1,6 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
+import { getVehicles, createVehicle, updateVehicle, vehicleDriverAssign, deleteVehicle } from '@/app/queries/abm';
+import { getDrivers } from '@/app/queries/abm';
+
 import {
   Table,
   TableBody,
@@ -9,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectLabel, SelectItem } from '@/components/ui/select';
@@ -39,50 +43,35 @@ const ABMVehicle: React.FC = () => {
   const [editingVehicleData, setEditingVehicleData] = useState<Vehicle | null>(null);
   const [newVehicle, setNewVehicle] = useState<Vehicle | null>(null);
   const [availableDrivers, setAvailableDrivers] = useState<Driver[]>([]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
+  const [combinedData, setCombinedData] = useState<Vehicle[]>([]);
 
   useEffect(() => {
     const fetchVehicles = async () => {
-      try {
-        const session = await getSession();
+      const session = await getSession();
         if (!session) {
           console.error('No session found');
           return;
         }
-  
-        const token = session.token;
-  
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/vehicles`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        const data = await response.json();
-        setVehicles(data.content);
-        console.log('Vehicles:', data.content);
+      const token = session.token;
+      try {
+        const response = await getVehicles(token);
+        setVehicles(response.content);
       } catch (error) {
         console.error('Error fetching vehicles:', error);
       }
     };
   
     const fetchDrivers = async () => {
-      try {
-        const session = await getSession();
+      const session = await getSession();
         if (!session) {
           console.error('No session found');
           return;
         }
-  
-        const token = session.token;
-  
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/drivers`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        const data = await response.json();
-        setAvailableDrivers(Array.isArray(data.content) ? data.content : []);
+      const token = session.token;
+      try {
+        const response = await getDrivers(token);
+        setAvailableDrivers(Array.isArray(response.content) ? response.content : []);
       } catch (error) {
         console.error('Error fetching drivers:', error);
       }
@@ -111,23 +100,19 @@ const ABMVehicle: React.FC = () => {
       console.error('No session found');
       return;
     }
-  
     const token = session.token;
-  
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/vehicles/${vehicleId}/driver/${driverId}`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to update driver');
+      let updatedVehicle;
+      if (driverId === "none") {
+        // Enviar un PATCH a Vehicle con el atributo driver_id en NULL
+        const response = await updateVehicle(vehicleId, driverId, token);
+        updatedVehicle = response;
+      } else {
+        // Asignar el Driver al Vehicle
+        const response = await vehicleDriverAssign(vehicleId, driverId, token);
+        updatedVehicle = response;
       }
   
-      const updatedVehicle = await response.json();
       setVehicles(vehicles.map(vehicle => vehicle.id === vehicleId ? updatedVehicle : vehicle));
     } catch (error) {
       console.error('Error updating driver:', error);
@@ -155,25 +140,15 @@ const ABMVehicle: React.FC = () => {
 
   const handleSaveNewVehicle = async () => {
     const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
     const token = session.token;
-
     try {
-        console.log('New Vehicle:', newVehicle);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/vehicles`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newVehicle),
-      });
-      const savedVehicle = await response.json();
-      setVehicles([...vehicles, savedVehicle]);
+      console.log('New Vehicle:', newVehicle);
+      const response = await createVehicle(newVehicle, token);
+      setVehicles([...vehicles, response]);
       setNewVehicle(null);
     } catch (error) {
       console.error('Error saving new vehicle:', error);
@@ -189,26 +164,16 @@ const ABMVehicle: React.FC = () => {
   };
 
   const handleSaveEdit = async (vehicleId: number) => {
-    const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-
-    const token = session.token;
-
     const vehicleToUpdate = vehicles.find(vehicle => vehicle.id === vehicleId);
+    const session = await getSession();
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
+    const token = session.token;
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/vehicles/${vehicleId}`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(vehicleToUpdate),
-      });
-      const updatedVehicle = await response.json();
-      setVehicles(vehicles.map(vehicle => vehicle.id === Number(vehicleId) ? updatedVehicle : vehicle));
+      const response = await updateVehicle(vehicleId, vehicleToUpdate, token);
+      setVehicles(vehicles.map(vehicle => vehicle.id === Number(vehicleId) ? response : vehicle));
       setEditingVehicleId(null);
     } catch (error) {
       console.error('Error updating vehicle:', error);
@@ -221,46 +186,29 @@ const ABMVehicle: React.FC = () => {
       console.error('No session found');
       return;
     }
-
     const token = session.token;
-
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/vehicles/${vehicleId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      setVehicles(vehicles.map(vehicle => vehicle.id === vehicleId ? { ...vehicle, deleted: true } : vehicle));
+      await deleteVehicle(vehicleId, token);
+      setVehicles(vehicles.filter(vehicle => vehicle.id !== vehicleId));
+      setCombinedData(combinedData.filter(data => data.id !== vehicleId));
     } catch (error) {
       console.error('Error deleting vehicle:', error);
     }
   };
 
   const handleDisable = async (vehicleId: number) => {
-    const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-  
-    const token = session.token;
-  
     const vehicleToDisable = vehicles.find(vehicle => vehicle.id === vehicleId);
+    const session = await getSession();
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
+    const token = session.token;
     if (vehicleToDisable) {
       vehicleToDisable.isDisabled = new Date().toISOString();
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/vehicles/${vehicleId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(vehicleToDisable),
-        });
-        const updatedVehicle = await response.json();
-        setVehicles(vehicles.map(vehicle => vehicle.id === vehicleId ? updatedVehicle : vehicle));
+        const response = await updateVehicle(vehicleId, vehicleToDisable, token);
+        setVehicles(vehicles.map(vehicle => vehicle.id === vehicleId ? response : vehicle));
       } catch (error) {
         console.error('Error disabling vehicle:', error);
       }
@@ -272,30 +220,18 @@ const ABMVehicle: React.FC = () => {
   };
 
   const handleEnable = async (vehicleId: number) => {
-    const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-  
-    const token = session.token;
-  
     const vehicleToEnable = vehicles.find(vehicle => vehicle.id === vehicleId);
+    const session = await getSession();
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
+    const token = session.token;
     if (vehicleToEnable) {
       vehicleToEnable.isDisabled = null;
-      console.log('Vehicle to enable:', vehicleToEnable);
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/vehicles/${vehicleId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(vehicleToEnable),
-        });
-        const updatedVehicle = await response.json();
-        console.log('Updated Vehicle:', updatedVehicle); // Verifica la respuesta del backend
-        setVehicles(vehicles.map(vehicle => vehicle.id === vehicleId ? updatedVehicle : vehicle));
+        const response = await updateVehicle(vehicleId, vehicleToEnable, token);
+        setVehicles(vehicles.map(vehicle => vehicle.id === vehicleId ? response : vehicle));
       } catch (error) {
         console.error('Error enabling vehicle:', error);
       }
@@ -440,23 +376,39 @@ const ABMVehicle: React.FC = () => {
               </TableCell>
               <TableCell>{vehicle.isDisabled}</TableCell>
               <TableCell>
-                  {editingVehicleId === vehicle.id ? (
-                    <>
-                      <Button onClick={() => handleSaveEdit(vehicle.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Save</Button>
-                      <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancel</Button>
-                    </>
+              {editingVehicleId === vehicle.id ? (
+                <>
+                  <Button onClick={() => handleSaveEdit(vehicle.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Save</Button>
+                  <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancel</Button>
+                </>
+              ) : (
+                <>
+                  <Button onClick={() => handleEdit(vehicle.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Edit</Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button onClick={() => setSelectedVehicleId(vehicle.id.toString())} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Esta acción no se puede deshacer. Esto eliminará permanentemente el vehículo.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className='bg-secondary text-secondary-foreground hover:bg-secondary-foreground hover:text-secondary'>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction className='bg-destructive hover:bg-red-600' onClick={() => selectedVehicleId && handleDelete(Number(selectedVehicleId))}>Confirmar</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  {vehicle.isDisabled ? (
+                    <Button onClick={() => handleEnable(vehicle.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Enable</Button>
                   ) : (
-                    <>
-                      <Button onClick={() => handleEdit(vehicle.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Edit</Button>
-                      <Button onClick={() => handleDelete(vehicle.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Delete</Button>
-                      {vehicle.isDisabled ? (
-                        <Button onClick={() => handleEnable(vehicle.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Enable</Button>
-                      ) : (
-                        <Button onClick={() => handleDisable(vehicle.id)} className="bg-orange-500 m-1 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">Disable</Button>
-                      )}
-                    </>
+                    <Button onClick={() => handleDisable(vehicle.id)} className="bg-orange-500 m-1 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">Disable</Button>
                   )}
-                </TableCell>
+                </>
+              )}
+            </TableCell>
             </TableRow>
           ))}
           {newVehicle && (

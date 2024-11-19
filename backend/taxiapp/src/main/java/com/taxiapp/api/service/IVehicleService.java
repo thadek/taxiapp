@@ -15,17 +15,17 @@ public interface IVehicleService {
 
 
     public Vehicle create(VehicleCreateRequest vehicle);
-    public Vehicle update(VehicleUpdateRequest vehicle, String id);
-    public Vehicle findById(String id);
+    public Vehicle update(VehicleUpdateRequest vehicle, Integer id);
+    public Vehicle findById(Integer id);
     public Page<Vehicle> findAll(Pageable pageable);
-    public void delete(String id);
+    public void delete(Integer id);
 
     //Metodo para restaurar soft delete
-    ResultResponse restore(String id);
+    ResultResponse restore(Integer id);
 
     //Metodo para listar vehiculos eliminados por softdelete
     Page<Vehicle> findAllDeleted(Pageable pageable);
 
-    Vehicle setDriver(String vehicleId, UUID driverId);
+    Vehicle setDriver(Integer vehicleId, UUID driverId);
 
 }

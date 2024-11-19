@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
+import { getRoles, createRole, updateRole, deleteRole } from '@/app/queries/abm';
 import {
   Table,
   TableBody,
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from '@/components/ui/button';
 
 interface Role {
@@ -21,25 +23,18 @@ const ABMRole = () => {
   const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
   const [editingRoleData, setEditingRoleData] = useState<Role | null>(null);
   const [newRole, setNewRole] = useState<Role | null>(null);
+  const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchRoles = async () => {
-      try {
-        const session = await getSession();
+      const session = await getSession();
         if (!session) {
           console.error('No session found');
           return;
         }
-
-        const token = session.token;
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/roles`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        const data = await response.json();
+      const token = session.token;
+      try {
+        const data = await getRoles(token);
         setRoles(data);
       } catch (error) {
         console.error('Error fetching roles:', error);
@@ -83,15 +78,7 @@ const ABMRole = () => {
     const roleToUpdate = roles.find(role => role.id === roleId);
     if (roleToUpdate) {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/roles/${roleId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(roleToUpdate),
-        });
-        const updatedRole = await response.json();
+        const updatedRole = await updateRole(roleId.toString(), roleToUpdate, token);
         setRoles(roles.map(role => role.id === roleId ? updatedRole : role));
         setEditingRoleId(null);
       } catch (error) {
@@ -122,13 +109,7 @@ const ABMRole = () => {
     const token = session.token;
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/roles/${roleId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      await deleteRole(roleId.toString(), token);
       setRoles(roles.filter(role => role.id !== roleId));
     } catch (error) {
       console.error('Error deleting role:', error);
@@ -137,25 +118,14 @@ const ABMRole = () => {
 
   const handleSaveNewRole = async () => {
     const session = await getSession();
-    if (!session) {
-      console.error('No session found');
-      return;
-    }
-
+        if (!session) {
+          console.error('No session found');
+          return;
+        }
     const token = session.token;
-
     try {
-      console.log(newRole);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/roles`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newRole),
-      });
-      const savedRole = await response.json();
-      setRoles([...roles, savedRole]);
+      const createdRole = await createRole(newRole, token);
+      setRoles([...roles, createdRole]);
       setNewRole(null);
     } catch (error) {
       console.error('Error saving new role:', error);
@@ -201,18 +171,34 @@ return (
                 )}
               </TableCell>
               <TableCell className='text-right'>
-                  {editingRoleId === role.id.toString() ? (
-                    <>
-                      <Button onClick={() => handleSaveEdit(role.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Save</Button>
-                      <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancel</Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button onClick={() => handleEdit(role.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Edit</Button>
-                      <Button onClick={() => handleDelete(role.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Delete</Button>
-                    </>
-                  )}
-                </TableCell>
+        {editingRoleId === role.id.toString() ? (
+          <>
+            <Button onClick={() => handleSaveEdit(role.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Save</Button>
+            <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancel</Button>
+          </>
+        ) : (
+          <>
+            <Button onClick={() => handleEdit(role.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Edit</Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button onClick={() => setSelectedRoleId(role.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Delete</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta acción no se puede deshacer. Esto eliminará permanentemente el rol.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className='bg-secondary text-secondary-foreground hover:bg-secondary-foreground hover:text-secondary'>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction className='bg-destructive hover:bg-red-600' onClick={() => selectedRoleId && handleDelete(selectedRoleId)}>Confirmar</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        )}
+      </TableCell>
             </TableRow>
           ))}
           {newRole && (

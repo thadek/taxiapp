@@ -231,7 +231,7 @@ public class RideServiceImpl implements IRideService {
      * Asignar un auto a un viaje (OPERADOR o ADMIN)
      */
     @Transactional
-    public Ride assignVehicleToRide(String rideId, String vehicleId) {
+    public Ride assignVehicleToRide(String rideId, Integer vehicleId) {
         //Obtengo el viaje
         Ride ride = rideRepository.findById(rideId).orElse(null);
         if (ride == null) {
@@ -243,7 +243,7 @@ public class RideServiceImpl implements IRideService {
         //Obtengo el vehículo
         Vehicle vehicle = vehicleRepository.findById(vehicleId).orElse(null);
         if (vehicle == null) {
-            throw new EntityNotFoundException("Vehicle", "id", vehicleId);
+            throw new EntityNotFoundException("Vehicle", "id", vehicleId.toString());
         }
         if(vehicle.getDriver() == null){
             throw new RideException("El vehículo no tiene conductor asignado.");

@@ -9,6 +9,7 @@ import java.util.Date;
 
 @Builder
 public record VehicleUpdateRequest(
+        String driver_id,
         String brand,
         String model,
         String color,

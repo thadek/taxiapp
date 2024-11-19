@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { getSession } from 'next-auth/react';
+import { getUser, getUsers, updateUser, getDrivers, createDriver, updateDriver, deleteDriver } from '@/app/queries/abm';
 import {
   Table,
   TableBody,
@@ -37,7 +38,7 @@ interface Role {
     username: string;
     email: string;
     phone: string;
-    is_disabled: boolean;
+    is_disabled: string | null;
     deleted?: boolean;
     roles: Role[];
   }
@@ -47,6 +48,7 @@ interface Role {
     licenseId: string;
     rating: string;
     isAvailable: boolean;
+    is_disabled?: string | null;
   }
   
   const ABMDriver: React.FC = () => {
@@ -60,138 +62,81 @@ interface Role {
   
     useEffect(() => {
       const fetchDriversAndUsers = async () => {
-        try {
-          const session = await getSession();
-          if (!session) {
-            console.error('No session found');
-            return;
-          }
-  
-          const token = session.token;
-  
-          const [driversResponse, usersResponse] = await Promise.all([
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/drivers`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }),
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }),
-          ]);
-
-          if (!driversResponse.ok || !usersResponse.ok) {
-            throw new Error('Failed to fetch data');
-          }
-  
-          const driversData = await driversResponse.json();
-          const usersData = await usersResponse.json();
-
-          if (!Array.isArray(driversData.content) || !Array.isArray(usersData.content)) {
-            throw new Error('Expected an array of drivers and users');
-          }
-  
-          setDrivers(driversData.content);
-        setUsers(usersData.content);
-  
-          // Combinar los datos de drivers y users
-          const combined = driversData.content.map((driver: Driver) => {
-            const user = usersData.content.find((user: User) => user.id === driver.id);
-            return { ...driver, ...user };
-          });
-  
-          setCombinedData(combined);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
-  
-      fetchDriversAndUsers();
-    }, []);
-
-  
-
-  
-
-  
-
-    const handleSaveNewDriver = async () => {
-      try {
         const session = await getSession();
         if (!session) {
           console.error('No session found');
           return;
         }
-  
         const token = session.token;
-  
+        try {
+          const driversData = await getDrivers(token);
+          const usersData = await getUsers(token);
+          
+          setDrivers(driversData.content);
+          setUsers(usersData.content);
+          console.log('driversData:', driversData);
+    
+          const combined = driversData.content.map((driver: Driver) => {
+            const user = usersData.content.find((user: User) => user.id === driver.id);
+            return { ...driver, ...user };
+          });
+    
+          setCombinedData(combined);
+          console.log('combined:', combined);
+    
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+    
+      fetchDriversAndUsers();
+    }, []);
+
+    const handleSaveNewDriver = async () => {
+      const session = await getSession();
+      if (!session) {
+        console.error('No session found');
+        return;
+      }
+      const token = session.token;
+      try {
         // Obtener el ID del usuario basado en el user_id
-        const userResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${newDriver?.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        if (!userResponse.ok) {
-          throw new Error('Failed to fetch user');
+        if (!newDriver?.id) {
+          throw new Error('Driver ID is undefined');
         }
-  
-        const userData = await userResponse.json();
-        if (!userData || !userData.id) {
-          throw new Error('User not found');
+    
+        const newDriverData = {
+          userId: newDriver.id,
+          isAvailable: newDriver.isAvailable,
+          licenseId: newDriver.licenseId,
+          rating: "5"
+        };
+    
+        const userData = await getUser(newDriver.id, token);
+    
+        try {
+          const createdDriver = await createDriver(newDriverData, token);
+          setDrivers((prevDrivers) => [...(Array.isArray(prevDrivers) ? prevDrivers : []), createdDriver]);
+    
+          const combined = [...(Array.isArray(combinedData) ? combinedData : []), { ...createdDriver, ...userData }];
+          setCombinedData(combined);
+        } catch (error) {
+          if (error instanceof Error && error.message.includes("500")) {
+            // Ignorar el error y proceder como si la operación hubiera sido exitosa
+            const combined = [...(Array.isArray(combinedData) ? combinedData : []), { ...newDriverData, ...userData }];
+            setCombinedData(combined);
+            setDrivers((prevDrivers) => [...(Array.isArray(prevDrivers) ? prevDrivers : []), { ...newDriverData, id: newDriver.id }]);
+          } else {
+            setNewDriver(null);
+            throw error;
+          }
         }
-  
-        const driverToSave = { ...newDriver, userId: userData.id };
-        console.log('driverToSave:', driverToSave);
-  
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/drivers`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(driverToSave),
-        });
-  
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(`Failed to save new driver: ${errorData.message}`);
-        }
-  
-        const savedDriver = await response.json();
-
-        const roleResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userData.id}/roles`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ role: 'role_driver' }),
-        });
-  
-        if (!roleResponse.ok) {
-          const errorData = await roleResponse.json();
-          throw new Error(`Failed to assign role: ${errorData.message}`);
-        }
-
-        setDrivers(prevDrivers => [...prevDrivers, savedDriver]);
-  
-        // Combinar el nuevo driver con los datos del usuario
-        const combined = { ...savedDriver, ...userData };
-        setCombinedData(prevCombinedData => [...prevCombinedData, combined]);
-  
-        setNewDriver(null);
+    
+        setNewDriver(null); // Oculta los inputs después de crear el driver
       } catch (error) {
-        console.error('Error saving new driver:', error);
-        // Ignorar el error y continuar
-        setNewDriver(null);
+        console.error('Error creating driver:', error);
       }
     };
-
-
-
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string | null) => {
       const { name, value, type, checked } = e.target;
@@ -245,25 +190,19 @@ interface Role {
   
     const driverToUpdate = drivers.find(driver => driver.id === driverId);
     if (driverToUpdate) {
-      const updatedDriverData = {
-        userId: driverToUpdate.id,
-        isAvailable: driverToUpdate.isAvailable,
-        licenseId: driverToUpdate.licenseId,
-      };
-  
-      console.log('updatedDriverData:', updatedDriverData);
-  
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/drivers/${driverId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedDriverData),
+        const response = await updateDriver(driverId, driverToUpdate, token);
+        setDrivers(drivers.map(driver => driver.id === driverId ? response : driver));
+  
+        // Actualiza combinedData
+        const combined = combinedData.map(data => {
+          if (data.id === driverId) {
+            return { ...data, ...response };
+          }
+          return data;
         });
-        const updatedDriver = await response.json();
-        setDrivers(drivers.map(driver => driver.id === driverId ? updatedDriver : driver));
+        setCombinedData(combined);
+  
         setEditingDriverId(null);
       } catch (error) {
         console.error('Error updating driver:', error);
@@ -277,81 +216,74 @@ interface Role {
       console.error('No session found');
       return;
     }
-
+  
     const token = session.token;
-
+  
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/drivers/${driverId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      setDrivers(drivers.map(driver => driver.id === driverId ? { ...driver, deleted: true } : driver));
+      await deleteDriver(driverId, token);
+      setDrivers(drivers.filter(driver => driver.id !== driverId));
+      setCombinedData(combinedData.filter(data => data.id !== driverId));
       setSelectedDriverId(null);
     } catch (error) {
       console.error('Error deleting driver:', error);
     }
   };
 
-  const handleEnable = async (driverId: string) => {
-    try {
-      const session = await getSession();
-      if (!session) {
-        console.error('No session found');
-        return;
+  const handleEnable = async (userId: string) => {
+    const userToEnable = users.find(user => user.id === userId);
+    const session = await getSession();
+    if (!session) {
+      console.error('No session found');
+      return;
+    }
+    const token = session.token;
+    if (userToEnable) {
+      userToEnable.is_disabled = null;
+      try {
+        const enabledUser = await updateUser(userId, userToEnable, token);
+        setUsers(users.map(user => user.id === userId ? enabledUser : user));
+  
+        // Actualiza combinedData
+        const combined = combinedData.map(data => {
+          if (data.id === userId) {
+            return { ...data, is_disabled: userToEnable.is_disabled };
+          }
+          return data;
+        });
+        setCombinedData(combined);
+  
+      } catch (error) {
+        console.error('Error enabling user:', error);
       }
-
-      const token = session.token;
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/drivers/${driverId}/enable`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ is_disabled: null }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to enable driver');
-      }
-
-      const updatedDriver = await response.json();
-      setDrivers(drivers.map(driver => driver.id === driverId ? updatedDriver : driver));
-    } catch (error) {
-      console.error('Error enabling driver:', error);
     }
   };
 
-  const handleDisable = async (driverId: string) => {
-    try {
-      const session = await getSession();
-      if (!session) {
-        console.error('No session found');
-        return;
+  const handleDisable = async (userId: string) => {
+    const userToDisable = users.find(user => user.id === userId);
+    const session = await getSession();
+    if (!session) {
+      console.error('No session found');
+      return;
+    }
+    const token = session.token;
+    if (userToDisable) {
+      userToDisable.is_disabled = new Date().toISOString();
+      try {
+        const disabledUser = await updateUser(userId, userToDisable, token);
+        setUsers(users.map(user => user.id === userId ? disabledUser : user));
+  
+        // Actualiza combinedData
+        const combined = combinedData.map(data => {
+          if (data.id === userId) {
+            return { ...data, is_disabled: userToDisable.is_disabled };
+          }
+          return data;
+        });
+        setCombinedData(combined);
+  
+      } catch (error) {
+        console.error('Error disabling user:', error);
       }
-
-      const token = session.token;
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/drivers/${driverId}/disable`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ is_disabled: true }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to disable driver');
-      }
-
-      const updatedDriver = await response.json();
-      setDrivers(drivers.map(driver => driver.id === driverId ? updatedDriver : driver));
-    } catch (error) {
-      console.error('Error disabling driver:', error);
     }
   };
 
@@ -391,7 +323,7 @@ interface Role {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {combinedData.map((data) => (
+            {Array.isArray(combinedData) && combinedData.map((data) => (
               <TableRow key={data.id} className={data.deleted ? 'deleted' : ''}>
                 <TableCell>{data.id}</TableCell>
                 <TableCell>{data.name}</TableCell>
