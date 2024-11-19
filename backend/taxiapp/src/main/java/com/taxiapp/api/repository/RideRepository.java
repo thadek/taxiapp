@@ -28,6 +28,8 @@ public interface RideRepository extends JpaRepository<Ride, String> {
 
     Page<Ride> findByClientAndStatusIn(User user, List<RideStatus> rideStatuses, Pageable pageable);
 
+    Optional<Ride> findFirstByVehicleDriverEmailAndStatusIn(String email, List<RideStatus> statuses);
+
     @Query(value = """
     SELECT * 
     FROM ride r 
