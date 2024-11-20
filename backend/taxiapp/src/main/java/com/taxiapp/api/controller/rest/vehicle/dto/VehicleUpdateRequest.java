@@ -1,5 +1,6 @@
 package com.taxiapp.api.controller.rest.vehicle.dto;
 
+import com.taxiapp.api.enums.VehicleStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,11 @@ public record VehicleUpdateRequest(
         String details,
         @Min(1900) Integer year,
         Date isDisabled,
-        String licensePlate
+        String licensePlate,
+        VehicleStatus status
+
+
+
+
 ) {
 }

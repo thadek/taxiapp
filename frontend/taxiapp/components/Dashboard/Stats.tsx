@@ -3,7 +3,7 @@ import { Car, Clock, Users } from 'lucide-react';
 import { Skeleton } from '@nextui-org/react';
 import { CircularProgress } from "@nextui-org/progress";
 const Stats = ({ taxisCount, tripsCount, driversCount }) => (
-    <div className="grid grid-cols-4 gap-6 mb-6">
+    <div className="grid grid-cols-3 gap-6 mb-6">
 
         <Card className='relative'>
 
@@ -31,19 +31,11 @@ const Stats = ({ taxisCount, tripsCount, driversCount }) => (
                 <div className="text-2xl font-bold">{tripsCount}</div>
             </CardContent>
         </Card>
+       
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Conductores en línea</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{driversCount}</div>
-            </CardContent>
-        </Card>
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Conductores en línea</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium">Autos en línea</CardTitle>
+                <Car className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{driversCount}</div>

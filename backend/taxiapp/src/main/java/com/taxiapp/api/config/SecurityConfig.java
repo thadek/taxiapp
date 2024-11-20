@@ -40,15 +40,17 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex->{
+                    ex.authenticationEntryPoint(jwtAuthEntryPoint);
+                    ex.accessDeniedHandler(jwtAccessDeniedHandler);
+                })
+
                  .authorizeHttpRequests(authorize->
                     authorize.requestMatchers("/auth/*","/error","/docs/**","/v3/api-docs/**","/v3/api-docs","/ws/**").permitAll()
                                     .anyRequest().authenticated())
 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex->{
-                    ex.authenticationEntryPoint(jwtAuthEntryPoint);
-                    ex.accessDeniedHandler(jwtAccessDeniedHandler);
-                })
+
                 .sessionManagement((session)-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();

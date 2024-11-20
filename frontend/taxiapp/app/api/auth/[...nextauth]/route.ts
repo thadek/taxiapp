@@ -57,9 +57,7 @@ const authOptions = {
     },
     async session({ session, user, token }: { session: any, user: any, token: any }) {
       // Pasamos el objeto usuario y el token a la sesión
-     console.log("session",session);
-     console.log("user",user);
-      console.log("token",token);
+  
       session.user = token.user.user;
       session.token = token.token;
       return session;

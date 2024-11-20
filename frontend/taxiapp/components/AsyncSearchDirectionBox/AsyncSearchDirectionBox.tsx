@@ -33,7 +33,7 @@ export default function AsyncSearchDirectionBox({ text, onSelectionChange }: { t
 
   let list = useAsyncList<LocationResult>({
     async load({ signal, filterText }) {
-      let res = await fetch(`${nominatimUrl}:8080/search?q=${filterText}`, { signal });
+      let res = await fetch(`${nominatimUrl}/search?q=${filterText}`, { signal });
       let json = await res.json();
       return {
         items: json,

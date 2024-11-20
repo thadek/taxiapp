@@ -189,7 +189,7 @@ public class RideController {
     @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER', 'USER', 'OPERATOR')")
     @PostMapping("/{rideId}/client-cancel")
     public ResponseEntity<RideUserResponse> cancelRideFromClient(@PathVariable String rideId, Principal principal) {
-            return ResponseEntity.ok(modelMapper.map(rideService.cancelRideFromClient(rideId, principal), RideUserResponse.class));
+            return ResponseEntity.ok(modelMapper.map(rideService.cancelRideFromClient(rideId, principal.getName()), RideUserResponse.class));
     }
 
     /**

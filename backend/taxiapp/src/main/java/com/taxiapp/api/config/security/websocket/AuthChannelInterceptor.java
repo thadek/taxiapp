@@ -35,6 +35,12 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
             }
         }
 
+
+
+        System.out.println("Destino: " + accessor.getDestination());
+        System.out.println("Tipo de mensaje: " + accessor.getCommand());
+        System.out.println("Contenido: " + message.getPayload());
+
         return message;
     }
 }

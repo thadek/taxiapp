@@ -1,6 +1,6 @@
 'use client'
 
-import { Calendar, Home, LayoutDashboard, LogIn, Search, Settings,UserPlus,LogOut, User } from "lucide-react"
+import { Calendar, Home, LayoutDashboard, LogIn, Search, Settings,UserPlus,LogOut, User, Car } from "lucide-react"
 import { Logo } from "@/components/ui/logo"
 
 import { useSession, signIn, signOut } from "next-auth/react"
@@ -97,9 +97,9 @@ const items = [
     icon: Calendar,
   },
   {
-    title: "Buscar",
-    url: "#",
-    icon: Search,
+    title: "Viajes",
+    url: "/rides",
+    icon: Car,
   },
   {
     title: "Configuración",
@@ -112,6 +112,8 @@ export  function AppSidebar() {
 
 
   const { data: session, status } = useSession();
+
+  
 
   const isOperatorOrAdmin = session && checkMultipleRoles(["ROLE_ADMIN","ROLE_OPERATOR"], session.user.roles);
 
@@ -142,6 +144,7 @@ export  function AppSidebar() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+                {isOperatorOrAdmin && (
                 <SidebarMenuItem>
                   <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="abm">
@@ -164,7 +167,7 @@ export  function AppSidebar() {
                         </AccordionContent>
                     </AccordionItem>
                   </Accordion>
-                </SidebarMenuItem>
+                </SidebarMenuItem>)}
 
                 {!session && itemsWithoutLogin.map((item) => (
                   <SidebarMenuItem key={item.title}>

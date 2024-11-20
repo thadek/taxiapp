@@ -21,6 +21,7 @@ import { useMemo } from 'react'
 import Stats from '../../components/Dashboard/Stats'
 
 import RidesToConfirm from './RidesToConfirm';
+import OngoingTrips from './OnGoingRides';
 
 // Simulated data
 const taxisOnline = [
@@ -133,64 +134,9 @@ const TaxiMap = ({ taxis }) => {
     </Card>
   )
   
-  // New TripsToConfirm Component
-  const TripsToConfirm = ({ trips, onConfirm, onCancel }) => (
-    <Card className="col-span-1">
-      <CardHeader>
-        <CardTitle>Viajes a Confirmar</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {trips.map(trip => (
-          <div key={trip.id} className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <div className="font-semibold">{trip.from} → {trip.to}</div>
-            <div className="text-sm text-gray-500">{trip.distance}</div>
-            <div className="text-sm text-gray-500">Pasajero: {trip.passenger}</div>
-            <div className="mt-2 flex justify-end space-x-2">
-              <Button variant="outline" size="sm" onClick={() => onConfirm(trip.id)}>
-                <Check className="mr-2 h-4 w-4" /> Confirmar
-              </Button>
-              <Button size="sm" variant="destructive" onClick={() => onCancel(trip.id)}>
-                <X className="mr-2 h-4 w-4" /> Cancelar
-              </Button>
-            </div>
-          </div>
-        ))}
-        {
-          trips.length === 0 && (
-            <div className="text-gray-500 flex text-center items-center justify-center w-full h-44">
-              No hay viajes pendientes por confirmar.
-            </div>
-          )
-        }
-      </CardContent>
-    </Card>
-  )
+ 
   
-  // New OngoingTrips Component
-  const OngoingTrips = ({ trips, onViewDetails }) => (
-    <Card className="col-span-2">
-      <CardHeader>
-        <CardTitle>Viajes en Curso</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {trips.map(trip => (
-            <div key={trip.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="font-semibold">{trip.from} → {trip.to}</div>
-              <div className="text-sm text-gray-500">{trip.distance}</div>
-              <div className="text-sm text-gray-500">Conductor: {trip.driver}</div>
-              <div className="text-sm font-medium mt-1">{trip.status}</div>
-              <div className="mt-2 flex justify-end">
-                <Button size="sm" variant="outline" onClick={() => onViewDetails(trip.id)}>
-                  <Eye className="mr-2 h-4 w-4" /> Ver Detalles
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  )
+
   
   // OnlineDrivers Component (unchanged)
   const OnlineDrivers = ({ drivers }) => (
@@ -257,10 +203,7 @@ export default function Dash({ }) {
         setTripsToConfirm(prevTrips => prevTrips.filter(trip => trip.id !== id))
     }
 
-    const handleViewTripDetails = (id) => {
-        // Here you would typically open a modal or navigate to a details page
-        console.log(`Viewing details for trip ${id}`)
-    }
+
 
 
 
@@ -276,20 +219,14 @@ export default function Dash({ }) {
             <div className="grid grid-cols-2 gap-6">
                 <TaxiMap taxis={taxisOnline} />
                 <PendingTrips trips={pendingTrips} onNewTrip={handleNewTrip} />
-                <TripsToConfirm
-                    trips={tripsToConfirm}
-                    onConfirm={handleConfirmTrip}
-                    onCancel={handleCancelTrip}
-                />
+                <RidesToConfirm />
                 <OngoingTrips
                     trips={ongoingTrips}
-                    onViewDetails={handleViewTripDetails}
+                   
                 />
                 <OnlineDrivers drivers={onlineDrivers} />
             </div>
-            <div className="col-span-2">
-              <RidesToConfirm />
-            </div>
+           
         </div>
     )
 }

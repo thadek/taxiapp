@@ -22,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.dialect.function.CaseLeastGreatestEmulation;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.taxiapp.api.utils.ValidationService;
@@ -110,7 +112,8 @@ public class RideServiceImpl implements IRideService {
      */
     @Transactional(readOnly = true)
     public Page<Ride> getRidesByStatus(RideStatus rideStatus, Pageable pageable) {
-        return rideRepository.findByStatus(rideStatus,pageable);
+        Pageable pageableReq = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),Sort.by("createdAt").descending());
+        return rideRepository.findByStatus(rideStatus,pageableReq);
 
     }
 
@@ -139,14 +142,14 @@ public class RideServiceImpl implements IRideService {
      * @return Ride
      */
     @Transactional
-    public Ride cancelRideFromClient(String rideId, Object principal) throws EntityNotFoundException {
+    public Ride cancelRideFromClient(String rideId, String userMail) throws EntityNotFoundException {
         Ride ride = rideRepository.findById(rideId).orElse(null);
         if (ride == null) {
            throw new EntityNotFoundException("Ride", "id", rideId);
         }
 
         //Obtener el usuario logueado
-        if(!Objects.equals(ride.getClient().getEmail(), principal.toString())) {
+        if(!Objects.equals(ride.getClient().getEmail(), userMail)) {
             throw new RideException("No tienes permiso para cancelar este viaje.");
         }
 
@@ -355,8 +358,8 @@ public class RideServiceImpl implements IRideService {
         User user = userRepository.findByEmail(principal.toString()).orElse(null);
 
         ride.setClient(user);
-        ride.setCreated_at(new Date());
-        ride.setUpdated_at(new Date());
+        ride.setCreatedAt(new Date());
+        ride.setUpdatedAt(new Date());
 
 
         ride.setComments(request.getComments());
@@ -373,6 +376,7 @@ public class RideServiceImpl implements IRideService {
         return RideUserResponse.builder()
                 .rideId(rideCreated.getId())
                 .status(rideCreated.getStatus())
+                .comments(rideCreated.getComments())
                 .pickup_location(rideCreated.getPickup_location())
                 .dropoff_location(rideCreated.getDropoff_location())
                 .is_booked(ride.getIs_booked())
@@ -415,8 +419,8 @@ public class RideServiceImpl implements IRideService {
 
         ride.setPrice(request.getPrice());
         ride.setClient(user);
-        ride.setCreated_at(new Date());
-        ride.setUpdated_at(new Date());
+        ride.setCreatedAt(new Date());
+        ride.setUpdatedAt(new Date());
         ride.setComments(request.getComments());
 
         Ride rideCreated = rideRepository.save(ride);

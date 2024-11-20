@@ -3,6 +3,7 @@ package com.taxiapp.api.controller.rest.vehicle;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleDTO;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleUpdateRequest;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleCreateRequest;
+import com.taxiapp.api.enums.VehicleStatus;
 import com.taxiapp.api.model.Vehicle;
 import com.taxiapp.api.service.impl.VehicleServiceImpl;
 import com.taxiapp.api.utils.ResultResponse;
@@ -98,6 +99,11 @@ public class VehicleController {
         return new ResponseEntity<>(modelMapper.map(vehicle, VehicleDTO.class), HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}/{status}")
+    public ResponseEntity<VehicleDTO> changeStatus(@PathVariable Integer id, @PathVariable VehicleStatus status) {
+        Vehicle vehicle = vehicleServiceImpl.updateStatusByOperator(id, status);
+        return new ResponseEntity<>(modelMapper.map(vehicle, VehicleDTO.class), HttpStatus.OK);
+    }
 
 
 }

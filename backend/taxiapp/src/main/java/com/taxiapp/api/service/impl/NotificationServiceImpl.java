@@ -1,4 +1,5 @@
 package com.taxiapp.api.service.impl;
+import com.taxiapp.api.enums.RideEvent;
 import com.taxiapp.api.enums.RideStatus;
 import com.taxiapp.api.events.ride.RideStatusChangeEvent;
 import com.taxiapp.api.model.Ride;
@@ -16,9 +17,9 @@ public class NotificationServiceImpl {
         this.messagingTemplate = messagingTemplate;
     }
 
-   /* public void sendRideStatusChangedNotification(Ride ride, RideStatus status) {
-        messagingTemplate.convertAndSend("/topic/rides", ride);
-    }*/
+    public void sendUserNotification(Ride ride, RideEvent event) {
+        messagingTemplate.convertAndSendToUser(ride.getClient().getEmail(),"/notification",event);
+    }
 
    /* public void notifyRideUpdate(RideStatusChangeEvent event) {
         messagingTemplate.convertAndSend("/topic/rides",new EventNotification(event.getRideId(), event.getMessage(), "RideStatusChangeEvent"));

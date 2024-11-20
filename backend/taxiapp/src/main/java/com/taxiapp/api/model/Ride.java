@@ -55,10 +55,10 @@ public class Ride {
     @OneToMany(mappedBy = "ride")
     private List<Report> reports;
 
-    @Column(nullable = false)
-    private Date created_at;
+    @Column(nullable = false, name="created_at")
+    private Date createdAt;
 
-    @Column(nullable = false)
-    private Date updated_at;
+    @Column(nullable = false, name="updated_at")
+    private Date updatedAt;
 
 }

@@ -15,24 +15,18 @@ interface MarkerProps {
     display_name: string;
 }
 
-function EvtClickMapa({ onClick }: { onClick: (latlng: L.LatLng) => void }) {
+/*function EvtClickMapa({ onClick }: { onClick: (latlng: L.LatLng) => void }) {
     useMapEvents({
         click(e) {
             onClick(e.latlng);
         }
     });
     return null;
-}
+}*/
 
 export default function RTLMapComponent() {
     const position = [-38.951155, -68.065541];
-    const { message } = useWebSocketSubscription('http://localhost:8080/api/v1/ws', '/topic/locations');
-
-    const {message:msj} = useWebSocketSubscription('http://localhost:8080/api/v1/ws', '/topic/rides');    
-    
-    useEffect(() => {
-    toast.info("TOPIC-RIDES: "+msj);
-    }, [msj]);
+    const { message } = useWebSocketSubscription('http://localhost:8080/api/v1/ws', '/topic/locations'); 
 
     const [carPosition, setCarPosition] = useState<[number, number]>([-38.951155, -68.065541]);
     const [previousPosition, setPreviousPosition] = useState<[number, number]>([-38.951155, -68.065541]);
@@ -69,7 +63,7 @@ export default function RTLMapComponent() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            <EvtClickMapa onClick={(coords) => console.log("Coordinates:", coords)} />
+           {/*<EvtClickMapa onClick={(coords) => console.log("Coordinates:", coords)} /> */}
             <Marker position={carPosition} icon={svgCar} />
         </MapContainer>
     );

@@ -2,7 +2,9 @@ package com.taxiapp.api.handler;
 
 
 import com.taxiapp.api.events.ride.RideStatusChangeEvent;
+import com.taxiapp.api.model.RideNotification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -11,6 +13,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class NotificationServiceHandler {
 
+    private final SimpMessagingTemplate messagingTemplate;
 
     /**
      * Events from user
@@ -24,25 +27,35 @@ public class NotificationServiceHandler {
             case CREATED_BY_USER -> {
                 //TODO: avisar al operador que el usuario ha creado un viaje
                 System.out.println("Ride created by user");
-                break;
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
             }
 
             case PROGRAMMED_BY_USER -> {
                 //TODO: avisar al operador que el usuario ha programado un viaje
                 System.out.println("Ride programmed by user");
-                break;
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
             }
 
             case CANCELLED_BY_USER -> {
                 //TODO: avisar al operador y al chofer(si corresponde) que el usuario ha cancelado un viaje
                 System.out.println("Ride cancelled by user");
-                break;
-            }
+                //Operador
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                //Chofer
+                if(event.getRide().getVehicle().getDriver() != null){
+                    messagingTemplate.convertAndSendToUser(event.getRide().getVehicle().getDriver().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
+                }
 
+            }
             case MODIFIED_BY_USER -> {
                 //TODO: avisar al operador y al chofer(si corresponde) que el usuario ha modificado un viaje
                 System.out.println("Ride modified by user");
-                break;
+                //Operador
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                //Chofer
+                if(event.getRide().getVehicle().getDriver() != null){
+                    messagingTemplate.convertAndSendToUser(event.getRide().getVehicle().getDriver().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
+                }
             }
 
         }
@@ -62,6 +75,7 @@ public class NotificationServiceHandler {
             case CREATED_BY_OPERATOR -> {
                 //TODO: avisar al usuario que el viaje ha sido creado
                 System.out.println("Ride created by operator");
+                messagingTemplate.convertAndSendToUser(event.getRide().getClient().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
             }
 
             case PROGRAMMED_BY_OPERATOR -> {
@@ -77,6 +91,10 @@ public class NotificationServiceHandler {
             case DRIVER_ASSIGNED_BY_OPERATOR -> {
                 //TODO: avisar al usuario y al chofer que se asigno un chofer al viaje
                 System.out.println("Driver assigned by operator");
+                //Avisar al usuario
+                messagingTemplate.convertAndSendToUser(event.getRide().getClient().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
+                //Avisar al chofer
+                messagingTemplate.convertAndSendToUser(event.getRide().getVehicle().getDriver().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
             }
 
             case INTERRUPTED_BY_OPERATOR -> {
@@ -87,6 +105,15 @@ public class NotificationServiceHandler {
             case CANCELED_BY_OPERATOR -> {
                 //TODO: avisar al usuario y chofer (si corresponde) que el viaje ha sido cancelado
                 System.out.println("Ride cancelled by operator");
+                //Usuario
+                messagingTemplate.convertAndSendToUser(event.getRide().getClient().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
+
+                //Chofer
+                if(event.getRide().getVehicle() != null){
+
+                    messagingTemplate.convertAndSendToUser(event.getRide().getVehicle().getDriver().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
+                }
+
             }
 
         }
