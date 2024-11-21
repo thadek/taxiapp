@@ -1,17 +1,14 @@
-package com.taxiapp.api.model;
+package com.taxiapp.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 
 import java.sql.Timestamp;

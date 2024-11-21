@@ -1,11 +1,9 @@
 package com.taxiapp.api.events.ride;
 
 import com.taxiapp.api.enums.RideEvent;
-import com.taxiapp.api.enums.RideStatus;
-import com.taxiapp.api.model.Ride;
+import com.taxiapp.api.entity.Ride;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.stereotype.Component;
 
 @Getter
 public class RideStatusChangeEvent extends ApplicationEvent {

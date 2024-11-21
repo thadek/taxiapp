@@ -1,7 +1,5 @@
 package com.taxiapp.api.controller.rest.ride;
 
-import com.taxiapp.api.model.User;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

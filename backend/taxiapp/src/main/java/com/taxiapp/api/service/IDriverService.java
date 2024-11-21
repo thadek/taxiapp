@@ -1,9 +1,7 @@
 package com.taxiapp.api.service;
 
-import com.taxiapp.api.controller.rest.driver.dto.DriverCreateRequest;
 import com.taxiapp.api.controller.rest.driver.dto.DriverUpdateRequest;
-import com.taxiapp.api.model.Driver;
-import com.taxiapp.api.model.User;
+import com.taxiapp.api.entity.Driver;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;

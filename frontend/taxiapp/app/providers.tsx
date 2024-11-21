@@ -23,7 +23,7 @@ function makeQueryClient() {
   })
 }
 
-let browserQueryClient: QueryClient | undefined = undefined
+const browserQueryClient: QueryClient | undefined = undefined
 
 
 

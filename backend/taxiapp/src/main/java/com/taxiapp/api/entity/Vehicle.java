@@ -1,4 +1,4 @@
-package com.taxiapp.api.model;
+package com.taxiapp.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.taxiapp.api.enums.VehicleStatus;
@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import java.util.Date;
 import java.util.List;

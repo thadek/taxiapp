@@ -1,8 +1,8 @@
 package com.taxiapp.api.repository;
 
 import com.taxiapp.api.enums.RideStatus;
-import com.taxiapp.api.model.Ride;
-import com.taxiapp.api.model.User;
+import com.taxiapp.api.entity.Ride;
+import com.taxiapp.api.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

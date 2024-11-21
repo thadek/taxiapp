@@ -4,14 +4,14 @@ import { Eye } from 'lucide-react';
 import Link from 'next/link';
 
 // New OngoingTrips Component
-const OngoingTrips = ({ trips }) => (
+const OngoingTrips = ({ trips }:{trips:any}) => (
     <Card className="col-span-2">
         <CardHeader>
             <CardTitle>Viajes en Curso</CardTitle>
         </CardHeader>
         <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {trips.map(trip => (
+                {trips.map((trip:any) => (
                     <div key={trip.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <div className="font-semibold">{trip.from} → {trip.to}</div>
                         <div className="text-sm text-gray-500">{trip.distance}</div>

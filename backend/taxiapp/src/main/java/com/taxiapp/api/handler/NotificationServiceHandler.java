@@ -2,7 +2,7 @@ package com.taxiapp.api.handler;
 
 
 import com.taxiapp.api.events.ride.RideStatusChangeEvent;
-import com.taxiapp.api.model.RideNotification;
+import com.taxiapp.api.entity.RideNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;

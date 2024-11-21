@@ -56,7 +56,7 @@ const onlineDrivers = [
   
   // TaxiMap Component (unchanged)
 // TaxiMap Component (unchanged)
-const TaxiMap = ({ taxis }) => {
+const TaxiMap = ({}) => {
 
     const Map = useMemo(() => dynamic(() => import("@/components/MapWithSearch/page"), { ssr: false }), []);
   
@@ -66,11 +66,11 @@ const TaxiMap = ({ taxis }) => {
   }
   
   // New Trip Dialog Component
-  const NewTripDialog = ({ onNewTrip }) => {
+  const NewTripDialog = ({ onNewTrip }:{onNewTrip:any}) => {
     const [from, setFrom] = useState('')
     const [to, setTo] = useState('')
   
-    const handleSubmit = (e) => {
+    const handleSubmit = (e:any) => {
       e.preventDefault()
       onNewTrip({ from, to, distance: `${(Math.random() * 10).toFixed(1)} miles` })
       setFrom('')
@@ -108,7 +108,7 @@ const TaxiMap = ({ taxis }) => {
   }
   
   // Updated PendingTrips Component
-  const PendingTrips = ({ trips, onNewTrip }) => (
+  const PendingTrips = ({ trips, onNewTrip }:{trips:any,onNewTrip:any}) => (
     <Card className="col-span-1 overflow-x-auto">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Viajes pendientes</CardTitle>
@@ -116,7 +116,7 @@ const TaxiMap = ({ taxis }) => {
       </CardHeader>
       <CardContent>
         <AnimatePresence>
-          {trips.map(trip => (
+          {trips.map((trip:any) => (
             <motion.div
               key={trip.id}
               initial={{ opacity: 0, y: -20 }}
@@ -139,18 +139,18 @@ const TaxiMap = ({ taxis }) => {
 
   
   // OnlineDrivers Component (unchanged)
-  const OnlineDrivers = ({ drivers }) => (
+  const OnlineDrivers = ({ drivers }:{drivers:any}) => (
     <Card className="col-span-2">
       <CardHeader>
         <CardTitle>Conductores en línea</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {drivers.map(driver => (
+          {drivers.map((driver:any) => (
             <div key={driver.id} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <Avatar>
                 <AvatarImage src={`https://i.pravatar.cc/150?u=${driver.id}`} />
-                <AvatarFallback>{driver.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                <AvatarFallback>{driver.name.split(' ').map((n:any) => n[0]).join('')}</AvatarFallback>
               </Avatar>
               <div>
                 <div className="font-semibold">{driver.name}</div>
@@ -189,17 +189,17 @@ export default function Dash({ }) {
         return () => clearInterval(interval)
     }, []) */
 
-    const handleNewTrip = (trip) => {
+    const handleNewTrip = (trip:any) => {
         setPendingTrips(prevTrips => [{ id: Date.now(), ...trip }, ...prevTrips])
     }
 
-    const handleConfirmTrip = (id) => {
+    const handleConfirmTrip = (id:any) => {
         setTripsToConfirm(prevTrips => prevTrips.filter(trip => trip.id !== id))
         // Here you would typically assign a driver and move the trip to ongoing trips
         setOngoingTrips(prevTrips => [{ id, from: 'Confirmed Trip', to: 'Destination', distance: '5 miles', driver: 'Assigned Driver', status: 'En ruta' }, ...prevTrips])
     }
 
-    const handleCancelTrip = (id) => {
+    const handleCancelTrip = (id:any) => {
         setTripsToConfirm(prevTrips => prevTrips.filter(trip => trip.id !== id))
     }
 
@@ -217,9 +217,9 @@ export default function Dash({ }) {
                 driversCount={onlineDrivers.length}
             />
             <div className="grid grid-cols-2 gap-6">
-                <TaxiMap taxis={taxisOnline} />
+                <TaxiMap  />
                 <PendingTrips trips={pendingTrips} onNewTrip={handleNewTrip} />
-                <RidesToConfirm />
+                <RidesToConfirm reload={null} />
                 <OngoingTrips
                     trips={ongoingTrips}
                    

@@ -31,10 +31,10 @@ export default function AsyncSearchDirectionBox({ text, onSelectionChange }: { t
 
   const nominatimUrl = process.env.NEXT_PUBLIC_NOMINATIM_URL;
 
-  let list = useAsyncList<LocationResult>({
+  const list = useAsyncList<LocationResult>({
     async load({ signal, filterText }) {
-      let res = await fetch(`${nominatimUrl}/search?q=${filterText}`, { signal });
-      let json = await res.json();
+      const res = await fetch(`${nominatimUrl}/search?q=${filterText}`, { signal });
+      const json = await res.json();
       return {
         items: json,
 

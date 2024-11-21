@@ -1,10 +1,7 @@
 package com.taxiapp.api.controller.rest.user.dto;
 
-import com.taxiapp.api.model.Role;
-import lombok.AllArgsConstructor;
+import com.taxiapp.api.entity.Role;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.Set;

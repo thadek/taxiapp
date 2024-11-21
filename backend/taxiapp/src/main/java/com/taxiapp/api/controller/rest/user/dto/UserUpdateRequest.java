@@ -1,12 +1,10 @@
 package com.taxiapp.api.controller.rest.user.dto;
 
-import com.taxiapp.api.model.Role;
-import jakarta.validation.constraints.NotNull;
+import com.taxiapp.api.entity.Role;
 import lombok.Builder;
 
 import java.sql.Timestamp;
 import java.util.Set;
-import java.util.UUID;
 
 @Builder
 public record UserUpdateRequest(

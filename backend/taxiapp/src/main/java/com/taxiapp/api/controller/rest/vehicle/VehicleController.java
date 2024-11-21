@@ -4,7 +4,7 @@ import com.taxiapp.api.controller.rest.vehicle.dto.VehicleDTO;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleUpdateRequest;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleCreateRequest;
 import com.taxiapp.api.enums.VehicleStatus;
-import com.taxiapp.api.model.Vehicle;
+import com.taxiapp.api.entity.Vehicle;
 import com.taxiapp.api.service.impl.VehicleServiceImpl;
 import com.taxiapp.api.utils.ResultResponse;
 import jakarta.validation.Valid;

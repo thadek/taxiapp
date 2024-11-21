@@ -1,8 +1,6 @@
 package com.taxiapp.api.service.impl;
 import com.taxiapp.api.enums.RideEvent;
-import com.taxiapp.api.enums.RideStatus;
-import com.taxiapp.api.events.ride.RideStatusChangeEvent;
-import com.taxiapp.api.model.Ride;
+import com.taxiapp.api.entity.Ride;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

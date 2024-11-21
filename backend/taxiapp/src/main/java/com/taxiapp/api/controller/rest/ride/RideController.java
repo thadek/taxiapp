@@ -1,9 +1,8 @@
 package com.taxiapp.api.controller.rest.ride;
 
-import com.taxiapp.api.controller.rest.driver.dto.DriverDTO;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleDTO;
 import com.taxiapp.api.enums.RideStatus;
-import com.taxiapp.api.model.Ride;
+import com.taxiapp.api.entity.Ride;
 import com.taxiapp.api.service.impl.RideServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

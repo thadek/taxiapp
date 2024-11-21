@@ -1,6 +1,6 @@
 package com.taxiapp.api.repository;
 
-import com.taxiapp.api.model.Driver;
+import com.taxiapp.api.entity.Driver;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

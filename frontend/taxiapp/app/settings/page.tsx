@@ -11,7 +11,7 @@ import { getQueryClient } from '../get-query-client'
 import { getSettings } from '@/app/queries/settings'
 
 
-export default function PostsRoute({ dehydratedState }: { dehydratedState: unknown }) {
+export default function PostsRoute({}) {
 
     const queryClient = getQueryClient()
 

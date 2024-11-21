@@ -3,7 +3,7 @@ package com.taxiapp.api.service;
 
 import com.taxiapp.api.controller.rest.user.dto.UserCreateRequest;
 import com.taxiapp.api.controller.rest.user.dto.UserUpdateRequest;
-import com.taxiapp.api.model.User;
+import com.taxiapp.api.entity.User;
 import com.taxiapp.api.utils.ResultResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,8 +1,7 @@
-package com.taxiapp.api.model;
+package com.taxiapp.api.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
