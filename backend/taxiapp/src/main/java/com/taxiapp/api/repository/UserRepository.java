@@ -37,4 +37,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID>, 
     void restoreById(UUID id);
 
     Optional<User> findByPhone(String phone);
+
+
+    @Query("SELECT u FROM User u WHERE " +
+            "LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(u.lastname) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "u.phone LIKE CONCAT('%', :query, '%')")
+    Page<User> searchUsers(@Param("query") String query,Pageable pageable);
+
 }

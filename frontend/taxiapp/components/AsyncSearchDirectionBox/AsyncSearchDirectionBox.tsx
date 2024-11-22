@@ -19,12 +19,6 @@ type FieldState = {
 
 
 
-function generateRandomLetters() {
-  const letters = "abcdefghijklmnopqrstuvwxyz";
-  const firstLetter = letters[Math.floor(Math.random() * letters.length)];
-  const secondLetter = letters[Math.floor(Math.random() * letters.length)];
-  return firstLetter + secondLetter;
-}
 
 export default function AsyncSearchDirectionBox({ text, onSelectionChange }: { text: string, onSelectionChange: (key: React.Key | null) => void }) {
 
@@ -51,7 +45,7 @@ export default function AsyncSearchDirectionBox({ text, onSelectionChange }: { t
       isLoading={list.isLoading}
       items={list.items}
       label={text}
-      placeholder="Escribí para buscar..."
+      placeholder="Buscar por dirección..."
       variant="underlined"
       onSelectionChange={onSelectionChange}
       onInputChange={list.setFilterText}

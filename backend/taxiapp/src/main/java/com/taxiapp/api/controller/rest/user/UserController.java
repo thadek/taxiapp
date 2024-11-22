@@ -116,4 +116,20 @@ public class UserController {
         ResultResponse result = userServiceImpl.restore(id);
         return ResponseEntity.status(result.status()).body(result);
     }
+
+
+
+    /**
+     * Search users
+     * @param q String
+     * @param pageable Pageable
+     * @return PagedModel<UserDTO>
+     */
+    @GetMapping("/search")
+    public PagedModel<UserDTO> searchUsers(@RequestParam String q, @PageableDefault() Pageable pageable) {
+        return new PagedModel<>(userServiceImpl.searchUsers(q,pageable).map(UserMapper::toUserDTO));
+    }
+
+
+
 }

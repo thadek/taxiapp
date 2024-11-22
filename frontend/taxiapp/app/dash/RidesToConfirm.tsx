@@ -1,62 +1,26 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { getSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, Check } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query';
 import { Spinner } from '@nextui-org/react';
+import TaxiAppSkeleton from '@/components/taxiapp-skeleton';
+import { Ride } from '@/types/ride.type';
+import { loadPlace } from '@/app/utils/loadPlace';
+import { toast } from "sonner";
+import { AnimatePresence, motion } from 'framer-motion';
 
 
 
 
 
-interface Ride {
-  id: string;
-  comments?: string;
-  created_at: string;
-  dropoff_location: string;
-  is_booked: boolean;
-  pickup_location: string;
-  price?: number;
-  rating?: number;
-  ride_end?: string;
-  ride_start?: string;
-  status: number;
-  updated_at: string;
-  vehicle: null
-  client: User
-  originName: string
-  destinationName: string
-}
-
-
-type User = {
-  id: string
-  name: string
-  lastname: string
-  username: string
-  email: string
-  phone: string
-  is_disabled: boolean
-  deleted: boolean
-
-}
 
 
 
-const RidesToConfirm = ({reload}:{reload:any}) => {
+const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
 
 
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
@@ -86,11 +50,33 @@ const RidesToConfirm = ({reload}:{reload:any}) => {
 
 
 
-  const { isPending, isSuccess, isError, data:rides, error } = useQuery({
-    queryKey: ['ridesToConfirm',reload],
+  
+
+
+  const { isPending, isSuccess, isError, data: rides, error, refetch } = useQuery({
+    queryKey: ['ridesToConfirm'],
     queryFn: fetchRidesAndPlaces
   })
 
+
+  useEffect(() => {
+    if (!webSocketMsg) return;
+
+    const handleWebSocketMessage = (message: any) => {
+
+        
+        if (message?.eventType === "CREATED_BY_USER" || message?.eventType === "UPDATED_BY_USER" || message?.eventType === "CANCELLED_BY_USER") {    
+            toast.promise(refetch(), {
+                loading: 'Actualizando...',
+                success: 'Actualizado',
+                error: 'Error al actualizar',
+            });       
+            
+        }
+    };
+
+    handleWebSocketMessage(webSocketMsg);
+}, [webSocketMsg, refetch]);
 
 
   const handleCancel = (ride: Ride) => {
@@ -98,17 +84,7 @@ const RidesToConfirm = ({reload}:{reload:any}) => {
   };
 
 
-  const loadPlace = async (coords: string) => {
-    const [lat, lon] = coords.split(',');
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_NOMINATIM_URL}/reverse?lat=${lat}&lon=${lon}&format=json`);
-      const data = await response.json();
-      return data.address ? `${data.address.road} ${data.address.house_number}, ${data.address.city} (Estimado)` : 'Ubicación no geo-referenciada';
-    } catch (error) {
-      console.error('Error fetching place name:', error);
-      return 'Error obteniendo dirección';
-    }
-  };
+ 
 
 
   const confirmCancel = async () => {
@@ -131,7 +107,7 @@ const RidesToConfirm = ({reload}:{reload:any}) => {
           body: JSON.stringify({ status: 'CANCELLED' }),
         });
         const updatedRide = await response.json();
-        setRides(rides.filter(ride => ride.id !== selectedRide.id));
+    
         setSelectedRide(null);
       } catch (error) {
         console.error('Error updating ride status:', error);
@@ -143,18 +119,27 @@ const RidesToConfirm = ({reload}:{reload:any}) => {
 
 
   return (
-    
+
     <Card className="col-span-1">
       <CardHeader>
         <CardTitle>Viajes pendientes a confirmar</CardTitle>
       </CardHeader>
       <CardContent>
+        <AnimatePresence>
         {isPending && (
           <div className="text-gray-500 flex text-center items-center justify-center w-full h-44">
-           <Spinner />
+            <TaxiAppSkeleton />
           </div>
-        )}	
+        )}
         {isSuccess && rides && rides.map(trip => (
+           <motion.div
+           key={trip.id}
+           initial={{ opacity: 0, y: -20 }}
+           animate={{ opacity: 1, y: 0 }}
+           exit={{ opacity: 0, y: 20 }}
+           transition={{ duration: 0.3 }}
+           
+         >
           <div key={trip.id} className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div className="font-semibold">{trip.originName} → {trip.destinationName}</div>
 
@@ -170,14 +155,16 @@ const RidesToConfirm = ({reload}:{reload:any}) => {
               </Button>
             </div>
           </div>
+          </motion.div>
         ))}
         {
-         isSuccess && rides &&  rides.length === 0 && (
+          isSuccess && rides && rides.length === 0 && (
             <div className="text-gray-500 flex text-center items-center justify-center w-full h-44">
               No hay viajes pendientes por confirmar.
             </div>
           )
         }
+        </AnimatePresence>
       </CardContent>
     </Card>
   );

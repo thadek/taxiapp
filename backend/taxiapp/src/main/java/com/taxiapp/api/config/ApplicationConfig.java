@@ -1,6 +1,10 @@
 package com.taxiapp.api.config;
 
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.taxiapp.api.config.security.JwtAuthenticationFilter;
 import com.taxiapp.api.config.security.JwtAuthenticationProvider;
 import com.taxiapp.api.config.security.websocket.AuthChannelInterceptor;
@@ -11,11 +15,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
 @Configuration
 public class ApplicationConfig {
 
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
+
+
 
     /**
      * Bean Password encoder para inyección
@@ -43,5 +51,8 @@ public class ApplicationConfig {
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
+
+
+
 
 }

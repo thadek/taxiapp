@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,6 +48,20 @@ public class RideController {
     ) {
         return new PagedModel<>(rideService.getRidesByStatus(status, pageable));
     }
+
+
+    /**
+     * Obtener los viajes por multiples estados
+     */
+    @GetMapping("/by-status")
+    @PreAuthorize("hasAnyRole('ADMIN','OPERATOR')")
+    public PagedModel<Ride> getRidesByStatus(
+            @RequestParam @Valid RideStatus[] states,
+            @PageableDefault() Pageable pageable
+    ) {
+        return new PagedModel<>(rideService.getRidesByMultipleStatuses(List.of(states), pageable));
+    }
+
 
     /**
      * Iniciar un viaje asignado a un conductor. SOLO el conductor asignado puede iniciar sus viajes

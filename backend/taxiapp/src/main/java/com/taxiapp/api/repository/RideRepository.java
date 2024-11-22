@@ -29,6 +29,8 @@ public interface RideRepository extends JpaRepository<Ride, String>, PagingAndSo
 
     Page<Ride> findByClientAndStatusIn(User user, List<RideStatus> rideStatuses, Pageable pageable);
 
+    Page<Ride> findByStatusIn(List<RideStatus> rideStatuses, Pageable pageable);
+
     Optional<Ride> findFirstByVehicleDriverEmailAndStatusIn(String email, List<RideStatus> statuses);
 
     @Query(value = """

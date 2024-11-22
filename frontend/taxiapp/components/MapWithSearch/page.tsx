@@ -45,12 +45,12 @@ const MapWithSearch: React.FC = () => {
   };
 
   return (
-    <Card className="w-full">
+    <Card className="col-span-2">
       <CardHeader>
         <CardTitle className="flex gap-3"><Map/>Mapa en vivo</CardTitle>
-        <Separator className="my-4" />
+        <Separator className=" " />
       </CardHeader>
-      <CardContent className="h-96">
+      <CardContent className="h-[33vh]">
        {/**<MapComponent/> */} 
        <RTLMapComponent />
       </CardContent>

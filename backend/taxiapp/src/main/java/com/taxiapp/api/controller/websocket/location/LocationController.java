@@ -1,6 +1,6 @@
 package com.taxiapp.api.controller.websocket.location;
 
-import com.taxiapp.api.entity.Location;
+import com.taxiapp.api.model.Location;
 import com.taxiapp.api.service.impl.LocationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;

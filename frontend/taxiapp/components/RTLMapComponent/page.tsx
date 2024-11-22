@@ -26,7 +26,7 @@ interface MarkerProps {
 
 export default function RTLMapComponent() {
     const position = [-38.951155, -68.065541];
-    const { message } = useWebSocketSubscription('http://localhost:8080/api/v1/ws', '/topic/locations'); 
+    const { message } = useWebSocketSubscription(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ws`, '/topic/locations'); 
 
     const [carPosition, setCarPosition] = useState<[number, number]>([-38.951155, -68.065541]);
     const [previousPosition, setPreviousPosition] = useState<[number, number]>([-38.951155, -68.065541]);

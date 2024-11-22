@@ -3,7 +3,7 @@ package com.taxiapp.api.service.impl;
 
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleDTO;
 import com.taxiapp.api.controller.websocket.location.LocationDTO;
-import com.taxiapp.api.entity.Location;
+import com.taxiapp.api.model.Location;
 import com.taxiapp.api.entity.Vehicle;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

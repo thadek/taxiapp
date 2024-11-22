@@ -115,6 +115,14 @@ public class RideServiceImpl implements IRideService {
     }
 
 
+    /**
+     * Obtener los viajes por multiples estados
+     */
+    @Transactional(readOnly = true)
+    public Page<Ride> getRidesByMultipleStatuses(List<RideStatus> rideStatuses, Pageable pageable) {
+        Pageable pageableReq = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),Sort.by("createdAt").descending());
+        return rideRepository.findByStatusIn(rideStatuses,pageableReq);
+    }
 
 
     /**

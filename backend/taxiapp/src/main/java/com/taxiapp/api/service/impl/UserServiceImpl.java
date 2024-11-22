@@ -290,4 +290,17 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     }
 
 
+    /**
+     * Search users
+     * @param query
+     * @param pageable
+     * @return
+     */
+    public Page<User> searchUsers(String query,Pageable pageable){
+        return userRepository.searchUsers(query,pageable);
+    }
+
+
+
+
 }
