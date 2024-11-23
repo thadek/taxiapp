@@ -45,4 +45,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID>, 
             "u.phone LIKE CONCAT('%', :query, '%')")
     Page<User> searchUsers(@Param("query") String query,Pageable pageable);
 
+
+    Optional<User> findByFcmToken(@Param("fcmToken") String fcmToken);
+
 }

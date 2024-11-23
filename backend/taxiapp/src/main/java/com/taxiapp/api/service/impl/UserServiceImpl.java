@@ -301,6 +301,20 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     }
 
 
-
+    /**
+     * Update FCM token
+     * @param email
+     * @param fcmToken
+     */
+    public void updateFcmToken(String email, String fcmToken) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setFcmToken(fcmToken);
+            userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("User", "email", email);
+        }
+    }
 
 }
