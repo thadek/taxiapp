@@ -54,7 +54,12 @@ public class NotificationServiceHandler {
         switch(event.getEventType()){
             case CREATED_BY_OPERATOR -> {
                 logger.info("Ride created by operator");
+
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                
+
                 sendNotification(event.getRide().getClient().getEmail(), "Ride Created", "A new ride has been created.");
+
             }
             case PROGRAMMED_BY_OPERATOR -> {
                 logger.info("Ride programmed by operator");
@@ -69,8 +74,10 @@ public class NotificationServiceHandler {
             }
             case DRIVER_ASSIGNED_BY_OPERATOR -> {
                 logger.info("Driver assigned by operator");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));           
                 sendNotification(event.getRide().getClient().getEmail(), "Driver Assigned", "A driver has been assigned to your ride.");
                 sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Driver Assigned", "You have been assigned to a ride.");
+
             }
             case INTERRUPTED_BY_OPERATOR -> {
                 logger.info("Ride interrupted by operator");
@@ -80,10 +87,14 @@ public class NotificationServiceHandler {
                 }
             }
             case CANCELED_BY_OPERATOR -> {
+
+                //TODO: avisar al usuario y chofer (si corresponde) que el viaje ha sido cancelado
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
                 logger.info("Ride cancelled by operator");
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
+                 sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
                 if(event.getRide().getVehicle().getDriver() != null){
                     sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Cancelled", "A ride has been cancelled.");
+
                 }
             }
         }

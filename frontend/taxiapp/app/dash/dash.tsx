@@ -10,7 +10,7 @@ import useWebSocketSubscription from '@/hooks/useSocket'
 
 
 const TaxiMap = ({ }) => {
-  const Map = useMemo(() => dynamic(() => import("@/components/MapWithSearch/page"), { ssr: false }), []);
+  const Map =  dynamic(() => import("@/components/MapWithSearch/page"), { ssr: false });
   return (
     <Map />
   )
@@ -21,7 +21,7 @@ export default function Dash({ }) {
   const { message } = useWebSocketSubscription(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ws`, '/topic/rides'); 
 
   return (
-    <div className="flex-1 p-8 overflow-auto">
+    <div className="flex-1 p-8 overflow-auto bg-slate-900">
       <Stats
         tripsCount={3}
         driversCount={1}

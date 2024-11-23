@@ -1,4 +1,5 @@
 import { User } from "./user.type"
+import { Driver } from "./driver.type"
 
 export type Vehicle = {
     id: string
@@ -8,7 +9,7 @@ export type Vehicle = {
     status: string
     details: string
     color: string
-    driver: User | null
+    driver: Driver
     license_plate: string
     isDisabled: boolean
     deleted: boolean

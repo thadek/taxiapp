@@ -15,12 +15,14 @@ export default function Dorime() {
     
 
     return (
-
-        <div>
-      <h1>MESSAGE TOPIC RIDES</h1>
-      <pre>
-        <code>{JSON.stringify(message, null, 2)}</code>
-      </pre>
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+      {/* Tarjeta con borde brillante */}
+      <div className="relative rounded-lg p-[3px] bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 animate-glowingBorder bg-[length:200%_200%]">
+        {/* Contenido de la tarjeta */}
+        <div className="rounded-lg bg-gray-800 p-6 text-white">
+          asad
+        </div>
+      </div>
     </div>
         
     )
