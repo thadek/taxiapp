@@ -1,3 +1,4 @@
+'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Car, Clock, Users } from 'lucide-react';
 import { Skeleton } from '@nextui-org/react';

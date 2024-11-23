@@ -16,6 +16,7 @@ export type Ride = {
     updated_at: string;
     vehicle: Vehicle |null
     client: User
+    createdAt: string
     originName: string
     destinationName: string
   }

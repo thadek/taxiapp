@@ -111,7 +111,6 @@ public class RideServiceImpl implements IRideService {
     public Page<Ride> getRidesByStatus(RideStatus rideStatus, Pageable pageable) {
         Pageable pageableReq = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),Sort.by("createdAt").descending());
         return rideRepository.findByStatus(rideStatus,pageableReq);
-
     }
 
 

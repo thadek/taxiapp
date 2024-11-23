@@ -1,4 +1,5 @@
-import Home from "./home";
+
+import dynamic from "next/dynamic";
 
 export const generateMetadata = () => {
   return {
@@ -7,6 +8,7 @@ export const generateMetadata = () => {
 }
 
 export default function IndexPage() {
+  const Home = dynamic(() => import('./home'), { ssr: false });
   return (
     <Home />
   );

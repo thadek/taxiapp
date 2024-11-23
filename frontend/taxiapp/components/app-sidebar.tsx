@@ -113,7 +113,6 @@ export  function AppSidebar() {
 
   const { data: session, status } = useSession();
 
-  
 
   const isOperatorOrAdmin = session && checkMultipleRoles(["ROLE_ADMIN","ROLE_OPERATOR"], session.user.roles);
 
@@ -148,20 +147,20 @@ export  function AppSidebar() {
                 <SidebarMenuItem>
                   <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="abm">
-                      <AccordionTrigger>ABM</AccordionTrigger>
+                      <AccordionTrigger>Gestionar</AccordionTrigger>
                         <AccordionContent>
                         <div className="flex flex-col">
                           <Link className="m-1" href="/abm/abmUser">
-                          <span className="sidebar-subitem">ABM Usuario</span>
+                          <span className="sidebar-subitem">Gestionar Usuarios</span>
                           </Link>
                           <Link className="m-1" href="/abm/abmDriver">
-                          <span className="sidebar-subitem">ABM Driver</span>
+                          <span className="sidebar-subitem">Gestionar Conductores</span>
                           </Link>
                           <Link className="m-1" href="/abm/abmVehicle">
-                          <span className="sidebar-subitem">ABM Vehicle</span>
+                          <span className="sidebar-subitem">Gestionar Autos</span>
                           </Link>
                           <Link className="m-1" href="/abm/abmRole">
-                          <span className="sidebar-subitem">ABM Role</span>
+                          <span className="sidebar-subitem">Gestionar Roles</span>
                           </Link>
                         </div>
                         </AccordionContent>

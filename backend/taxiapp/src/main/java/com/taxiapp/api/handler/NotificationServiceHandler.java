@@ -79,6 +79,7 @@ public class NotificationServiceHandler {
             case CREATED_BY_OPERATOR -> {
                 //TODO: avisar al usuario que el viaje ha sido creado
                 logger.info("Ride created by operator");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
                 messagingTemplate.convertAndSendToUser(event.getRide().getClient().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
             }
 
@@ -95,6 +96,7 @@ public class NotificationServiceHandler {
             case DRIVER_ASSIGNED_BY_OPERATOR -> {
                 //TODO: avisar al usuario y al chofer que se asigno un chofer al viaje
                 logger.info("Driver assigned by operator");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
                 //Avisar al usuario
                 messagingTemplate.convertAndSendToUser(event.getRide().getClient().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
                 //Avisar al chofer
@@ -108,7 +110,9 @@ public class NotificationServiceHandler {
 
             case CANCELED_BY_OPERATOR -> {
                 //TODO: avisar al usuario y chofer (si corresponde) que el viaje ha sido cancelado
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
                 logger.info("Ride cancelled by operator");
+
                 //Usuario
                 messagingTemplate.convertAndSendToUser(event.getRide().getClient().getEmail(),"/notification",new RideNotification(event.getEventType(),event.getRide()));
 

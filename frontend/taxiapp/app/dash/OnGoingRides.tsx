@@ -1,17 +1,17 @@
+'use client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
 import { Ride } from '@/types/ride.type';
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getSession } from 'next-auth/react';
-import TaxiAppSkeleton from '@/components/taxiapp-skeleton';
 import { loadPlace } from '@/app/utils/loadPlace';
 import { Chip } from '@nextui-org/react';
 import { useEffect } from 'react';
 import { toast } from "sonner";
 import { AnimatePresence, motion } from 'framer-motion';
+import { Spinner } from '@nextui-org/react';
 
 const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
 
@@ -66,11 +66,16 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
         const handleWebSocketMessage = (message: any) => {
 
 
-            if (message?.eventType === "ACCEPTED_BY_DRIVER" || message?.eventType === "STARTED_BY_DRIVER" || message?.eventType === "COMPLETED_BY_DRIVER" || message?.eventType === "INTERRUPTED_BY_DRIVER") {
+            if (message?.eventType === "ACCEPTED_BY_DRIVER" || 
+                message?.eventType === "STARTED_BY_DRIVER" || 
+                message?.eventType === "COMPLETED_BY_DRIVER" || 
+                message?.eventType === "INTERRUPTED_BY_DRIVER" ||
+                message?.eventType === "CANCELLED_BY_DRIVER"
+            ) {
                 toast.promise(refetch(), {
                     loading: 'Hay cambios en los viajes en curso...',
-                    success: 'Actualizado',
                     error: 'Error al actualizar',
+                    
                 });
 
             }
@@ -84,7 +89,7 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
 
         <Card className="col-span-2">
             <CardHeader>
-                <CardTitle>Viajes en Curso</CardTitle>
+                <CardTitle>Viajes activos</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -92,7 +97,7 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
 
                         {isPending && (
                             <div className="text-gray-500 flex text-center items-center justify-center w-full h-44">
-                                <TaxiAppSkeleton />
+                                <Spinner />
                             </div>
                         )}
                         {isSuccess && rides && rides.map((ride: Ride) => (
