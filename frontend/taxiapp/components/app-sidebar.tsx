@@ -101,11 +101,6 @@ const items = [
     url: "/rides",
     icon: Car,
   },
-  {
-    title: "Configuración",
-    url: "/settings",
-    icon: Settings,
-  },
 ]
 
 export  function AppSidebar() {
@@ -196,19 +191,6 @@ export  function AppSidebar() {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-
-
-{/*
-TODO: Hice una prueba para ver si implementar calcular el estimado en un dialog quedaba bien
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Are you absolutely sure?</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your account
-                and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent> */}
 
 
           <ModeToggle />

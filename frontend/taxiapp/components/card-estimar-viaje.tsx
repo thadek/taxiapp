@@ -35,14 +35,14 @@ type MapBoxResponse = {
 
 export default function EstimarViajeCard() {
 
-  //const Map = dynamic(() => import("@/app/components/MapWithRoute/MapWithRoute"), { ssr: false });
+  const Map = dynamic(() => import("@/components/MapWithRoute/MapWithRoute"), { ssr: false });
 
   const [origen, setOrigen] = useState<MapBoxResponse>();
   const [destino, setDestino] = useState<MapBoxResponse>();
 
   const [selected, setSelected] = useState<string>("Nocturno");
   const [mostrarMapa, setMostrarMapa] = useState<boolean>(false);
-  // const [costo, setCosto] = useState<number>(0);
+
 
 
 
@@ -162,7 +162,7 @@ export default function EstimarViajeCard() {
 
       {mostrarMapa &&
         <>
-          <MapWithRoute turno={handleCostoSegunHorario()} start={origen?.geometry.coordinates} end={destino?.geometry.coordinates} />
+          <Map turno={handleCostoSegunHorario()} start={origen?.geometry.coordinates} end={destino?.geometry.coordinates} />
         </>}
     </CardFooter>
 
