@@ -3,7 +3,7 @@ package com.taxiapp.api.service.impl;
 import com.taxiapp.api.controller.rest.role.RoleCreateRequest;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
-import com.taxiapp.api.model.Role;
+import com.taxiapp.api.entity.Role;
 import com.taxiapp.api.repository.RoleRepository;
 import com.taxiapp.api.service.IRoleService;
 import lombok.AllArgsConstructor;

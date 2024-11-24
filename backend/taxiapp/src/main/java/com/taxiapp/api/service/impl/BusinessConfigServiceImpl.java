@@ -1,6 +1,6 @@
 package com.taxiapp.api.service.impl;
 
-import com.taxiapp.api.model.BusinessConfig;
+import com.taxiapp.api.entity.BusinessConfig;
 import com.taxiapp.api.repository.BusinessConfigRepository;
 import com.taxiapp.api.service.IBusinessConfigService;
 import lombok.RequiredArgsConstructor;

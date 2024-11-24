@@ -3,7 +3,7 @@ package com.taxiapp.api.config.security;
 import com.taxiapp.api.controller.rest.user.dto.UserDTO;
 import com.taxiapp.api.exception.auth.AuthException;
 
-import com.taxiapp.api.model.Role;
+import com.taxiapp.api.entity.Role;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.*;

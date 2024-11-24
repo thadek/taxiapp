@@ -4,8 +4,8 @@ import com.taxiapp.api.controller.rest.user.dto.UserCreateRequest;
 import com.taxiapp.api.controller.rest.user.dto.UserUpdateRequest;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
-import com.taxiapp.api.model.Role;
-import com.taxiapp.api.model.User;
+import com.taxiapp.api.entity.Role;
+import com.taxiapp.api.entity.User;
 import com.taxiapp.api.repository.RoleRepository;
 import com.taxiapp.api.repository.UserRepository;
 import com.taxiapp.api.service.IUserService;
@@ -289,5 +289,32 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         return userRepository.findByPhone(phone).orElseThrow(() -> new EntityNotFoundException("User", "phone", phone));
     }
 
+
+    /**
+     * Search users
+     * @param query
+     * @param pageable
+     * @return
+     */
+    public Page<User> searchUsers(String query,Pageable pageable){
+        return userRepository.searchUsers(query,pageable);
+    }
+
+
+    /**
+     * Update FCM token
+     * @param email
+     * @param fcmToken
+     */
+    public void updateFcmToken(String email, String fcmToken) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setFcmToken(fcmToken);
+            userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("User", "email", email);
+        }
+    }
 
 }

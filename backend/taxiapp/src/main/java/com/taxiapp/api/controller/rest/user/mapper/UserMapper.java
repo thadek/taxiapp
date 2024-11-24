@@ -1,7 +1,7 @@
 package com.taxiapp.api.controller.rest.user.mapper;
 
 import com.taxiapp.api.controller.rest.user.dto.UserDTO;
-import com.taxiapp.api.model.User;
+import com.taxiapp.api.entity.User;
 
 import java.util.List;
 import java.util.stream.Collectors;

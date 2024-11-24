@@ -2,7 +2,6 @@ package com.taxiapp.api.controller.rest.vehicle.dto;
 
 
 import com.taxiapp.api.enums.VehicleStatus;
-import com.taxiapp.api.model.Driver;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

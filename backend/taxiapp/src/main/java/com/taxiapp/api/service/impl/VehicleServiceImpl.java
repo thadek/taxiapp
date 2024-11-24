@@ -2,24 +2,28 @@ package com.taxiapp.api.service.impl;
 
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleCreateRequest;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleUpdateRequest;
+import com.taxiapp.api.entity.User;
 import com.taxiapp.api.enums.VehicleStatus;
 import com.taxiapp.api.exception.common.DuplicatedEntityException;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
-import com.taxiapp.api.exception.ride.RideException;
 import com.taxiapp.api.exception.vehicle.VehicleException;
-import com.taxiapp.api.model.Driver;
-import com.taxiapp.api.model.Vehicle;
+import com.taxiapp.api.entity.Driver;
+import com.taxiapp.api.entity.Vehicle;
 import com.taxiapp.api.repository.DriverRepository;
 import com.taxiapp.api.repository.VehicleRepository;
 import com.taxiapp.api.service.IVehicleService;
 import com.taxiapp.api.utils.ResultResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,6 +32,8 @@ public class VehicleServiceImpl implements IVehicleService {
 
     private final VehicleRepository vehicleRepository;
     private final DriverRepository driverRepository;
+    private static final Logger logger = LoggerFactory.getLogger(VehicleServiceImpl.class);
+
 
 
     @Transactional
@@ -103,8 +109,14 @@ public class VehicleServiceImpl implements IVehicleService {
 
 
     @Transactional
-    public Vehicle updateStatusByOperator(Integer id, VehicleStatus status) {
+    public Vehicle updateStatus(Integer id, VehicleStatus status, Authentication auth) {
+
         Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle", "id", id.toString()));
+
+        if(vehicle.getDriver() == null){
+            throw new VehicleException("You can't change the status of a vehicle that hasn't a driver");
+        }
+        logger.info("User: " + auth.getName() + " changed the status of the vehicle: " + vehicle.getId() + " to: " + status);
         vehicle.setStatus(status);
         return vehicleRepository.save(vehicle);
     }
@@ -191,5 +203,10 @@ public class VehicleServiceImpl implements IVehicleService {
         return vehicleRepository.findByDriverEmail(email).orElseThrow(() -> new EntityNotFoundException("Vehicle and Driver", "driverEmail", email));
     }
 
+
+    @Transactional(readOnly = true)
+    public Page<Vehicle> findByStatusIn(List<VehicleStatus> statuses, Pageable pageable) {
+        return vehicleRepository.findByStatusIn(statuses, pageable);
+    }
 
 }

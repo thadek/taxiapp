@@ -1,8 +1,8 @@
 package com.taxiapp.api.repository;
 
 import com.taxiapp.api.enums.RideStatus;
-import com.taxiapp.api.model.Ride;
-import com.taxiapp.api.model.User;
+import com.taxiapp.api.entity.Ride;
+import com.taxiapp.api.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +28,8 @@ public interface RideRepository extends JpaRepository<Ride, String>, PagingAndSo
     Page<Ride> findByClient(User user, Pageable pageable);
 
     Page<Ride> findByClientAndStatusIn(User user, List<RideStatus> rideStatuses, Pageable pageable);
+
+    Page<Ride> findByStatusIn(List<RideStatus> rideStatuses, Pageable pageable);
 
     Optional<Ride> findFirstByVehicleDriverEmailAndStatusIn(String email, List<RideStatus> statuses);
 

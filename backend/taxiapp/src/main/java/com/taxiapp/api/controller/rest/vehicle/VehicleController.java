@@ -3,8 +3,9 @@ package com.taxiapp.api.controller.rest.vehicle;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleDTO;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleUpdateRequest;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleCreateRequest;
+import com.taxiapp.api.enums.RideStatus;
 import com.taxiapp.api.enums.VehicleStatus;
-import com.taxiapp.api.model.Vehicle;
+import com.taxiapp.api.entity.Vehicle;
 import com.taxiapp.api.service.impl.VehicleServiceImpl;
 import com.taxiapp.api.utils.ResultResponse;
 import jakarta.validation.Valid;
@@ -17,8 +18,11 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -99,11 +103,20 @@ public class VehicleController {
         return new ResponseEntity<>(modelMapper.map(vehicle, VehicleDTO.class), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR','ROLE_DRIVER')")
     @PatchMapping("/{id}/{status}")
-    public ResponseEntity<VehicleDTO> changeStatus(@PathVariable Integer id, @PathVariable VehicleStatus status) {
-        Vehicle vehicle = vehicleServiceImpl.updateStatusByOperator(id, status);
+    public ResponseEntity<VehicleDTO> changeStatus(@PathVariable Integer id, @PathVariable VehicleStatus status, Authentication auth) {
+        Vehicle vehicle = vehicleServiceImpl.updateStatus(id, status, auth);
         return new ResponseEntity<>(modelMapper.map(vehicle, VehicleDTO.class), HttpStatus.OK);
     }
+
+    @GetMapping("/by-status")
+    public PagedModel<VehicleDTO> findByStatus(@RequestParam @Valid VehicleStatus[] statuses, @PageableDefault() Pageable pageable) {
+        Page<Vehicle> vehicles = vehicleServiceImpl.findByStatusIn(List.of(statuses), pageable);
+        return new PagedModel<>(vehicles.map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class)));
+    }
+
+
 
 
 }

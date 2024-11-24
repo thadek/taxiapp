@@ -10,6 +10,8 @@ import { ChevronLeft, ChevronRight, Eye } from 'lucide-react'
 import { Spinner } from '@nextui-org/react'
 import { getSession } from 'next-auth/react'
 import Link from 'next/link'
+import { formatToGMTMinus3 } from '@/app/utils/formatTime'
+import { Ride } from '@/types/ride.type'
 
 type Role = {
     name: string
@@ -27,35 +29,6 @@ type User = {
     deleted: boolean
     roles: Role[]
 }
-
-type Vehicle = {
-    id: number
-    brand: string
-    model: string
-    color: string
-    licensePlate: string
-    driver: User & { licenseId: string; rating: string; isAvailable: boolean }
-}
-
-
-
-function formatToGMTMinus3(dateString: string): string {
-    if (dateString === null) return "N/A"
-    const date = new Date(dateString)
-
-    const offsetInMilliseconds = -3 * 60 * 60 * 1000;
-    const localDate = new Date(date.getTime() + offsetInMilliseconds);
-    const options: Intl.DateTimeFormatOptions = {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit"
-    };
-
-    return localDate.toLocaleString("es-AR", options);
-}
-
 
 
 
@@ -87,8 +60,7 @@ export default function RidesPage() {
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['trips', page, searchTerm],
-        queryFn: () => fetchTrips(page, searchTerm),
-        keepPreviousData: true
+        queryFn: () => fetchTrips(page, searchTerm)
     })
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,7 +104,7 @@ export default function RidesPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {data?.trips.map((trip) => (
+                                {data?.trips.map(({trip}:{trip:Ride}) => (
                                     <TableRow key={trip.id}>
                                         <TableCell className="font-medium">{trip.id.slice(0, 8)}...</TableCell>
                                         <TableCell>{formatToGMTMinus3(trip.createdAt)}</TableCell>

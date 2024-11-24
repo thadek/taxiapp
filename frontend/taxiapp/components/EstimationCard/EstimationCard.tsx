@@ -97,10 +97,7 @@ export default function EstimationCard({ start, end, distance, shift }: { start:
                     </div>
 
 
-                    <div className="flex w-full gap-1">
-                        <WeatherCard text={"Origen"} coords={start[1] + "," + start[0]} />
-                        <WeatherCard text={"Destino"} coords={end[1] + "," + end[0]} />
-                    </div>
+                   
 
 
                 </div>

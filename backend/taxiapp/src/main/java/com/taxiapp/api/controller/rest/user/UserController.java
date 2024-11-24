@@ -5,7 +5,7 @@ import com.taxiapp.api.controller.rest.user.dto.UserDTO;
 import com.taxiapp.api.controller.rest.user.dto.UserUpdateRequest;
 import com.taxiapp.api.controller.rest.user.mapper.UserMapper;
 import com.taxiapp.api.controller.rest.user.dto.UserCreateRequest;
-import com.taxiapp.api.model.User;
+import com.taxiapp.api.entity.User;
 import com.taxiapp.api.service.impl.UserServiceImpl;
 import com.taxiapp.api.utils.ResultResponse;
 import jakarta.validation.Valid;
@@ -116,4 +116,20 @@ public class UserController {
         ResultResponse result = userServiceImpl.restore(id);
         return ResponseEntity.status(result.status()).body(result);
     }
+
+
+
+    /**
+     * Search users
+     * @param q String
+     * @param pageable Pageable
+     * @return PagedModel<UserDTO>
+     */
+    @GetMapping("/search")
+    public PagedModel<UserDTO> searchUsers(@RequestParam String q, @PageableDefault() Pageable pageable) {
+        return new PagedModel<>(userServiceImpl.searchUsers(q,pageable).map(UserMapper::toUserDTO));
+    }
+
+
+
 }

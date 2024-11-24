@@ -8,8 +8,8 @@ import com.taxiapp.api.controller.rest.auth.dto.RegisterRequest;
 import com.taxiapp.api.controller.rest.user.dto.UserDTO;
 import com.taxiapp.api.exception.auth.AuthException;
 
-import com.taxiapp.api.model.Role;
-import com.taxiapp.api.model.User;
+import com.taxiapp.api.entity.Role;
+import com.taxiapp.api.entity.User;
 import com.taxiapp.api.repository.RoleRepository;
 import com.taxiapp.api.repository.UserRepository;
 import com.taxiapp.api.config.security.JwtAuthenticationProvider;

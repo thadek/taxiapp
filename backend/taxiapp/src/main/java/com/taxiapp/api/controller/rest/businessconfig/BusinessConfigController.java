@@ -1,6 +1,6 @@
 package com.taxiapp.api.controller.rest.businessconfig;
 
-import com.taxiapp.api.model.BusinessConfig;
+import com.taxiapp.api.entity.BusinessConfig;
 import com.taxiapp.api.service.impl.BusinessConfigServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

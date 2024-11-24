@@ -1,4 +1,4 @@
-package com.taxiapp.api.model;
+package com.taxiapp.api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

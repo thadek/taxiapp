@@ -19,22 +19,16 @@ type FieldState = {
 
 
 
-function generateRandomLetters() {
-  const letters = "abcdefghijklmnopqrstuvwxyz";
-  const firstLetter = letters[Math.floor(Math.random() * letters.length)];
-  const secondLetter = letters[Math.floor(Math.random() * letters.length)];
-  return firstLetter + secondLetter;
-}
 
 export default function AsyncSearchDirectionBox({ text, onSelectionChange }: { text: string, onSelectionChange: (key: React.Key | null) => void }) {
 
 
   const nominatimUrl = process.env.NEXT_PUBLIC_NOMINATIM_URL;
 
-  let list = useAsyncList<LocationResult>({
+  const list = useAsyncList<LocationResult>({
     async load({ signal, filterText }) {
-      let res = await fetch(`${nominatimUrl}/search?q=${filterText}`, { signal });
-      let json = await res.json();
+      const res = await fetch(`${nominatimUrl}/search?q=${filterText}`, { signal });
+      const json = await res.json();
       return {
         items: json,
 
@@ -51,7 +45,7 @@ export default function AsyncSearchDirectionBox({ text, onSelectionChange }: { t
       isLoading={list.isLoading}
       items={list.items}
       label={text}
-      placeholder="Escribí para buscar..."
+      placeholder="Buscar por dirección..."
       variant="underlined"
       onSelectionChange={onSelectionChange}
       onInputChange={list.setFilterText}

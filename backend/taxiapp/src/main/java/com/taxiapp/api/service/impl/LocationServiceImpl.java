@@ -3,9 +3,8 @@ package com.taxiapp.api.service.impl;
 
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleDTO;
 import com.taxiapp.api.controller.websocket.location.LocationDTO;
-import com.taxiapp.api.model.Driver;
 import com.taxiapp.api.model.Location;
-import com.taxiapp.api.model.Vehicle;
+import com.taxiapp.api.entity.Vehicle;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;

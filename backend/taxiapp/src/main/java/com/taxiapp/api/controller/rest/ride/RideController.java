@@ -1,9 +1,8 @@
 package com.taxiapp.api.controller.rest.ride;
 
-import com.taxiapp.api.controller.rest.driver.dto.DriverDTO;
 import com.taxiapp.api.controller.rest.vehicle.dto.VehicleDTO;
 import com.taxiapp.api.enums.RideStatus;
-import com.taxiapp.api.model.Ride;
+import com.taxiapp.api.entity.Ride;
 import com.taxiapp.api.service.impl.RideServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,6 +48,20 @@ public class RideController {
     ) {
         return new PagedModel<>(rideService.getRidesByStatus(status, pageable));
     }
+
+
+    /**
+     * Obtener los viajes por multiples estados
+     */
+    @GetMapping("/by-status")
+    @PreAuthorize("hasAnyRole('ADMIN','OPERATOR')")
+    public PagedModel<Ride> getRidesByStatus(
+            @RequestParam @Valid RideStatus[] states,
+            @PageableDefault() Pageable pageable
+    ) {
+        return new PagedModel<>(rideService.getRidesByMultipleStatuses(List.of(states), pageable));
+    }
+
 
     /**
      * Iniciar un viaje asignado a un conductor. SOLO el conductor asignado puede iniciar sus viajes

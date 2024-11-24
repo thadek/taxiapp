@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 
 const useWebSocketSubscription = (url:string, topic:string) => {
   const [status, setStatus] = useState<string>("Connecting...");
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState<Object>();
   const { data: session } = useSession();
 
   useEffect(() => {

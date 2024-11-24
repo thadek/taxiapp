@@ -1,8 +1,7 @@
 package com.taxiapp.api.controller.rest.ride;
 
 import com.taxiapp.api.enums.RideStatus;
-import com.taxiapp.api.model.Vehicle;
-import jakarta.persistence.Column;
+import com.taxiapp.api.entity.Vehicle;
 import lombok.*;
 
 import java.util.Date;

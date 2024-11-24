@@ -1,18 +1,13 @@
-package com.taxiapp.api.model;
+package com.taxiapp.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -27,7 +22,7 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 @SQLDelete(sql = "UPDATE user SET deleted = true WHERE id = ?")
 @DynamicUpdate
-public class User  {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -55,7 +50,7 @@ public class User  {
 
     private boolean deleted = Boolean.FALSE;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -63,8 +58,9 @@ public class User  {
     )
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "client",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Ride> rides;
 
+    private String fcmToken; // Nuevo campo para el token de FCM
 }

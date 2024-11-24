@@ -1,4 +1,4 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
 import { getServerSession } from 'next-auth';
 
 
@@ -13,7 +13,7 @@ const getSettings = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${session.token}`
+                "Authorization": `Bearer ${session?.token}`
             }}
     )
     return response.json()

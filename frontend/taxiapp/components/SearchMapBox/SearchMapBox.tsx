@@ -31,7 +31,7 @@ const SearchMapBox = ({text, setRetrieve}:{text:string, setRetrieve:any}) => {
         <div>
        <Label className='text-sm'>{text}</Label>
         
-         {/*@ts-ignore */}
+         {/*@ts-expect-error */}
         <SearchBox 
             
             theme={theme}

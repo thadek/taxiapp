@@ -1,8 +1,9 @@
+'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Car, Clock, Users } from 'lucide-react';
 import { Skeleton } from '@nextui-org/react';
 import { CircularProgress } from "@nextui-org/progress";
-const Stats = ({ taxisCount, tripsCount, driversCount }) => (
+const Stats = ({ tripsCount, driversCount }:{tripsCount:number,driversCount:number}) => (
     <div className="grid grid-cols-3 gap-6 mb-6">
 
         <Card className='relative'>

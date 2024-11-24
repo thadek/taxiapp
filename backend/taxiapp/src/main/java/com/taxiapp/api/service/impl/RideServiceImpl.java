@@ -9,17 +9,15 @@ import com.taxiapp.api.enums.VehicleStatus;
 import com.taxiapp.api.events.ride.RideStatusChangeEvent;
 import com.taxiapp.api.exception.common.EntityNotFoundException;
 import com.taxiapp.api.exception.ride.RideException;
-import com.taxiapp.api.model.Driver;
-import com.taxiapp.api.model.Ride;
-import com.taxiapp.api.model.User;
-import com.taxiapp.api.model.Vehicle;
+import com.taxiapp.api.entity.Ride;
+import com.taxiapp.api.entity.User;
+import com.taxiapp.api.entity.Vehicle;
 import com.taxiapp.api.repository.RideRepository;
 import com.taxiapp.api.repository.UserRepository;
 import com.taxiapp.api.repository.VehicleRepository;
 import com.taxiapp.api.service.IRideService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.dialect.function.CaseLeastGreatestEmulation;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +32,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 
 @Service
@@ -114,10 +111,17 @@ public class RideServiceImpl implements IRideService {
     public Page<Ride> getRidesByStatus(RideStatus rideStatus, Pageable pageable) {
         Pageable pageableReq = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),Sort.by("createdAt").descending());
         return rideRepository.findByStatus(rideStatus,pageableReq);
-
     }
 
 
+    /**
+     * Obtener los viajes por multiples estados
+     */
+    @Transactional(readOnly = true)
+    public Page<Ride> getRidesByMultipleStatuses(List<RideStatus> rideStatuses, Pageable pageable) {
+        Pageable pageableReq = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),Sort.by("createdAt").descending());
+        return rideRepository.findByStatusIn(rideStatuses,pageableReq);
+    }
 
 
     /**

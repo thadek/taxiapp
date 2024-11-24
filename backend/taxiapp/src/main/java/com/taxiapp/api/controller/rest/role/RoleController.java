@@ -2,7 +2,7 @@ package com.taxiapp.api.controller.rest.role;
 
 
 
-import com.taxiapp.api.model.Role;
+import com.taxiapp.api.entity.Role;
 import com.taxiapp.api.service.impl.RoleServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
