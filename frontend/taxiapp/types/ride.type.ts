@@ -10,8 +10,8 @@ export type Ride = {
     pickup_location: string;
     price?: number;
     rating?: number;
-    ride_end?: string;
-    ride_start?: string;
+    ride_end: string;
+    ride_start: string;
     status: string;
     updated_at: string;
     vehicle: Vehicle |null

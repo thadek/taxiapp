@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import L, { LatLngExpression } from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import CarSVG from "../carSVG";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -25,7 +25,7 @@ interface MarkerProps {
 }*/
 
 export default function RTLMapComponent() {
-    const position = [-38.951155, -68.065541];
+    const position:LatLngExpression = [-38.951155, -68.065541];
     const { message } = useWebSocketSubscription(`${process.env.NEXT_PUBLIC_BACKEND_URL}/ws`, '/topic/locations'); 
 
     const [carPosition, setCarPosition] = useState<[number, number]>([-38.951155, -68.065541]);
@@ -48,6 +48,7 @@ export default function RTLMapComponent() {
 
     useEffect(() => {
         if (message) {
+            /*@ts-ignore */
             const newPoint: [number, number] = [message.x, message.y];
             const newAngle = gpsDirectionAngleCalc(previousPosition, newPoint);
 
@@ -58,6 +59,7 @@ export default function RTLMapComponent() {
     }, [message, previousPosition]);
 
     return (
+    
         <MapContainer center={position} zoom={13} className="w-full h-full z-10" >
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

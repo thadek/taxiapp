@@ -10,11 +10,13 @@ export const generateMetadata = () => {
 
 export default function Estimar() {	
 
-  return (
+  return (<></>)
+
+/*  return (
     <div className=" min-h-full content-center bg-slate-900 ">
       <main className="flex flex-col items-center  gap-3 p-3 ">      
         <EstimarViajeCardMapbox />
       </main>
     </div>
-  );
+  );*/
 }

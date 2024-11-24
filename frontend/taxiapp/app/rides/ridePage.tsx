@@ -11,6 +11,7 @@ import { Spinner } from '@nextui-org/react'
 import { getSession } from 'next-auth/react'
 import Link from 'next/link'
 import { formatToGMTMinus3 } from '@/app/utils/formatTime'
+import { Ride } from '@/types/ride.type'
 
 type Role = {
     name: string
@@ -28,20 +29,6 @@ type User = {
     deleted: boolean
     roles: Role[]
 }
-
-type Vehicle = {
-    id: number
-    brand: string
-    model: string
-    color: string
-    licensePlate: string
-    driver: User & { licenseId: string; rating: string; isAvailable: boolean }
-}
-
-
-
-
-
 
 
 
@@ -73,8 +60,7 @@ export default function RidesPage() {
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['trips', page, searchTerm],
-        queryFn: () => fetchTrips(page, searchTerm),
-        keepPreviousData: true
+        queryFn: () => fetchTrips(page, searchTerm)
     })
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,7 +104,7 @@ export default function RidesPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {data?.trips.map((trip) => (
+                                {data?.trips.map(({trip}:{trip:Ride}) => (
                                     <TableRow key={trip.id}>
                                         <TableCell className="font-medium">{trip.id.slice(0, 8)}...</TableCell>
                                         <TableCell>{formatToGMTMinus3(trip.createdAt)}</TableCell>
