@@ -1,3 +1,5 @@
+import { report } from "process";
+
 const fetchWithAuth = async (url: string, token: string, options: RequestInit = {}) => {
     const headers = {
         ...options.headers,
@@ -6,8 +8,15 @@ const fetchWithAuth = async (url: string, token: string, options: RequestInit = 
     };
 
     const response = await fetch(url, { ...options, headers });
-    
-    return response.json();
+  if (response.ok) {
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+    return null; // O devuelve un valor adecuado si no es JSON
+  } else {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
     
 };
 
@@ -209,4 +218,87 @@ const deleteRole = async (roleId: string, token: string) => {
     });
 };
 
-export { getUsers, getUser, createUser, updateUser, userAssignRole, deleteUser, getDrivers, createDriver, updateDriver, deleteDriver, getVehicles, createVehicle, updateVehicle, vehicleDriverAssign, deleteVehicle, getRoles, createRole, updateRole, deleteRole };
+/**
+ * Obtener todos los reportes
+ * @returns
+ */
+const getReports = async (token: string) => {
+    return fetchWithAuth(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports`, token);
+};
+
+/**
+ * Obtener todos los reportes con el id del viaje
+ * @param reportId
+ * @returns
+ */
+const getReportsWithRideId = async (token: string) => {
+    // Obtener todos los reportes
+    const reportsResponse = await fetchWithAuth(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports`, token);
+    const reports = reportsResponse.content || [];
+  
+    // Obtener todos los viajes
+    const ridesResponse = await fetchWithAuth(`${process.env.NEXT_PUBLIC_BACKEND_URL}/rides`, token);
+    const rides = ridesResponse.content || [];
+  
+    // Asocia los rideId de los viajes a los reportes
+    const reportsWithRideId = reports.map((report: any) => {
+      const ride = rides.find((ride: any) => ride.report && ride.report.id === report.id);
+      return { ...report, rideId: ride ? ride.id : null };
+    });
+  
+    return {
+      data: reportsWithRideId,
+      totalPages: reportsResponse.totalPages || 1,
+    };
+  };
+
+/**
+ * Obtener un reporte específico según el id del viaje
+ * @param reportId
+ * @returns
+ */
+const getReportByRideId = async (rideId: string, token: string) => {
+    return fetchWithAuth(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports/ride/${rideId}`, token);
+}
+
+/**
+ * Crear un nuevo reporte
+ * @param newReport
+ * @returns 
+ */
+const createReport = async (newReport: any, token: string) => {
+    return fetchWithAuth(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports`, token, {
+        method: 'POST',
+        body: JSON.stringify(newReport),
+    });
+};
+
+/**
+ * Eliminar un reporte
+ * @param reportId
+ * @returns 
+ */
+const deleteReport = async (reportId: string, token: string) => {
+    return fetchWithAuth(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports/${reportId}`, token, {
+        method: 'DELETE',
+    });
+}
+
+/**
+ * Obtener todos los viajes
+ * @returns
+ */
+const getRides = async (token: string, page: number = 0, size: number = 8) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/rides?page=${page}&size=${size}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch rides');
+    }
+    return response.json();
+  };
+
+export { getUsers, getUser, createUser, updateUser, userAssignRole, deleteUser, getDrivers, createDriver, updateDriver, deleteDriver, getVehicles, createVehicle, updateVehicle, vehicleDriverAssign, deleteVehicle, getRoles, createRole, updateRole, deleteRole, getReports, getReportsWithRideId, createReport, getReportByRideId, deleteReport, getRides };
