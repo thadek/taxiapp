@@ -54,6 +54,11 @@ public class NotificationServiceHandler {
                     notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Modified", "A ride has been modified.");
                 }
             }
+            case RATED_BY_USER -> {
+                logger.info("Ride rated by user");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Rated", "Your ride has been rated.");
+            }
         }
     }
 
@@ -65,9 +70,6 @@ public class NotificationServiceHandler {
                 logger.info("Ride created by operator");
 
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                
-
-
 
             }
             case PROGRAMMED_BY_OPERATOR -> {
@@ -137,6 +139,12 @@ public class NotificationServiceHandler {
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
                 notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
             }
+            case REJECTED_BY_DRIVER -> {
+                logger.info("Ride rejected by driver");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Rejected", "The driver can't take your ride, please wait until the operator assigns another driver.");
+            }
+
         }
     }
     //TODO: este metodo deberia ir en otra clase

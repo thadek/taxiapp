@@ -64,6 +64,7 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
         if (!webSocketMsg) return;
 
         const handleWebSocketMessage = (message: any) => {
+            console.log(message)
                 refetch();     
         };
 

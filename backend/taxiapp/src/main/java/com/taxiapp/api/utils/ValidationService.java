@@ -34,4 +34,12 @@ public class ValidationService {
      }
 
 
+     public static void validateRating(Integer rating) {
+         if (rating == null) {
+             throw new ValidationException("Rating cannot be empty","rating");
+         }else if (rating < 1 || rating > 5) {
+             throw new ValidationException("Rating must be between 1 and 5","rating");
+         }
+     }
+
 }

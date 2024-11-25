@@ -249,6 +249,31 @@ public class RideController {
     }
 
 
+    /**
+     * Rechazar un viaje asignado a un conductor. SOLO el conductor asignado puede rechazar sus viajes
+     * @param rideId
+     * @param principal
+     * @return
+     */
+    @PostMapping("/{rideId}/reject")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
+    public ResponseEntity<RideDTO> rejectRide(@PathVariable String rideId, Principal principal) {
+        return ResponseEntity.ok(modelMapper.map(rideService.rejectRide(rideId, principal), RideDTO.class));
+    }
+
+    /**
+     * Calificar un viaje
+     * @param rideId
+     * @param rating
+     * @param principal
+     * @return
+     */
+    @PostMapping("/{rideId}/rate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<RideUserResponse> rateRide(@PathVariable String rideId, @RequestParam Integer rating, Principal principal) {
+        return ResponseEntity.ok(modelMapper.map(rideService.rateRide(rideId, rating, principal), RideUserResponse.class));
+    }
+
 
 
 
