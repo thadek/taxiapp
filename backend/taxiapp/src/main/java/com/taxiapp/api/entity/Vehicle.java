@@ -51,7 +51,7 @@ public class Vehicle {
     @Column(unique = true,nullable = false, length = 50,name = "license_plate")
     private String licensePlate;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="driver_id")
     private Driver driver;
 

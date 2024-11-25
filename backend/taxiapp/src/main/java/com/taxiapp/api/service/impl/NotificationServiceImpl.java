@@ -2,25 +2,58 @@ package com.taxiapp.api.service.impl;
 import com.google.firebase.messaging.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.taxiapp.api.enums.RideEvent;
-import com.taxiapp.api.entity.Ride;
+
 import com.taxiapp.api.model.NotificationRequest;
+import com.taxiapp.api.service.IUserService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 
 @Service
+@RequiredArgsConstructor
 public class NotificationServiceImpl {
+
+    private final IUserService userService;
 
     private final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
 
-    public void sendMessageToToken(NotificationRequest request)
+
+    public void sendNotification(String userEmail, String title, String body) {
+        try {
+            String userFcmToken = getUserFcmToken(userEmail);
+
+            if(userFcmToken == null || userFcmToken.isEmpty()) {
+                logger.error("FCM token not found for user: " + userEmail);
+                return;
+            }
+
+            Message message = Message.builder()
+                    .setToken(userFcmToken)
+                    .setNotification(Notification.builder()
+                            .setTitle(title)
+                            .setBody(body)
+                            .build())
+                    .build();
+
+
+            String response = FirebaseMessaging.getInstance().send(message);
+            logger.info("Successfully sent message: " + response);
+        } catch (Exception e) {
+            logger.error("Error sending FCM message", e);
+        }
+    }
+
+    public  String getUserFcmToken(String userEmail) {
+        return userService.findByEmail(userEmail).getFcmToken();
+    }
+
+    public  void sendMessageToToken(NotificationRequest request)
             throws InterruptedException, ExecutionException {
         Message message = getPreconfiguredMessageToToken(request);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

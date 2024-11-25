@@ -23,9 +23,6 @@ import { CarFront } from 'lucide-react';
 
 
 const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
-  const theme = useTheme();
-
-  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
 
 
 
@@ -69,12 +66,14 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
     const handleWebSocketMessage = (message: any) => {
 
 
-      if (message?.eventType === "CREATED_BY_USER" || message?.eventType === "UPDATED_BY_USER" || message?.eventType === "CANCELLED_BY_USER") {
-        toast.promise(refetch(), {
-          loading: 'Actualizando...',
-          success: 'Actualizado',
-          error: 'Error al actualizar',
-        });
+      if (message?.eventType === "CREATED_BY_USER"
+        || message?.eventType === "UPDATED_BY_USER"
+        || message?.eventType === "CANCELLED_BY_USER"
+        || message?.eventType === "ACCEPTED_BY_DRIVER"
+        || message?.eventType === "CREATED_BY_OPERATOR"
+        || message?.eventType === "DRIVER_ASSIGNED_BY_OPERATOR"
+        || message?.eventType === "UPDATED_BY_SYSTEM") {
+        refetch()
 
       }
     };
@@ -94,26 +93,25 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
       <CardHeader>
         <CardTitle>Viajes pendientes a confirmar</CardTitle>
       </CardHeader>
-      <CardContent className="p-5 flex flex-col gap-5 w-full h-full">
-
+      <CardContent className="p-5 flex flex-col gap-5 w-full  max-h-[700px] overflow-y-auto   scrollbar-thin scrollbar-thumb-slate-900">
         <AnimatePresence>
           {isPending && (
             <div className="text-gray-500 flex text-center items-center justify-center w-full min-h-96">
               <Spinner />
             </div>
           )}
-          {isSuccess && rides && rides.map((trip: Ride) => (<PendingRideCard key={trip.id} trip={trip} />))}
-          {
-            isSuccess && rides && rides.length === 0 && (
-              <div className="text-gray-500 flex text-center items-center flex-col justify-center w-full h-full min-h-5 ">
-                <CarFront className='w-14 h-14'/>
-                No hay viajes pendientes por confirmar.
-              </div>
-            )
-          }
+          {isSuccess && rides && rides.map((trip: Ride) => (
+            <PendingRideCard key={trip.id} trip={trip} />
+          ))}
+          {isSuccess && rides && rides.length === 0 && (
+            <div className="text-gray-500 flex text-center items-center flex-col justify-center w-full h-full min-h-5 ">
+              <CarFront className="w-14 h-14" />
+              No hay viajes pendientes por confirmar.
+            </div>
+          )}
         </AnimatePresence>
       </CardContent>
-    </Card >
+    </Card>
 
   );
 

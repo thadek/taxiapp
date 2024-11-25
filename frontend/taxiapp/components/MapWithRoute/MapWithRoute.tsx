@@ -35,7 +35,7 @@ const MapWithRoute = ({ start, end, turno }: { start: any, end: any, turno: any 
 
 
   if (isLoading) {
-  return (<div className="w-full h-[20vh] flex justify-center items-center">
+  return (<div className="w-full h-full flex justify-center items-center">
     <TaxiAppSkeleton/>
   </div>)
   }

@@ -11,7 +11,7 @@ public enum RideEvent {
     DRIVER_ASSIGNED_BY_OPERATOR, /* The driver was assigned by the operator */
     MODIFIED_BY_OPERATOR, /* The ride was modified by the operator */
     INTERRUPTED_BY_OPERATOR, /* The ride was interrupted by the operator */
-    CANCELED_BY_OPERATOR, /* The ride was cancelled by the operator */
+    CANCELLED_BY_OPERATOR, /* The ride was cancelled by the operator */
 
 
     ACCEPTED_BY_DRIVER, /* The ride was accepted by the driver */
@@ -20,6 +20,8 @@ public enum RideEvent {
     INTERRUPTED_BY_DRIVER, /* The ride was interrupted by the driver */
     CANCELLED_BY_DRIVER, /* The ride was cancelled by the driver */
 
+
+    UPDATED_BY_SYSTEM, /* The ride was updated by the system */
 
 
 }

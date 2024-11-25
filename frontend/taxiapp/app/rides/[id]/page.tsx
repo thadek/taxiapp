@@ -1,5 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation'
+import RideDetail from './rideDetail';
 
 export default function RideDetails() {
 
@@ -7,7 +8,7 @@ export default function RideDetails() {
 
   return (
     <div>
-      <h1>Detalles del viaje: {id}</h1>
+      <RideDetail rideId={id as string} />
     </div>
   );
 }

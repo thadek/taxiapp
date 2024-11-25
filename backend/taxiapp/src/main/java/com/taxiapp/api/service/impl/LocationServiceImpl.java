@@ -22,6 +22,7 @@ public class LocationServiceImpl {
     private final ModelMapper modelMapper;
 
 
+
     @Async
     public LocationDTO getVehicleLocation(Location location, Principal principal) {
         Vehicle vehicle = vehicleServiceImpl.findByDriverEmail(principal.getName());

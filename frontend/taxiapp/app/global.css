@@ -130,3 +130,15 @@ body {
     @apply bg-secondary text-foreground;
   }
 }
+
+
+/* Elimina los botones en navegadores basados en WebKit (Chrome, Edge, etc.) */
+.scrollbar-container::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Elimina los botones en Firefox */
+.scrollbar-container {
+  scrollbar-width: thin; /* Asegúrate de que siga siendo delgada */
+  scrollbar-color: #cbd5e0 #edf2f7;
+}

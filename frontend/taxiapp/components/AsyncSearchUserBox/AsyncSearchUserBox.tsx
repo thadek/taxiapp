@@ -1,14 +1,8 @@
 'use client'
 
-import React from "react";
-import { Autocomplete, AutocompleteItem,  Spinner } from "@nextui-org/react";
-import { Input } from "@nextui-org/react";
-import {  getSession, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-
-
-
-
+import React, { useEffect, useState } from "react";
+import { Autocomplete, Spinner, Input } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 
 type User = {
   id: string;
@@ -18,14 +12,12 @@ type User = {
   phone: string;
   roles: Role[];
   is_disabled: boolean;
-}
+};
 
 type Role = {
   id: string;
   name: string;
-}
-
-
+};
 
 export default function ComboBoxSearchUser({
   onSelectionChange,
@@ -34,9 +26,8 @@ export default function ComboBoxSearchUser({
 }) {
   const { data: session } = useSession();
   const backUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-  
-  const [inputValue, setInputValue] = useState('');
 
+  const [inputValue, setInputValue] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +38,8 @@ export default function ComboBoxSearchUser({
         setIsLoading(true);
         try {
           const response = await fetch(
-            `${backUrl}/users/search?q=${inputValue}&size=50`, {
+            `${backUrl}/users/search?q=${inputValue}&size=50`,
+            {
               headers: {
                 Authorization: `Bearer ${session.token}`,
               },
@@ -56,7 +48,7 @@ export default function ComboBoxSearchUser({
           const data = await response.json();
           setUsers(data.content);
         } catch (error) {
-          console.error('Error fetching users:', error);
+          console.error("Error fetching users:", error);
         } finally {
           setIsLoading(false);
         }
@@ -81,12 +73,21 @@ export default function ComboBoxSearchUser({
 
   const handleSelectionChange = (user: User) => {
     onSelectionChange(user.id);
-    setInputValue(`${user.name} - ${user.lastname} - ${user.email} - ${user.phone}`);
+    setInputValue(
+      `${user.name} - ${user.lastname} - ${user.email} - ${user.phone}`
+    );
   };
 
   const handleCreateNewUser = () => {
     // Lógica para redirigir a la página de creación de usuario
     window.location.href = "/abm/AbmUser";
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && filteredUsers.length > 0) {
+      // Selecciona automáticamente el primer usuario
+      handleSelectionChange(filteredUsers[0]);
+    }
   };
 
   return (
@@ -97,18 +98,23 @@ export default function ComboBoxSearchUser({
         variant="underlined"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        className="w-full "
+        onKeyDown={handleKeyDown} // Maneja el evento Enter
+        className="w-full"
         placeholder="Buscar por nombre, apellido o teléfono..."
       />
 
-      {isLoading && <div className="absolute bottom-3 right-5"><Spinner size="sm"/></div>}
+      {isLoading && (
+        <div className="absolute bottom-3 right-5">
+          <Spinner size="sm" />
+        </div>
+      )}
 
       {filteredUsers.length > 0 && (
-        <ul className="absolute w-full mt-2    bg-slate-800 shadow-lg z-20 transition duration-250">
+        <ul className="absolute w-full mt-2 bg-slate-800 shadow-lg z-20 transition duration-250">
           {filteredUsers.map((user) => (
             <li
               key={user.id}
-              className="cursor-pointer p-2 transition  duration-100 hover:bg-slate-700"
+              className="cursor-pointer p-2 transition duration-100 hover:bg-slate-700"
               onClick={() => handleSelectionChange(user)}
             >
               {user.name} {user.lastname} ({user.email}) - {user.phone}
@@ -116,8 +122,7 @@ export default function ComboBoxSearchUser({
           ))}
         </ul>
       )}
-
-      
     </div>
   );
 }
+

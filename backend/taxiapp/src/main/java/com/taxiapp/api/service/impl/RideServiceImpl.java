@@ -198,7 +198,7 @@ public class RideServiceImpl implements IRideService {
         Ride cancelledRide = rideRepository.save(ride);
 
         //Notificar a subscriptores DEL CAMBIO DE ESTADO DE RIDE
-        eventPublisher.publishEvent(new RideStatusChangeEvent(this, rideId, RideEvent.CANCELED_BY_OPERATOR,cancelledRide));
+        eventPublisher.publishEvent(new RideStatusChangeEvent(this, rideId, RideEvent.CANCELLED_BY_OPERATOR,cancelledRide));
         return cancelledRide;
     }
 
