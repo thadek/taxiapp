@@ -52,7 +52,8 @@ interface Driver {
         const token = session.token;
         try {
           const fetchedRides = await getRides(token)
-          setRides(Array.isArray(fetchedRides) ? fetchedRides : [])
+          setRides(fetchedRides.content)
+          console.log("Rides fetched:", fetchedRides)
         } catch (error) {
           console.error("Error fetching rides:", error)
         } finally {
@@ -66,8 +67,6 @@ interface Driver {
     const totalRides = rides.length
     const acceptedRides = rides.filter(ride => ride.status === "ACCEPTED").length
     const cancelledRides = rides.filter(ride => ride.status === "CANCELLED").length
-    const cancelledByDriver = rides.filter(ride => ride.status === "CANCELLED" && ride.report?.title.includes("Driver")).length
-    const cancelledByPassenger = cancelledRides - cancelledByDriver
   
     const drivers = rides.reduce((acc, ride) => {
       const driverId = ride.vehicle.driver.id
@@ -111,9 +110,9 @@ interface Driver {
   
     return (
       <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Estadísticas de Gestión de Taxis</h1>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <h1 className="text-2xl font-bold mb-4">Estadísticas de Gestión de Taxis</h1>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardBody>
               <p className="text-lg font-semibold">Total de viajes del día</p>
@@ -130,8 +129,6 @@ interface Driver {
             <CardBody>
               <p className="text-lg font-semibold">Viajes cancelados</p>
               <p className="text-3xl font-bold">{cancelledRides}</p>
-              <p className="text-sm">Por conductores: {cancelledByDriver}</p>
-              <p className="text-sm">Por pasajeros: {cancelledByPassenger}</p>
             </CardBody>
           </Card>
           <Card>
@@ -160,7 +157,7 @@ interface Driver {
           </CardBody>
         </Card>
   
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardBody>
               <p className="text-lg font-semibold">Conductor con más viajes</p>
@@ -189,7 +186,7 @@ interface Driver {
           </Card>
         </div>
   
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <Card>
             <CardBody>
               <p className="text-lg font-semibold">Calificación promedio de pasajeros</p>
