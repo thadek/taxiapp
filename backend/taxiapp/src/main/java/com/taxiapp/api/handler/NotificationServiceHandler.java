@@ -74,6 +74,7 @@ public class NotificationServiceHandler {
             }
             case PROGRAMMED_BY_OPERATOR -> {
                 logger.info("Ride programmed by operator");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
                 notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Programmed", "Your ride has been programmed.");
             }
             case MODIFIED_BY_OPERATOR -> {
@@ -99,7 +100,6 @@ public class NotificationServiceHandler {
             }
             case CANCELLED_BY_OPERATOR -> {
 
-                //TODO: avisar al usuario y chofer (si corresponde) que el viaje ha sido cancelado
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
                 logger.info("Ride cancelled by operator");
                 notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
@@ -147,9 +147,6 @@ public class NotificationServiceHandler {
 
         }
     }
-    //TODO: este metodo deberia ir en otra clase
-
-
 
     @Async
     @EventListener

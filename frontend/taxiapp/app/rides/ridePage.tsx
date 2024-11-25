@@ -90,6 +90,11 @@ const handleStatus = (status: string) => {
 
 
 
+const handleDriver = (driver: User) => {
+    if (!driver) return 'Sin conductor asignado'
+    return `${driver.name} ${driver.lastname}`
+}
+
 
 const fetchTrips = async (page = 0, searchTerm = '') => {
 
@@ -171,7 +176,7 @@ const fetchTrips = async (page = 0, searchTerm = '') => {
                                                 <TableCell>{trip.pickup_location}</TableCell>
                                                 <TableCell>{trip.dropoff_location}</TableCell>
                                                 <TableCell>{handleStatus(trip.status)}</TableCell>
-                                                <TableCell>{`${trip.vehicle && trip.vehicle.driver.name} ${trip.vehicle && trip.vehicle.driver.lastname}`}</TableCell>
+                                                <TableCell>{handleDriver(trip.vehicle?.driver)}</TableCell>
                                                 <TableCell>{`${trip.client.name} ${trip.client.lastname}`}</TableCell>
                                                 <TableCell>
                                                     <Link href={`/rides/${trip.id}`}>

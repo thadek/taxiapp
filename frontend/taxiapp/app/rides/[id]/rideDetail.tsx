@@ -15,6 +15,7 @@ import { Button, ButtonProps, Spinner, Chip } from "@nextui-org/react";
 import { X,CheckIcon, Calendar,CarIcon, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
 import StarSVG from "@/components/star-svg";
+import TaxiAppSkeleton from "@/components/taxiapp-skeleton";
 
 
 
@@ -153,7 +154,22 @@ export default function RideDetail({ rideId }: { rideId: string }) {
     }
 
     if (isPending) {
-        return <div>Cargando...</div>
+        return (
+            <div className="text-gray-500 flex flex-col gap-3 text-center items-center justify-center w-full h-screen">          
+                <Spinner />
+                <p>Se esta cargando el detalle del viaje...</p>
+                
+            </div>
+        )
+    }
+
+    if(isError){
+        return (
+            <div className="text-gray-500 flex flex-col gap-3 text-center items-center justify-center w-full h-screen">                    
+                <p>Ocurrió un error al cargar el detalle del viaje. Proba suerte más tarde</p>
+                
+            </div>
+        )
     }
 
     return (

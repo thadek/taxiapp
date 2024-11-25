@@ -5,7 +5,7 @@ import ContentLoader from "react-content-loader"
 const TaxiAppSkeleton = (props:any) => (
   <ContentLoader 
     speed={1.5}
-    width={180}
+    width={280}
     height={120}
     viewBox="0 0 569.333 128"
     backgroundColor="#000000"

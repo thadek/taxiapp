@@ -111,7 +111,6 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
                                 <TableHead className="text-gray-400">Origen → Destino</TableHead>
                                 <TableHead className="text-gray-400">Conductor</TableHead>
                                 <TableHead className="text-gray-400">Vehículo</TableHead>
-                                <TableHead className="text-gray-400">Comentarios</TableHead>
                                 <TableHead className="text-gray-400">Estado</TableHead>                             
                                 <TableHead className="text-gray-400">Hora de creación</TableHead>
                                 <TableHead className="text-gray-400 text-right">Detalles</TableHead>
@@ -148,7 +147,7 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
 
 
                                         <TableCell className="text-gray-300 font-medium">{ride.client.phone}</TableCell>
-                                        <TableCell className="text-gray-500 text-sm">{ride.originName} → {ride.destinationName}</TableCell>
+                                        <TableCell className="text-gray-500 text-xs">{ride.originName} → {ride.destinationName}</TableCell>
                                         <TableCell>
                                             <div className="flex flex-col">
                                                 <span className="text-gray-300">{ride.vehicle?.driver?.name}</span>
@@ -157,7 +156,6 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
                                         </TableCell>
                                         
                                         <TableCell className="text-gray-300">{ride.vehicle?.brand} {ride.vehicle?.model} - {ride.vehicle?.licensePlate} </TableCell>
-                                        <TableCell className="text-gray-300">{ride.comments? ride.comments : ""} </TableCell>
                                         <TableCell>
                                             <Chip
                                                 variant="flat"
