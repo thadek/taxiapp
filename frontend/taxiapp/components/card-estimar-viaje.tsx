@@ -18,13 +18,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 
 import MapWithRoute from "@/components/MapWithRoute/MapWithRoute";
+import { parseCoords } from "@/app/utils/parseCoords";
 
 
 
 
-const parseCoords = (coords: string) => {
-  return coords.split(",").map((coord) => parseFloat(coord));
-}
+
 
 
 type MapBoxResponse = {

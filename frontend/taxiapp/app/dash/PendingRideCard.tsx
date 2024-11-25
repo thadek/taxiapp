@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useQueryClient } from '@tanstack/react-query';
+import CancelRide from "@/components/Dashboard/PendingRides/CancelButton";
 
 
 
@@ -67,51 +68,7 @@ const AssignRideToVehicle = ({ rideId,vehicleId,setCancelButtonProps, assignButt
 }
 
 
-const CancelRide = ({ rideId, setAssignButtonProps,cancelButtonProps,setCancelButtonProps }: { rideId: string, setAssignButtonProps: Dispatch<ButtonProps>,cancelButtonProps:ButtonProps,setCancelButtonProps:Dispatch<ButtonProps> }) => {
 
-
-    const { data: session } = useSession();
-    const queryClient = useQueryClient();
-
-   
-
-    const mutation = useMutation({
-        mutationFn: async ({ rideId }: { rideId: string }) => {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/rides/${rideId}/operator-cancel`,
-                {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${session?.token}`,
-                    },
-                }
-            );
-            if (!response.ok) throw new Error('Failed to cancel ride');
-            return await response.json();
-        },
-    });
-
-    const handleCancel = () => {
-        setAssignButtonProps({ ...setAssignButtonProps, isDisabled: true })
-        setCancelButtonProps({ ...cancelButtonProps, isLoading: true })
-        setTimeout(() => {
-            mutation.mutate({ rideId: rideId })
-            queryClient.refetchQueries({ queryKey: ['ridesToConfirm'] })
-        }, 100)
-    }
-
-    if (mutation.error) {
-        return (
-            <Button variant="flat" color="danger" isDisabled>Error al cancelar</Button>
-        )
-    }
-    return (
-        <>
-            <Button isIconOnly onPress={() => handleCancel()} {...cancelButtonProps}><X className="" /></Button>
-        </>
-    );
-
-}
 
 
 export default function PendingRideCard({ trip }: { trip: Ride }) {

@@ -55,7 +55,7 @@ export default function AsyncPickDriverBox({onSelectionChange, validationError}:
               <option value="" disabled>
                 Elegir auto disponible
               </option>
-              {data?.content.map((vehicle: Vehicle) => (
+              {data?.content.map((vehicle: Vehicle) => ( vehicle.driver &&
                 <option key={vehicle.id} value={vehicle.id}>
                   {vehicle.brand} {vehicle.model} - {vehicle.driver.name},{' '}
                   {vehicle.driver.lastname}

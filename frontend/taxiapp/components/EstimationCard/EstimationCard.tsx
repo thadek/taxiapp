@@ -42,7 +42,7 @@ export default function EstimationCard({ start, end, distance, shift }: { start:
             <CardHeader>
                 <CardTitle className="gap-3 flex items-center">
                     <MapPinned size={30} />
-                    Resultados de estimación
+                    Detalles del recorrido
                 </CardTitle>
             </CardHeader>
             <Divider />

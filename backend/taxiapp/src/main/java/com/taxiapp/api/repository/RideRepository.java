@@ -49,4 +49,7 @@ public interface RideRepository extends JpaRepository<Ride, String>, PagingAndSo
             Pageable pageable
     );
 
+
+    List<Ride> findByStatus(RideStatus rideStatus);
+
 }

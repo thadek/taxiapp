@@ -97,6 +97,7 @@ public class VehicleServiceImpl implements IVehicleService {
                 UUID driverUUID = UUID.fromString(vehicle.driver_id());
                 Driver driver = driverRepository.findById(driverUUID)
                         .orElseThrow(() -> new EntityNotFoundException("Driver", "id", vehicle.driver_id()));
+
                 vehicleToUpdate.setDriver(driver);
             }
         }
