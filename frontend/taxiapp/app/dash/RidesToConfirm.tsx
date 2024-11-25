@@ -72,7 +72,8 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
         || message?.eventType === "ACCEPTED_BY_DRIVER"
         || message?.eventType === "CREATED_BY_OPERATOR"
         || message?.eventType === "DRIVER_ASSIGNED_BY_OPERATOR"
-        || message?.eventType === "UPDATED_BY_SYSTEM") {
+        || message?.eventType === "UPDATED_BY_SYSTEM"
+        || message?.eventType === "REJECTED_BY_DRIVER") {
         refetch()
 
       }

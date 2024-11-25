@@ -542,6 +542,63 @@ public class RideServiceImpl implements IRideService {
         return cancelledRide;
 
     }
+
+
+    /**
+     * Calificar un viaje (cliente)
+     */
+    @Transactional
+    public Ride rateRide(String rideId, Integer rating, Principal principal) {
+        Ride ride = rideRepository.findById(rideId).orElse(null);
+        if (ride == null) {
+            throw new EntityNotFoundException("Ride", "id", rideId);
+        }
+
+        if(ride.getStatus() != RideStatus.COMPLETED){
+            throw new RideException("No se puede calificar un viaje que no está en estado COMPLETED.");
+        }
+
+        //Obtener el usuario logueado
+        if(!Objects.equals(ride.getClient().getEmail(), principal.getName())) {
+            throw new RideException("No tienes permiso para calificar este viaje.");
+        }
+        ValidationService.validateRating(rating);
+        ride.setRating(rating);
+        Ride ratedRide = rideRepository.save(ride);
+
+        //Notificar a subscriptores DEL CAMBIO DE ESTADO DE RIDE
+        eventPublisher.publishEvent(new RideStatusChangeEvent(this, rideId, RideEvent.RATED_BY_USER,ratedRide));
+        return ratedRide;
+    }
+
+
+    /**
+     * Rechazar un viaje (conductor)
+     */
+    @Transactional
+    public Ride rejectRide(String rideId, Principal principal) {
+        Ride ride = rideRepository.findById(rideId).orElse(null);
+        if (ride == null) {
+            throw new EntityNotFoundException("Ride", "id", rideId);
+        }
+
+        if (ride.getStatus() != RideStatus.DRIVER_ASSIGNED) {
+            throw new RideException("No se puede rechazar un viaje que no está en estado DRIVER_ASSIGNED.");
+        }
+
+        //Obtener el conductor logueado
+        if (!Objects.equals(ride.getVehicle().getDriver().getEmail(), principal.getName())) {
+            throw new RideException("No tienes permiso para rechazar este viaje.");
+        }
+
+        ride.setStatus(RideStatus.PENDING);
+        ride.setVehicle(null);
+        Ride rejectedRide = rideRepository.save(ride);
+
+        //Notificar a subscriptores DEL CAMBIO DE ESTADO DE RIDE
+        eventPublisher.publishEvent(new RideStatusChangeEvent(this, rideId, RideEvent.REJECTED_BY_DRIVER, rejectedRide));
+        return rejectedRide;
+    }
 }
 
 

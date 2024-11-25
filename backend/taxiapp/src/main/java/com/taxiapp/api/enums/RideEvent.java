@@ -4,6 +4,8 @@ public enum RideEvent {
     CREATED_BY_USER, /* The ride was created by the user */
     PROGRAMMED_BY_USER, /* The ride was programmed by the user */
     CANCELLED_BY_USER, /* The ride was cancelled by the user */
+
+    RATED_BY_USER, /* The ride was rated by the user */
     MODIFIED_BY_USER, /* The ride was modified by the user */
 
     CREATED_BY_OPERATOR, /* The ride was created by the operator */
@@ -18,6 +20,8 @@ public enum RideEvent {
     STARTED_BY_DRIVER, /* The ride was started by the driver */
     COMPLETED_BY_DRIVER, /* The ride was completed by the driver */
     INTERRUPTED_BY_DRIVER, /* The ride was interrupted by the driver */
+
+    REJECTED_BY_DRIVER, /* The ride was rejected by the driver */
     CANCELLED_BY_DRIVER, /* The ride was cancelled by the driver */
 
 
