@@ -2,7 +2,7 @@ package com.taxiapp.api.controller.rest.report;
 
 import com.taxiapp.api.controller.rest.report.dto.ReportCreateRequest;
 import com.taxiapp.api.controller.rest.report.dto.ReportDTO;
-import com.taxiapp.api.model.Report;
+import com.taxiapp.api.entity.Report;
 import com.taxiapp.api.service.IReportService;
 import com.taxiapp.api.service.impl.ReportServiceImpl;
 import com.taxiapp.api.utils.ResultResponse;

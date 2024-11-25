@@ -1,7 +1,7 @@
 package com.taxiapp.api.service;
 
 import com.taxiapp.api.controller.rest.report.dto.ReportCreateRequest;
-import com.taxiapp.api.model.Report;
+import com.taxiapp.api.entity.Report;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
