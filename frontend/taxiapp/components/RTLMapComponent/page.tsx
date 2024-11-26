@@ -133,10 +133,13 @@ export default function RTLMapComponent() {
           icon={svgCar(angle, getStatusColor(vehicle.status))}
         >
           <Popup>
+            
             <strong>{vehicle.brand} {vehicle.model}</strong><br />
-            Placa: {vehicle.licensePlate}<br />
+            Patente: {vehicle.licensePlate}<br />
             Conductor: {vehicle.driver.name} {vehicle.driver.lastname}<br />
             Estado: {parseStatus[vehicle.status as VehicleStatus].detail}
+            
+           
           </Popup>
         </Marker>
       ))}

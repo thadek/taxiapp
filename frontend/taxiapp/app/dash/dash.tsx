@@ -28,7 +28,7 @@ export default function Dash({ }) {
   
 
   return (
-    <div className="flex-1 p-8 min-h-screen bg-slate-900 overflow-hidden">
+    <div className="flex-1 p-8 min-h-screen  bg-slate-300 dark:bg-slate-900 overflow-hidden">
      <Stats
         status={status}
         message={message}

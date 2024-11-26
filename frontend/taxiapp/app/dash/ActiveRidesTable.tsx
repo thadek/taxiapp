@@ -87,8 +87,8 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
 
     return (
 
-        <div className="w-full h-full col-span-2 bg-gray-950 p-6 rounded-lg overflow-hidden">
-            <h2 className="text-2xl font-bold text-white mb-4">Viajes activos</h2>
+        <div className="w-full h-full col-span-2 bg-white dark:bg-gray-950 p-6 rounded-lg overflow-hidden">
+            <h2 className="text-2xl font-bold  mb-4">Viajes activos</h2>
             <div className="mb-4">
                 <div className="relative">
 
@@ -98,14 +98,14 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
                         placeholder="Buscar por teléfono del cliente"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-8 bg-gray-900 text-white border-gray-800 focus:border-gray-700"
+                        className="pl-8 bg-white dark:bg-gray-900 text-white border-gray-800 focus:border-gray-700"
                     />
                 </div>
             </div>
             <div className="rounded-md border border-gray-800 overflow-hidden">
                 <div className="max-h-[600px] overflow-y-auto">
                     <Table>
-                        <TableHeader className="bg-gray-900 sticky top-0">
+                        <TableHeader className="bg-white dark:bg-gray-900 sticky top-0">
                             <TableRow>
                                 <TableHead className="text-gray-400">Teléfono del Cliente</TableHead>
                                 <TableHead className="text-gray-400">Origen → Destino</TableHead>
@@ -146,16 +146,16 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
                                     >
 
 
-                                        <TableCell className="text-gray-300 font-medium">{ride.client.phone}</TableCell>
-                                        <TableCell className="text-gray-500 text-xs">{ride.originName} → {ride.destinationName}</TableCell>
+                                        <TableCell className="text-gray-500 font-medium">{ride.client.phone}</TableCell>
+                                        <TableCell className="text-gray-600 text-xs">{ride.originName} → {ride.destinationName}</TableCell>
                                         <TableCell>
                                             <div className="flex flex-col">
-                                                <span className="text-gray-300">{ride.vehicle?.driver?.name}</span>
-                                                <span className="text-gray-500 text-sm">{ride.vehicle?.driver.email}</span>
+                                                <span className="text-gray-500">{ride.vehicle?.driver?.name}</span>
+                                                <span className="text-gray-600 text-sm">{ride.vehicle?.driver.email}</span>
                                             </div>
                                         </TableCell>
                                         
-                                        <TableCell className="text-gray-300">{ride.vehicle?.brand} {ride.vehicle?.model} - {ride.vehicle?.licensePlate} </TableCell>
+                                        <TableCell className="text-gray-500">{ride.vehicle?.brand} {ride.vehicle?.model} - {ride.vehicle?.licensePlate} </TableCell>
                                         <TableCell>
                                             <Chip
                                                 variant="flat"

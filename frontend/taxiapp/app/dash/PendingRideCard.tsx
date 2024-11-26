@@ -111,10 +111,10 @@ export default function PendingRideCard({ trip }: { trip: Ride }) {
             <ShineBorder
                 key={trip.id}
                 color={["blue", "purple", "pink", "teal", "cyan", "indigo"]}
-                borderWidth={1}
+                borderWidth={2}
                 className="w-full  p-0 flex flex-col items-start rounded-lg"
             >
-                <div className="bg-slate-900 w-full p-3 rounded-lg">
+                <div className="bg-slate-200 dark:bg-slate-900 w-full p-3 rounded-lg">
                     <div className="font-semibold">{trip.originName} → {trip.destinationName}</div>
                     <div className="text-sm text-gray-500">Pasajero: {trip.client.name} - {trip.client.lastname} - {trip.client.phone}</div>
                     <div className="text-sm text-gray-500">Comentarios: {trip.comments}</div>

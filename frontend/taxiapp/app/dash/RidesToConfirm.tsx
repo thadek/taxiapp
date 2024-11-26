@@ -101,7 +101,7 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
       <CardHeader>
         <CardTitle>Viajes pendientes a confirmar</CardTitle>
       </CardHeader>
-      <CardContent className="p-5 flex flex-col gap-5 w-full  max-h-[500px] overflow-y-auto   scrollbar-thin scrollbar-thumb-slate-900">
+      <CardContent className="p-5 flex flex-col gap-5 w-full  max-h-[600px] overflow-y-auto   scrollbar-thin scrollbar-thumb-slate-900">
         <AnimatePresence>
           {isPending && (
             <div className="text-gray-500 flex text-center items-center justify-center w-full min-h-96">
@@ -112,7 +112,7 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
             <PendingRideCard key={trip.id} trip={trip} />
           ))}
           {isSuccess && rides && rides.length === 0 && (
-            <div className="text-gray-500 flex text-center items-center flex-col justify-center w-full h-full  ">
+            <div className="text-gray-500 flex text-center items-center min-h-[400px] flex-col justify-center w-full   ">
               <CarFront className="w-14 h-14" />
               No hay viajes pendientes por confirmar.
             </div>

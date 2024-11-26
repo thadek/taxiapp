@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react'
 import { getSession } from 'next-auth/react'
-import { getRides,getRidesByStatus , getDrivers } from '@/app/queries/abm'
+import { getRides, getRidesByStatus, getDrivers } from '@/app/queries/abm'
 import { Card, CardBody, CardHeader } from "@nextui-org/card"
 import { Spinner } from "@nextui-org/spinner"
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/table"
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table"
+import { TableColumn } from '@nextui-org/react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { Chip } from "@nextui-org/chip"
 import { Divider } from "@nextui-org/divider"
@@ -108,11 +109,11 @@ export default function Dashboard() {
     )
   }
 
-  
+
   const totalTrips = rides.length
   const cancelledTrips = rides.filter(ride => ride.status === 'CANCELLED').length
 
-  
+
   const drivers = rides.reduce((acc, ride) => {
     if (!ride.vehicle || !ride.vehicle.driver) {
       return acc;
@@ -136,52 +137,52 @@ export default function Dashboard() {
   const driverWithHighestRating = driverArray.reduce((max, driver) => max.rating > driver.rating ? max : driver, { rating: 0, name: '', lastname: '' })
   const averageTripsPerDriver = driverArray.reduce((sum, driver) => sum + driver.trips, 0) / activeDrivers.length || 0
 
-  
+
   const totalRatings = rides.filter(ride => ride.rating).length
   const averagePassengerRating = rides.reduce((sum, ride) => sum + (ride.rating || 0), 0) / totalRatings || 0
   const totalReports = rides.filter(ride => ride.report).length
 
-  
+
   const rideStatusData = [
-    { status: 'PENDING', count: pendingRides.length },
-    { status: 'PROGRAMMED', count: rides.filter(ride => ride.isBooked).length },
-    { status: 'DRIVER_ASSIGNED', count: rides.filter(ride => ride.status === 'DRIVER_ASSIGNED').length },
-    { status: 'ACCEPTED', count: acceptedRides.length },
-    { status: 'STARTED', count: startedRides.length },
-    { status: 'COMPLETED', count: completedRides.length },
-    { status: 'INTERRUPTED', count: interruptedRides.length },
-    { status: 'CANCELLED', count: cancelledRides.length },
+    { status: 'Pendientes', count: pendingRides.length },
+    { status: 'Programados', count: rides.filter(ride => ride.isBooked).length },
+    { status: 'Conductor asignado', count: rides.filter(ride => ride.status === 'DRIVER_ASSIGNED').length },
+    { status: 'Aceptados', count: acceptedRides.length },
+    { status: 'Iniciados', count: startedRides.length },
+    { status: 'Completados', count: completedRides.length },
+    { status: 'Interrumpidos', count: interruptedRides.length },
+    { status: 'Cancelados', count: cancelledRides.length },
   ]
 
   return (
-    <div className="p-8 bg-gray-900 min-h-screen">
-      <Card className="mb-8 shadow-lg border-1 border-yellow-400">
+    <div className="p-8 dark:bg-gray-900 min-h-screen">
+      <Card className="mb-8 shadow-lg dark:bg-slate-950 border-none">
         <CardBody>
           <h1 className="text-3xl font-bold text-center text-secondary-foreground mb-2">Estadísticas</h1>
           <p className="text-center text-secondary-foreground">Estadísticas en tiempo real de nuestra flota</p>
         </CardBody>
       </Card>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card shadow="sm" className="border border-primary hover:scale-105 transition-transform duration-200">
+        <Card shadow="sm" className="bg-white dark:bg-slate-950 border-none hover:scale-105 transition-transform duration-200">
           <CardBody className="text-center">
             <p className="text-lg font-semibold text-foreground">Total de viajes</p>
             <p className="text-4xl font-bold text-primary">{totalTrips}</p>
           </CardBody>
         </Card>
-        <Card shadow="sm" className="border border-primary hover:scale-105 transition-transform duration-200">
+        <Card shadow="sm" className="bg-white dark:bg-slate-950 border-none hover:scale-105 transition-transform duration-200">
           <CardBody className="text-center">
             <p className="text-lg font-semibold text-foreground">Viajes aceptados</p>
             <p className="text-4xl font-bold text-success">{acceptedRides.length}</p>
           </CardBody>
         </Card>
-        <Card shadow="sm" className="border border-primary hover:scale-105 transition-transform duration-200">
+        <Card shadow="sm" className="bg-white dark:bg-slate-950 border-none hover:scale-105 transition-transform duration-200">
           <CardBody className="text-center">
             <p className="text-lg font-semibold text-foreground">Viajes cancelados</p>
             <p className="text-4xl font-bold text-danger">{cancelledTrips}</p>
           </CardBody>
         </Card>
-        <Card shadow="sm" className="border border-primary hover:scale-105 transition-transform duration-200">
+        <Card shadow="sm" className="bg-white dark:bg-slate-950 border-none hover:scale-105 transition-transform duration-200">
           <CardBody className="text-center">
             <p className="text-lg font-semibold text-foreground">Promedio de viajes por conductor</p>
             <p className="text-4xl font-bold text-foreground">{averageTripsPerDriver.toFixed(2)}</p>
@@ -190,18 +191,15 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card shadow="md" className="border border-primary">
-          <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+        <Card shadow="md" className="bg-white dark:bg-slate-950 border-none">
+          <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
             <h2 className="text-xl font-bold text-foreground">Métricas de Conductores</h2>
             <Divider className="my-2" />
           </CardHeader>
           <CardBody className="overflow-visible py-2">
-            <Table aria-label="Métricas de conductores" className="mt-3">
-              <TableHeader>
-                <TableColumn>Métrica</TableColumn>
-                <TableColumn>Valor</TableColumn>
-              </TableHeader>
-              <TableBody>
+            <Table aria-label="Métricas de conductores" className="">
+
+              <TableBody className="p-0">
                 <TableRow key="most-trips">
                   <TableCell>Conductor con más viajes</TableCell>
                   <TableCell>
@@ -235,18 +233,15 @@ export default function Dashboard() {
           </CardBody>
         </Card>
 
-        <Card shadow="md" className="border border-primary">
-          <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+        <Card shadow="md" className="border bg-white dark:bg-slate-950 border-none">
+          <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
             <h2 className="text-xl font-bold text-foreground">Métricas de Pasajeros</h2>
             <Divider className="my-2" />
           </CardHeader>
           <CardBody className="overflow-visible py-2">
-            <Table aria-label="Métricas de pasajeros" className="mt-3">
-              <TableHeader>
-                <TableColumn>Métrica</TableColumn>
-                <TableColumn>Valor</TableColumn>
-              </TableHeader>
-              <TableBody>
+            <Table aria-label="Métricas de pasajeros">
+
+              <TableBody >
                 <TableRow key="avg-rating">
                   <TableCell>Calificación promedio de pasajeros</TableCell>
                   <TableCell>
@@ -265,7 +260,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <Card shadow="lg" className="mb-8 border border-primary">
+      <Card shadow="lg" className="mb-8 border bg-white dark:bg-slate-950 border-none">
         <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
           <h2 className="text-xl font-bold text-foreground">Distribución de Estados de Viajes</h2>
           <Divider className="my-2" />
@@ -278,25 +273,27 @@ export default function Dashboard() {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="count" fill="#FACC15" />
+              <Bar dataKey="count" name="Cantidad" fill="#FACC15" />
             </BarChart>
           </ResponsiveContainer>
         </CardBody>
       </Card>
 
-      <Card shadow="lg" className="border border-primary">
-        <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+      <Card shadow="lg" className="border bg-white dark:bg-slate-950 border-none">
+        <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
           <h2 className="text-xl font-bold text-foreground">Detalles de Conductores</h2>
-          <Divider className="my-2" />
+
         </CardHeader>
         <CardBody>
-          <Table aria-label="Tabla de conductores" className="mt-3">
+          <Table aria-label="Tabla de conductores" className=" ">
             <TableHeader>
-              <TableColumn>Nombre</TableColumn>
-              <TableColumn>Viajes</TableColumn>
-              <TableColumn>Calificación</TableColumn>
+              <TableRow>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Viajes</TableHead>
+                <TableHead>Calificación</TableHead>
+              </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody >
               {driverArray.map((driver) => (
                 <TableRow key={driver.id}>
                   <TableCell>{driver.name} {driver.lastname}</TableCell>
