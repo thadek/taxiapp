@@ -37,7 +37,7 @@ const RegisterPage = () => {
     const responseAPI = await res.json();
 
     if (!res.ok) {
-      setErrors(responseAPI.message);
+      setErrors(Array.isArray(responseAPI.message) ? responseAPI.message : [responseAPI.message]);
       return;
     }
 
@@ -48,7 +48,7 @@ const RegisterPage = () => {
     });
 
     if (responseNextAuth?.error) {
-      setErrors(responseNextAuth.error.split(","));
+      setErrors(responseNextAuth.error ? responseNextAuth.error.split(",") : []);
       return;
     }
 

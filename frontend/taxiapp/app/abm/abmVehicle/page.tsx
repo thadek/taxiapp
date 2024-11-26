@@ -277,7 +277,7 @@ const ABMVehicle: React.FC = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Drivers</SelectLabel>
-                          <SelectItem value="none">No Driver</SelectItem>
+                          <SelectItem value="null">No Driver</SelectItem>
                           {availableDrivers.map(driver => (
                             <SelectItem key={driver.id} value={driver.id.toString()}>
                               {driver.name}

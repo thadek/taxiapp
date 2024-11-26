@@ -92,6 +92,9 @@ interface Role {
       fetchDriversAndUsers();
     }, []);
 
+    const availableUsers = users.filter(user => !drivers.some(driver => driver.id === user.id));
+
+
     const handleSaveNewDriver = async () => {
       const session = await getSession();
       if (!session) {
@@ -138,8 +141,9 @@ interface Role {
       }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string | null) => {
-      const { name, value, type, checked } = e.target;
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, id: string | null) => {
+      const target = e.target as HTMLInputElement;
+      const { name, value, type, checked } = target;
       const inputValue = type === 'checkbox' ? checked : value;
       if (id) {
         setDrivers(prevDrivers =>
@@ -404,15 +408,20 @@ interface Role {
             {newDriver && (
               <TableRow>
                 <TableCell>
-                  <input
-                    type="text"
-                    id={`user_id-new`}
+                  <select
+                    id="user_id-new"
                     name="id"
                     value={newDriver.id}
                     onChange={(e) => handleInputChange(e, null)}
                     className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500"
-                    placeholder="User ID"
-                  />
+                  >
+                    <option value="">Select User</option>
+                    {availableUsers.map(user => (
+                      <option key={user.id} value={user.id}>
+                        {user.name} {user.lastname}
+                      </option>
+                    ))}
+                  </select>
                 </TableCell>
                 <TableCell colSpan={5}></TableCell> {/* Espacio para los campos del usuario */}
                 <TableCell>
