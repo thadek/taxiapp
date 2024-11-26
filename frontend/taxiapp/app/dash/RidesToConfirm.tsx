@@ -97,11 +97,11 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
 
   return (
 
-    <Card className="col-span-1 max-h-[500px] w-full ">
+    <Card className="col-span-1  w-full ">
       <CardHeader>
         <CardTitle>Viajes pendientes a confirmar</CardTitle>
       </CardHeader>
-      <CardContent className="p-5 flex flex-col gap-5 w-full   overflow-y-auto h-full   scrollbar-thin scrollbar-thumb-slate-900">
+      <CardContent className="p-5 flex flex-col gap-5 w-full  max-h-[500px] overflow-y-auto   scrollbar-thin scrollbar-thumb-slate-900">
         <AnimatePresence>
           {isPending && (
             <div className="text-gray-500 flex text-center items-center justify-center w-full min-h-96">

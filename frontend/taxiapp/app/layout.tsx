@@ -2,7 +2,7 @@
 import "./global.css";
 import Navbar from "../components/Navbar/Navbar";
 import SessionAuthProvider from "@/context/SessionAuthProvider";
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
@@ -31,8 +31,9 @@ export default function RootLayout({
                 <main className="h-screen w-screen">
 
                   <Navbar />
-
-                  {children}
+                  
+                    {children}
+                  
                   <Toaster richColors position="bottom-center" closeButton />
 
                 </main>

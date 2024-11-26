@@ -126,29 +126,19 @@ const fetchTrips = async (page = 0, searchTerm = '') => {
             keepPreviousData: true
     })
 
-            const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-                setSearchTerm(e.target.value)
-        setPage(0) // Reset to first page on new search
-    }
+     
 
                 if (isLoading) return <Card className="w-full h-full justify-center flex"> <Spinner /> </Card>
                 if (isError) return <Card className="w-full h-full justify-center flex"> Ocurrió un error al cargar los viajes. </Card>
 
                 return (
                 <div className="p-3 flex justify-center  items-center ">
-                    <Card className="w-full">
+                    <Card className="w-full border-none ">
                         <CardHeader>
                             <CardTitle>Viajes</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="mb-4">
-                                <Input
-                                    type="text"
-                                    placeholder="Buscar viajes..."
-                                    value={searchTerm}
-                                    onChange={handleSearch}
-                                />
-                            </div>
+                            
                             <div className="overflow-x-auto">
                                 <Table>
                                     <TableHeader>

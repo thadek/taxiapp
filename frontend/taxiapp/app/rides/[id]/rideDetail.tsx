@@ -174,10 +174,10 @@ export default function RideDetail({ rideId }: { rideId: string }) {
 
     return (
         isSuccess && ride &&
-        <div className=" bg-slate-700 mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">Detalle del Viaje</h1>
+        <div className=" bg-slate-700 mx-auto  ">
+            
 
-            <Card className=" w-full ">
+            <Card className=" w-full h-full border-none rounded-none">
 
                 <CardContent className="p-0 h-96">
                     <MapWithRoute start={invertCoords(parseCoords(ride?.pickup_location))} end={invertCoords(parseCoords(ride?.dropoff_location))} turno={{ name: "diurno", costoporKm: 1000 }} />

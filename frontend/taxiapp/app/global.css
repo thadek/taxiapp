@@ -142,3 +142,11 @@ body {
   scrollbar-width: thin; /* Asegúrate de que siga siendo delgada */
   scrollbar-color: #cbd5e0 #edf2f7;
 }
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

@@ -1,14 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Clock } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query';
-import { getSession } from 'next-auth/react';
+import { getSession, signOut } from 'next-auth/react';
 import { Spinner } from '@nextui-org/react';
+import { useEffect } from 'react';
 
 
-export default function PendingRidesMiniCard(){
+
+export default function PendingRidesMiniCard({message}:{message:any}){
 
 
-    const { data, isLoading, isError, error } = useQuery({
+    const { data, isLoading,isSuccess, isError,refetch, error } = useQuery({
         queryKey: ['pendingRides'],
         queryFn: async () => {
             const session = await getSession();
@@ -23,10 +25,25 @@ export default function PendingRidesMiniCard(){
                   'Content-Type': 'application/json',
                 },
               });
-            const data = await response.json();
+            
+
+              const data = await response.json();
+              if(response.status === 401 && data.message === "Expired JWT Token"){  
+                signOut();
+                return;
+              }
+
+              
+            
             return data;
         },
     });
+
+    useEffect(() => {
+        if(!message) return;
+        refetch();
+
+    }, [message])
 
 
     if(isLoading) return <Card className="w-full h-full justify-center flex"> <Spinner /> </Card>
@@ -39,7 +56,8 @@ export default function PendingRidesMiniCard(){
             </CardHeader>
             <CardContent>
 
-                <div className="text-2xl font-bold">{data.page.totalElements}</div>
+                <div className="text-2xl font-bold">{isSuccess && data.page.totalElements} </div>
+                {isError && "Ocurrió un error al obtener datos."}
             </CardContent>
         </Card>
     )

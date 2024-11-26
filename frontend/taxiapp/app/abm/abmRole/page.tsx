@@ -141,15 +141,15 @@ return (
       <div className='table-container'>
       {!newRole && (
         <Button onClick={handleInsert} className="text-secondary bg-secondary-foreground shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:bg-yellow-500 font-bold px-4 p-4 rounded mt-4 mx-4">
-          + Insert New Role
+          + Agregar nuevo rol
         </Button>
       )}
       <div className='m-4 rounded-2xl bg-background shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Id</TableHead>
-            <TableHead>Name</TableHead>
+            <TableHead>#</TableHead>
+            <TableHead>Nombre</TableHead>
             <TableHead className='text-right'>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -173,15 +173,15 @@ return (
               <TableCell className='text-right'>
         {editingRoleId === role.id.toString() ? (
           <>
-            <Button onClick={() => handleSaveEdit(role.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Save</Button>
-            <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancel</Button>
+            <Button onClick={() => handleSaveEdit(role.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Guardar</Button>
+            <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancelar</Button>
           </>
         ) : (
           <>
-            <Button onClick={() => handleEdit(role.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Edit</Button>
+            <Button onClick={() => handleEdit(role.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Editar</Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button onClick={() => setSelectedRoleId(role.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Delete</Button>
+                <Button onClick={() => setSelectedRoleId(role.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Eliminar</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
