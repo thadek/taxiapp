@@ -13,6 +13,8 @@ import Link from 'next/link'
 import { formatToGMTMinus3 } from '@/app/utils/formatTime'
 import { Chip } from '@nextui-org/react'
 import { CheckIcon } from 'lucide-react'
+import { Ride } from '@/types/ride.type'
+import { Driver } from '@/types/driver.type'
 
 type Role = {
     name: string
@@ -41,8 +43,9 @@ type Vehicle = {
 }
 
 
+type rideStatus = 'PENDING' | 'ACCEPTED' | 'CANCELLED' | 'PROGRAMMED' | 'DRIVER_ASSIGNED' | 'STARTED' | 'COMPLETED'
 
-
+type buttonColor = 'warning' | 'success' | 'danger' | 'primary'
 
 const handleStatus = (status: string) => {
     const statusColor = {
@@ -77,20 +80,18 @@ const handleStatus = (status: string) => {
 
     return (
         <Chip
-            startContent={statusIcon[status]}
+            startContent={statusIcon[status as rideStatus]}
             variant="faded"
-            
-            color={statusColor[status]}
-
+            color={statusColor[status as rideStatus] as buttonColor}
         >
-            {/**@ts-ignore */}
-            {statusText[status]}
+          
+            {statusText[status as rideStatus]}
         </Chip>)
 }
 
 
 
-const handleDriver = (driver: User) => {
+const handleDriver = (driver: Driver | undefined) => {
     if (!driver) return 'Sin conductor asignado'
     return `${driver.name} ${driver.lastname}`
 }
@@ -157,7 +158,7 @@ const fetchTrips = async (page = 0, searchTerm = '') => {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {data?.trips.map((trip) => (
+                                        {data?.trips.map((trip:Ride) => (
                                             <TableRow key={trip.id}>
                                                 <TableCell className="font-medium">{trip.id.slice(0, 8)}...</TableCell>
                                                 <TableCell>{formatToGMTMinus3(trip.createdAt)}</TableCell>

@@ -81,7 +81,7 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
         || message?.eventType === "REJECTED_BY_DRIVER") {
         refetch()
 
-        queryClient.refetchQueries({queryKey:['pendingRides','programmedRides']});
+       
 
       }
     };

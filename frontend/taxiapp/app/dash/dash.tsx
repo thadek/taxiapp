@@ -1,15 +1,14 @@
 'use client'
 import React from 'react'
-import dynamic from 'next/dynamic'
-import { useMemo } from 'react'
+
 import Stats from '@/components/Dashboard/Stats/Stats'
 import RidesToConfirm from './RidesToConfirm';
-import OngoingTrips from './OnGoingRides';
+
 import NewRideCard from './NewRideCard';
 import useWebSocketSubscription from '@/hooks/useSocket'
 import MapWithSearch from '@/components/MapWithSearch/page'
 import ActiveRidesTable from './ActiveRidesTable';
-import { Spinner } from '@nextui-org/react'
+
 
 
 
@@ -31,9 +30,8 @@ export default function Dash({ }) {
   return (
     <div className="flex-1 p-8 min-h-screen bg-slate-900 overflow-hidden">
      <Stats
-        tripsCount={3}
-        driversCount={1}
         status={status}
+        message={message}
       />
       
       <div className="grid grid-cols-3 gap-6">
