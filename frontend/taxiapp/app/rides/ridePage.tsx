@@ -167,7 +167,7 @@ const fetchTrips = async (page = 0, searchTerm = '') => {
                                                 <TableCell>{trip.dropoff_location}</TableCell>
                                                 <TableCell>{handleStatus(trip.status)}</TableCell>
                                                 <TableCell>{handleDriver(trip.vehicle?.driver)}</TableCell>
-                                                <TableCell>{`${trip.client.name} ${trip.client.lastname}`}</TableCell>
+                                                <TableCell>{trip.client ? `${trip.client.name} ${trip.client.lastname}` : 'Sin cliente'}</TableCell>
                                                 <TableCell>
                                                     <Link href={`/rides/${trip.id}`}>
                                                         <Button size="sm" variant="outline" >

@@ -178,10 +178,10 @@ const Reports: React.FC = () => {
   };
 
   return (
-    <div className='geist-sans-font bg-secondary flex justify-center'>
+    <div className='geist-sans-fon flex justify-center'>
       <div className='table-container flex-col justify-center'>
         {showDetailView && selectedReport ? (
-          <Card className="w-full max-w-2xl mx-auto">
+          <Card className="w-full max-w-2xl bg-zinc-900 border-1 border-slate-700 mx-auto">
             <CardHeader>
               <CardTitle>Reporte de Siniestro</CardTitle>
             </CardHeader>
@@ -232,7 +232,7 @@ const Reports: React.FC = () => {
             </CardFooter>
           </Card>
         ) : showCreateForm ? (
-          <div className='m-4 rounded-2xl bg-background shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4'>
+          <div className='m-4 rounded-2xl bg-zinc-900 border-1 border-slate-700 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4'>
             <h2 className='text-xl font-bold mb-4'>Crear Nuevo Reporte</h2>
             <div className='mb-4'>
               <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='title'>Título</label>
@@ -297,7 +297,7 @@ const Reports: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className='m-4 rounded-2xl bg-background shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'>
+          <div className='m-4 rounded-2xl bg-zinc-900 border-1 border-slate-700 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'>
             <Button onClick={handleCreateReport} className="text-secondary bg-secondary-foreground shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:bg-yellow-500 font-bold px-4 p-4 rounded mt-4 mx-4">
               + Crear Reporte
             </Button>

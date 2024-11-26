@@ -154,7 +154,7 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="p-8 bg-secondary min-h-screen">
+    <div className="p-8 bg-gray-900 min-h-screen">
       <Card className="mb-8 shadow-lg border-1 border-yellow-400">
         <CardBody>
           <h1 className="text-3xl font-bold text-center text-secondary-foreground mb-2">Estadísticas</h1>

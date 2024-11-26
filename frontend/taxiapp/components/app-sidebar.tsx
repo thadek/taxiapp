@@ -35,6 +35,7 @@ import { checkMultipleRoles, checkRole } from "@/app/utils/role-check"
 import { useSession, signIn, signOut } from "next-auth/react"
 
 import { Calendar,  LogIn, Search, Settings,UserPlus,LogOut, User, Car } from "lucide-react"
+import { title } from "process"
 
 const itemsWithoutLogin = [
   {
@@ -107,6 +108,14 @@ const data = {
       {
         title: "Roles",
         url: "/abm/abmRole"
+      },
+      {
+        title: "Reportes",
+        url: "/reports"
+      },
+      {
+        title: "Estadísticas",
+        url: "/statistics"
       }
     ],
   },
