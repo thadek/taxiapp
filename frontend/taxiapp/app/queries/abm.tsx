@@ -290,15 +290,25 @@ const deleteReport = async (reportId: string, token: string) => {
  */
 const getRides = async (token: string, page: number = 0, size: number = 8) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/rides?page=${page}&size=${size}`, {
-      headers: {
+        headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-      },
+        },
     });
     if (!response.ok) {
-      throw new Error('Failed to fetch rides');
+        throw new Error('Failed to fetch rides');
     }
     return response.json();
-  };
+};
 
-export { getUsers, getUser, createUser, updateUser, userAssignRole, deleteUser, getDrivers, createDriver, updateDriver, deleteDriver, getVehicles, createVehicle, updateVehicle, vehicleDriverAssign, deleteVehicle, getRoles, createRole, updateRole, deleteRole, getReports, getReportsWithRideId, createReport, getReportByRideId, deleteReport, getRides };
+/**
+ * Obtener todos los viajes según el estado
+ * @param status
+ * @returns
+ */
+
+const getRidesByStatus = async (token: string, status: string,) => {
+    return fetchWithAuth(`${process.env.NEXT_PUBLIC_BACKEND_URL}/rides/by-status/${status}`, token);
+};
+
+export { getUsers, getUser, createUser, updateUser, userAssignRole, deleteUser, getDrivers, createDriver, updateDriver, deleteDriver, getVehicles, createVehicle, updateVehicle, vehicleDriverAssign, deleteVehicle, getRoles, createRole, updateRole, deleteRole, getReports, getReportsWithRideId, createReport, getReportByRideId, deleteReport, getRides, getRidesByStatus };

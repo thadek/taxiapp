@@ -79,7 +79,7 @@ export default function RegistrationForm() {
     const responseAPI = await res.json();
 
     if (!res.ok) {
-      setErrors(responseAPI.errors);
+      setErrors(Array.isArray(responseAPI.message) ? responseAPI.message : [responseAPI.message]);
       return;
     }
 
@@ -90,7 +90,7 @@ export default function RegistrationForm() {
     });
 
     if (responseNextAuth?.error) {
-      setErrors(responseNextAuth.error.split(","));
+      setErrors(responseNextAuth.error ? responseNextAuth.error.split(",") : []);
       return;
     }
 

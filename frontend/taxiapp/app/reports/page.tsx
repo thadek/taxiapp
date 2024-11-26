@@ -32,7 +32,8 @@ import {
   AlertDialogAction
 } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
+import { DatePicker } from "@nextui-org/date-picker";
+import { CalendarDate } from "@internationalized/date";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { FaArrowRight } from 'react-icons/fa';
 import { format } from 'date-fns';
@@ -68,7 +69,7 @@ const Reports: React.FC = () => {
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newReport, setNewReport] = useState<Report | null>(null);
-  const [date, setDate] = useState<Date | null>(null);
+  const [date, setDate] = useState<CalendarDate | null>(null);
 
   useEffect(() => {
     const fetchRides = async () => {
@@ -82,6 +83,7 @@ const Reports: React.FC = () => {
         const ridesResponse = await getRides(token, page, PAGE_SIZE);
         const allRides = ridesResponse.content || [];
         setRides(allRides);
+        console.log(ridesResponse);
         setTotalPages(ridesResponse.page.totalPages);
 
         // Filtra los rides que no tienen ningún reporte asociado
@@ -148,9 +150,10 @@ const Reports: React.FC = () => {
     }
     const token = session.token;
 
-    if (newReport && newReport.date) {
-      const date = new Date(newReport.date);
-      const formattedDate = date.toISOString();
+    if (newReport && newReport.date && date) {
+      const adjustedDate = new Date(date.toString());
+      adjustedDate.setMinutes(adjustedDate.getMinutes() - adjustedDate.getTimezoneOffset() + 15 * 60);
+      const formattedDate = adjustedDate.toISOString().split('T')[0];
       newReport.date = formattedDate;
     }
     console.log(newReport);
@@ -230,9 +233,9 @@ const Reports: React.FC = () => {
           </Card>
         ) : showCreateForm ? (
           <div className='m-4 rounded-2xl bg-background shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] p-4'>
-            <h2 className='text-xl font-bold mb-4'>Create New Report</h2>
+            <h2 className='text-xl font-bold mb-4'>Crear Nuevo Reporte</h2>
             <div className='mb-4'>
-              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='title'>Title</label>
+              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='title'>Título</label>
               <input
                 className='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500'
                 type='text'
@@ -242,7 +245,7 @@ const Reports: React.FC = () => {
               />
             </div>
             <div className='mb-4'>
-              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='description'>Description</label>
+              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='description'>Descripción</label>
               <Textarea
                 className='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-secondary leading-tight focus:outline-none focus:bg-white focus:border-yellow-500'
                 name='description'
@@ -251,7 +254,7 @@ const Reports: React.FC = () => {
               />
             </div>
             <div className='mb-4'>
-              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='lastLocation'>Last Location</label>
+              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='lastLocation'>Ültima Ubicación</label>
               <input
                 className='bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-secondary leading-tight focus:outline-none focus:bg-white focus:border-yellow-500'
                 type='text'
@@ -261,14 +264,14 @@ const Reports: React.FC = () => {
               />
             </div>
             <div className='mb-4'>
-              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='rideId'>Ride</label>
+              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='rideId'>Viaje</label>
               <select
                 className='bg-gray-200 border-2 border-gray-200 rounded w-full py-2 px-4 text-secondary leading-tight focus:outline-none focus:bg-white focus:border-yellow-500'
                 name='rideId'
                 value={newReport?.rideId || ''}
                 onChange={handleInputChange}
               >
-                <option value=''>Select a ride</option>
+                <option value=''>Selecciona un Viaje</option>
                 {availableRides.map(ride => (
                     <option className='text-secondary' key={ride.id} value={ride.id}>
                     {ride.id.slice(0, 4)} - {ride.pickup_location} - {ride.dropoff_location}
@@ -277,46 +280,33 @@ const Reports: React.FC = () => {
               </select>
             </div>
             <div className='mb-4'>
-              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='date'>Date</label>
-              <Popover>
-                <PopoverTrigger asChild>
-                    <Button
-                    variant={"outline"}
-                    className={`w-full justify-start text-left font-normal ${!date ? "text-muted-foreground" : ""}`}
-                    >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={date || undefined}
-                    onSelect={(day) => {
-                      setDate(day || null);
-                      setNewReport(prevNewReport => (prevNewReport ? { ...prevNewReport, date: day ? day.toISOString() : '' } : null));
-                    }}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+              <label className='block text-primary-foreground text-sm font-bold mb-2' htmlFor='date'>Fecha</label>
+              <DatePicker
+                label="Elija una fecha"
+                value={date}
+                onChange={(newDate) => {
+                  setDate(newDate);
+                  setNewReport(prevNewReport => (prevNewReport ? { ...prevNewReport, date: newDate ? newDate.toString() : '' } : null));
+                }}
+                className=""
+              />
             </div>
             <div className='mt-4'>
-              <Button onClick={handleSaveNewReport} className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded">Save</Button>
-              <Button onClick={handleCancelNewReport} className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded ml-4">Cancel</Button>
+              <Button onClick={handleSaveNewReport} className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded">Guardar</Button>
+              <Button onClick={handleCancelNewReport} className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded ml-4">Cancelar</Button>
             </div>
           </div>
         ) : (
           <div className='m-4 rounded-2xl bg-background shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'>
             <Button onClick={handleCreateReport} className="text-secondary bg-secondary-foreground shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:bg-yellow-500 font-bold px-4 p-4 rounded mt-4 mx-4">
-              + Create Report
+              + Crear Reporte
             </Button>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Ride ID</TableHead>
+                  <TableHead>Título</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>ID Viaje</TableHead>
                   <TableHead></TableHead> {/* Empty header for the arrow icon */}
                 </TableRow>
               </TableHeader>
