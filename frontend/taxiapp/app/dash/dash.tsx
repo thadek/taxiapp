@@ -9,16 +9,21 @@ import useWebSocketSubscription from '@/hooks/useSocket'
 import MapWithSearch from '@/components/MapWithSearch/page'
 import ActiveRidesTable from './ActiveRidesTable';
 import dynamic from 'next/dynamic';
+import { useMemo } from 'react';
 
 
 
 
 
 const TaxiMap = ({ }) => {
-  const Map =  dynamic(() => import("@/components/MapWithSearch/page"), { ssr: false });
-  return (
-    <Map />
-  )
+
+  return useMemo(() => {
+    const Map =  dynamic(() => import("@/components/MapWithSearch/page"), { ssr: false });
+    return (
+      <Map />
+    )
+  }
+  , [])
 }
 
 export default function Dash({ }) {

@@ -46,7 +46,7 @@ const useWebSocketSubscription = (url: string, topic: string) => {
         setStatus('ERROR');
        
       },
-      debug: (str) => console.log(str),
+      
     });
 
     stompClient.onWebSocketClose = () => {
@@ -65,8 +65,10 @@ const useWebSocketSubscription = (url: string, topic: string) => {
     stompClient.activate();
 
     return () => {
-      stompClient.deactivate();
-      toast.dismiss(); // Limpia cualquier toast activa al desmontar
+      if(stompClient){
+        stompClient.deactivate();
+      }
+      
     };
   }, [session, url, topic]);
 

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup,LayerGroup,useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L, { LatLngExpression } from "leaflet";
 import "leaflet-defaulticon-compatibility";
@@ -51,9 +51,8 @@ type VehicleStatus = 'AVAILABLE' | 'ON_TRIP' | 'STREET_TRIP' | 'BUSY' | 'UNAVAIL
 
 
 
+function MyLayer({}){
 
-export default function RTLMapComponent() {
-  const initialPosition: LatLngExpression = [-38.951155, -68.065541];
   const { message } = useWebSocketSubscription(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/ws`,
     "/topic/locations"
@@ -120,13 +119,9 @@ export default function RTLMapComponent() {
     }
   }, [message]);
 
-  return (
-    <MapContainer center={initialPosition} zoom={13} className="w-full h-full z-10">
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {Object.values(vehicles).map(({ id, position, angle, vehicle }) => (
+
+  return (message && <LayerGroup> 
+ {Object.values(vehicles).map(({ id, position, angle, vehicle }) => (
         <Marker
           key={id}
           position={position}
@@ -143,6 +138,23 @@ export default function RTLMapComponent() {
           </Popup>
         </Marker>
       ))}
+
+  </LayerGroup>);
+
+
+}
+
+
+
+export default function RTLMapComponent() {
+  
+  return (
+    <MapContainer center={[-38.951155, -68.065541]} zoom={13} className="w-full h-full z-10">
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      <MyLayer/>
     </MapContainer>
   );
 }
