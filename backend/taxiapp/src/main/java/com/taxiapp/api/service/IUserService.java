@@ -31,4 +31,6 @@ public interface IUserService {
 
     // Nuevo método para actualizar el token de FCM
     void updateFcmToken(String email, String fcmToken);
+
+    void deleteFcmToken(String email);
 }
