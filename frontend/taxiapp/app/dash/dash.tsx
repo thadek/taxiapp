@@ -8,15 +8,16 @@ import NewRideCard from './NewRideCard';
 import useWebSocketSubscription from '@/hooks/useSocket'
 import MapWithSearch from '@/components/MapWithSearch/page'
 import ActiveRidesTable from './ActiveRidesTable';
+import dynamic from 'next/dynamic';
 
 
 
 
 
 const TaxiMap = ({ }) => {
- // const Map =  dynamic(() => import("@/components/MapWithSearch/page"), { ssr: false });
+  const Map =  dynamic(() => import("@/components/MapWithSearch/page"), { ssr: false });
   return (
-    <MapWithSearch />
+    <Map />
   )
 }
 

@@ -49,6 +49,9 @@ export default function AsyncSearchDirectionBox({ text, onSelectionChange }: { t
       variant="underlined"
       onSelectionChange={onSelectionChange}
       onInputChange={list.setFilterText}
+      listboxProps={{
+        emptyContent: 'No se encontraron resultados.'
+    }}
     >
       {(item) => (
         <AutocompleteItem key={`${item.lat},${item.lon}`} className="capitalize">

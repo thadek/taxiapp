@@ -124,7 +124,7 @@ const fetchTrips = async (page = 0, searchTerm = '') => {
             const {data, isLoading, isError} = useQuery({
                 queryKey: ['trips', page, searchTerm],
         queryFn: () => fetchTrips(page, searchTerm),
-            keepPreviousData: true
+            placeholderData: (prev)=> prev
     })
 
      

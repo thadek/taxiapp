@@ -5,8 +5,17 @@ import SessionAuthProvider from "@/context/SessionAuthProvider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Metadata } from "next"
 import { Toaster } from "@/components/ui/sonner"
 import Providers from "./providers";
+
+
+export const metadata: Metadata = {
+  title: 'TaxiApp',
+  description:
+    "Aplicación de taxis -  backoffice",
+};
+
 
 
 export default function RootLayout({
