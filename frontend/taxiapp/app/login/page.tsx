@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation'
 import { toast } from "sonner"
+import NextImage from 'next/image';
+import {Image} from '@nextui-org/react';
 
 export default function Login() {
   const [errors, setErrors] = useState<string[]>([]);
@@ -49,16 +51,22 @@ export default function Login() {
   };
 
   return (
-    <section className="  bg-gray-900 bg-no-repeat bg-cover ">
+    <section className="  bg-slate-950 bg-no-repeat bg-cover ">
       <div className="flex items-center justify-center px-6 py-8 mx-auto md:h-screen rounded-tl-lg rounded-bl-lg lg:py-0">
-      <div className="w-full h-[600px] bg-slate-700   shadow  md:mt-0 sm:max-w-md xl:p-0 ">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            
+      <div className="w-full h-[600px] bg-slate-900   shadow  md:mt-0 sm:max-w-md xl:p-0 ">
+          <div className=" ">
+          <Image
+              as={NextImage}
+              src="/lib/images/taxi_blur.jpg"
+              alt="taxi"
+
+              width={700}
+              height={600}/>
           
           </div>
         </div>
         
-        <div className=" h-[600px] items-center flex w-full bg-white dark:bg-gray-800 dark:text-white text-gray-900 rounded-br-lg rounded-tr-lg   shadow  md:mt-0 sm:max-w-md xl:p-0 ">
+        <div className=" h-[600px] items-center flex w-full bg-white dark:bg-slate-900 dark:text-white text-gray-900 rounded-br-lg rounded-tr-lg   shadow  md:mt-0 sm:max-w-md xl:p-0 ">
           <div className="p-6 w-full">
             <h1 className="text-xl font-bold leading-tight tracking-tight  md:text-2xl ">
               Iniciar sesión

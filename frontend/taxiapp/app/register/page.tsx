@@ -1,22 +1,70 @@
-"use client";
+'use client'
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import Image from "next/image"
+import Link from "next/link"
+
+import { Button } from "@nextui-org/react"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { set } from "date-fns"
 
-const RegisterPage = () => {
-  const [errors, setErrors] = useState<string[]>([]);
-  const [name, setName] = useState<string>("test");
-  const [lastname, setLastname] = useState<string>("test");
-  const [username, setUsername] = useState<string>("test");
-  const [email, setEmail] = useState<string>("test@test.com");
-  const [password, setPassword] = useState<string>("123123");
+
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "El nombre debe tener al menos 2 caracteres.",
+  }),
+  lastname: z.string().min(2, {
+    message: "El apellido debe tener al menos 2 caracteres.",
+  }),
+  username: z.string().min(3, {
+    message: "El nombre de usuario debe tener al menos 3 caracteres.",
+  }),
+  email: z.string().email({
+    message: "Debe ser un email válido.",
+  }),
+  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, {
+    message: "Debe ser un número de teléfono válido.",
+  }),
+  password: z.string().min(6, {
+    message: "La contraseña debe tener al menos 6 caracteres.",
+  }),
+})
+
+export default function RegistrationForm() {
   const router = useRouter();
+  const [errors, setErrors] = useState<string[]>([]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setErrors([]);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      lastname: "",
+      username: "",
+      email: "",
+      phone: "",
+      password: "",
+    },
+  })
 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+
+    form.reset();
+   
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
       {
@@ -24,119 +72,146 @@ const RegisterPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name,
-          lastname,
-          username,
-          password,
-          email,
-        }),
+        body: JSON.stringify(values),
       }
     );
 
     const responseAPI = await res.json();
 
     if (!res.ok) {
-      setErrors(responseAPI.message);
+      setErrors(Array.isArray(responseAPI.message) ? responseAPI.message : [responseAPI.message]);
       return;
     }
 
     const responseNextAuth = await signIn("credentials", {
-      email,
-      password,
+      email: values.email,
+      password: values.password,
       redirect: false,
     });
 
     if (responseNextAuth?.error) {
-      setErrors(responseNextAuth.error.split(","));
+      setErrors(responseNextAuth.error ? responseNextAuth.error.split(",") : []);
       return;
     }
 
     router.push("/");
-  };
+    
+  }
+
+  
 
   return (
-    <div className="flex bg-gray-900 flex-col justify-center font-[sans-serif] sm:h-screen p-4 text-white">
-      <div className="max-w-md w-full mx-auto border border-gray-300 rounded-2xl p-8">
-      <h1 className="mb-7 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-        Registrar Usuario
-      </h1>
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-6">
-          <div>
-            <label className=" text-sm mb-2 block">Name</label>
-            <input
-              type="text"
-              placeholder="Enter name"
-              name="name"
-              className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-            />
-          </div>
-          <div>
-            <label className=" text-sm mb-2 block">Last name</label>
-            <input
-              name="lastname"
-              type="text"
-              value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
-              className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
-              placeholder="Enter last name"
-              required
-            />
-          </div>
-          <div>
-            <label className=" text-sm mb-2 block">Username</label>
-            <input
-              type="text"
-              placeholder="Enter username"
-              name="username"              
-              className=" bg-white border text-gray-800 border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"              
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              required
-            />
-          </div>          
-          <div>
-            <label className="  text-sm mb-2 block">Password</label>
-            <input
-              type="password"
-              placeholder="Enter password"
-              name="password"
-              className=" bg-white border text-gray-800 border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </div>
-          <div>
-            <label className=" text-sm mb-2 block">Email</label>
-            <input
-              type="email"
-              placeholder="email@ejemplo.com"
-              name="email"
-              className=" bg-white border text-black border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </div>
-          <button type="submit" className="w-full  bg-green-500 duration-150 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-            Register
-          </button>
-        </div>
-      </form>
-
-      {errors.length > 0 && (
-        <div className="alert alert-danger mt-2">
-          <ul className="mb-0">
-            {errors.map((error) => (
-              <li key={error}>{error}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
+      <div className="flex w-full max-w-2xl ">
+       
+        <Card className="flex-1 bg-slate-900/50 border-none">
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-semibold text-slate-200 mb-6">Registrarse</h2>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-200">Nombre</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ingrese su nombre" {...field} className="bg-slate-800/50 border-slate-700 text-slate-200" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastname"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-200">Apellido</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ingrese su apellido" {...field} className="bg-slate-800/50 border-slate-700 text-slate-200" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Nombre de usuario</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ingrese su nombre de usuario" {...field} className="bg-slate-800/50 border-slate-700 text-slate-200" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="email@ejemplo.com" type="email" {...field} className="bg-slate-800/50 border-slate-700 text-slate-200" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Contraseña</FormLabel>
+                      <FormControl>
+                        <Input placeholder="******" type="password" {...field} className="bg-slate-800/50 border-slate-700 text-slate-200" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-slate-200">Teléfono</FormLabel>
+                      <FormControl>
+                        <Input placeholder="+54115487847" {...field} className="bg-slate-800/50 border-slate-700 text-slate-200" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button type="submit" isLoading={form.formState.isSubmitting} className="w-full bg-blue-500 hover:bg-blue-600">
+                  Registrar
+                </Button>
+                <div className="text-center text-sm text-slate-400">
+                  ¿Ya tienes una cuenta?{" "}
+                  <Link href="/login" className="text-blue-400 hover:text-blue-300">
+                    Iniciar sesión
+                  </Link>
+                </div>
+              </form>
+            </Form>
+            {errors.length > 0 && (
+              <div className="mt-4 p-4 bg-red-500 text-white rounded-md">
+                <ul className="list-disc list-inside">
+                 Ocurrio un un error al registrar el usuario
+                </ul>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
-  );
-};
-export default RegisterPage;
+  )
+}
+

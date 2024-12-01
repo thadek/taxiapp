@@ -133,9 +133,9 @@ public class RideController {
      * @return ResponseEntity<RideUserResponse>
      */
     @GetMapping("/{rideId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER','OPERATOR')")
-    public ResponseEntity<RideUserResponse> getRide(@PathVariable String rideId) {
-        return ResponseEntity.ok(modelMapper.map(rideService.getRide(rideId), RideUserResponse.class));
+    @PreAuthorize("hasAnyRole('ADMIN','OPERATOR')")
+    public ResponseEntity<RideDTO> getRide(@PathVariable String rideId) {
+        return ResponseEntity.ok(modelMapper.map(rideService.getRide(rideId), RideDTO.class));
     }
 
 
@@ -175,7 +175,7 @@ public class RideController {
      * @return
      */
     @PostMapping("/{rideId}/accept")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
+    @PreAuthorize("hasAnyRole('ADMIN','DRIVER')")
     public ResponseEntity<RideUserResponse> acceptRide(@PathVariable String rideId, Principal principal) {
         return ResponseEntity.ok(modelMapper.map(rideService.acceptRide(rideId, principal.getName()), RideUserResponse.class));
     }
@@ -248,6 +248,31 @@ public class RideController {
         return ResponseEntity.ok(modelMapper.map(rideService.assignVehicleToRide(rideId, vehicleId), RideUserResponse.class));
     }
 
+
+    /**
+     * Rechazar un viaje asignado a un conductor. SOLO el conductor asignado puede rechazar sus viajes
+     * @param rideId
+     * @param principal
+     * @return
+     */
+    @PostMapping("/{rideId}/reject")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DRIVER')")
+    public ResponseEntity<RideDTO> rejectRide(@PathVariable String rideId, Principal principal) {
+        return ResponseEntity.ok(modelMapper.map(rideService.rejectRide(rideId, principal), RideDTO.class));
+    }
+
+    /**
+     * Calificar un viaje
+     * @param rideId
+     * @param rating
+     * @param principal
+     * @return
+     */
+    @PostMapping("/{rideId}/rate")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<RideUserResponse> rateRide(@PathVariable String rideId, @RequestParam Integer rating, Principal principal) {
+        return ResponseEntity.ok(modelMapper.map(rideService.rateRide(rideId, rating, principal), RideUserResponse.class));
+    }
 
 
 

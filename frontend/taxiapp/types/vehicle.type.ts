@@ -10,7 +10,7 @@ export type Vehicle = {
     details: string
     color: string
     driver: Driver
-    license_plate: string
+    licensePlate: string
     isDisabled: boolean
     deleted: boolean
 }

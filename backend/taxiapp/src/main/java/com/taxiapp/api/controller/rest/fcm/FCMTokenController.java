@@ -20,4 +20,10 @@ public class FCMTokenController {
         userService.updateFcmToken(request.getEmail(), request.getFcmToken());
         return ResponseEntity.ok("Token stored successfully");
     }
+
+    @DeleteMapping("/delete-fcm-token")
+    public ResponseEntity<?> deleteFcmToken(@RequestParam String email) {
+        userService.deleteFcmToken(email);
+        return ResponseEntity.ok("Token deleted successfully");
+    }
 }

@@ -1,5 +1,6 @@
 package com.taxiapp.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.taxiapp.api.enums.RideStatus;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -52,8 +53,10 @@ public class Ride {
     @JoinColumn(name="user_id")
     private User client;
 
-    @OneToMany(mappedBy = "ride")
-    private List<Report> reports;
+    @OneToOne
+    @JsonManagedReference
+    @JoinColumn(name = "report_id", referencedColumnName = "id")
+    private Report report;
 
     @Column(nullable = false, name="created_at")
     private Date createdAt;

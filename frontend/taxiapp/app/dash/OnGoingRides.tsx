@@ -64,21 +64,8 @@ const OnGoingRides = ({ webSocketMsg }: { webSocketMsg: any }) => {
         if (!webSocketMsg) return;
 
         const handleWebSocketMessage = (message: any) => {
-
-
-            if (message?.eventType === "ACCEPTED_BY_DRIVER" || 
-                message?.eventType === "STARTED_BY_DRIVER" || 
-                message?.eventType === "COMPLETED_BY_DRIVER" || 
-                message?.eventType === "INTERRUPTED_BY_DRIVER" ||
-                message?.eventType === "CANCELLED_BY_DRIVER"
-            ) {
-                toast.promise(refetch(), {
-                    loading: 'Hay cambios en los viajes en curso...',
-                    error: 'Error al actualizar',
-                    
-                });
-
-            }
+            console.log(message)
+                refetch();     
         };
 
         handleWebSocketMessage(webSocketMsg);

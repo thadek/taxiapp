@@ -1,58 +1,55 @@
-'use client'
+"use client"
 
-import { Calendar, Home, LayoutDashboard, LogIn, Search, Settings,UserPlus,LogOut, User, Car } from "lucide-react"
-import { Logo } from "@/components/ui/logo"
+import * as React from "react"
+import {
+  AudioWaveform,
+  BookOpen,
+  Bot,
+  CarIcon,
+  Command,
+  Frame,
+  GalleryVerticalEnd,
+  Home,
+  HomeIcon,
+  LayoutDashboard,
+  Map,
+  PieChart,
+  Receipt,
+  Settings2,
+  SquareTerminal,
+} from "lucide-react"
 
-import { useSession, signIn, signOut } from "next-auth/react"
-
+import { NavMain } from "@/components/nav-main"
+import { NavFixed } from "@/components/nav-fixed"
+import { NavUser } from "@/components/nav-user"
+import { LogoHeader } from "@/components/logo-header"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ModeToggle } from "./mode-toggle"
-import Link from "next/link"
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 
 import { checkMultipleRoles, checkRole } from "@/app/utils/role-check"
+import { useSession, signIn, signOut } from "next-auth/react"
 
-
-
+import { Calendar,  LogIn, Search, Settings,UserPlus,LogOut, User, Car } from "lucide-react"
+import { title } from "process"
 
 const itemsWithoutLogin = [
   {
-    title: "Inicio",
+    name: "Inicio",
     url: "/",
     icon: Home,
   },
   {
-    title: "Iniciar sesión",
+    name: "Iniciar sesión",
     url: "/login",
     icon: LogIn,
   },
   {
-    title: "Registrarse",
+    name: "Registrarse",
     url: "/register",
     icon: UserPlus,
   }
@@ -61,141 +58,115 @@ const itemsWithoutLogin = [
 
 const itemsUser = [
   {
-    title: "Inicio",
+    name: "Inicio",
     url: "/",
     icon: Home,
-  },
-  {
-    title: "Perfil",
-    url: "/profile",
-    icon: User,
-  },
-  {
-    title:"Cerrar sesión",
-    url:"/api/auth/signout",
-    icon: LogOut
   }
 
 
 ]
 
-// Menu items.
-const items = [
-  {
-    title: "Inicio",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "Dashboard",
-    url: "/dash",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Calcular costo de viaje",
-    url: "/estimar",
-    icon: Calendar,
-  },
-  {
+// This is sample data.
+const data = {
+  navMain: [{
     title: "Viajes",
-    url: "/rides",
-    icon: Car,
+    url: "#",
+    icon: CarIcon,
+    isActive: true,
+    role: ["admin", "operator"],
+    items: [
+      {
+        title: "Ver todos",
+        url: "/rides",
+      },
+      {
+        title: "Estimar costo",
+        url: "/estimar",
+      }
+    ],
   },
-]
 
-export  function AppSidebar() {
+  {
+    title: "Gestionar",
+    url: "#",
+    icon: SquareTerminal,
+    isActive: true,
+    role: ["admin", "operator"],
+    items: [
+      {
+        title: "Usuarios",
+        url: "/abm/abmUser",
+      },
+      {
+        title: "Conductores",
+        url: "/abm/abmDriver",
+      },
+      {
+        title: "Vehículos",
+        url: "/abm/abmVehicle",
+      },
+      {
+        title: "Roles",
+        url: "/abm/abmRole"
+      },
+      {
+        title: "Reportes",
+        url: "/reports"
+      },
+      {
+        title: "Estadísticas",
+        url: "/statistics"
+      }
+    ],
+  },
 
+  ],
+  fixed: [
+    {
+      name: "Inicio",
+      url: "/",
+      icon: HomeIcon,
+    },
+    {
+      name: "Dashboard",
+      url: "/dash",
+      icon: LayoutDashboard,
+    },
+  ],
+}
 
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  
   const { data: session, status } = useSession();
-
-
   const isOperatorOrAdmin = session && checkMultipleRoles(["ROLE_ADMIN","ROLE_OPERATOR"], session.user.roles);
-
-
-  if(status === "loading") {
-    return <></>
-  }
-
-
+  
+  if (status === "loading") return null;
+  
+  
   return (
-    <Sidebar>
-      <Dialog>
-        <SidebarHeader>
-          <Logo />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <LogoHeader />
+      </SidebarHeader>
+      <SidebarContent>
+        {session && checkMultipleRoles(["ROLE_USER"],session.user?.roles) && <NavFixed items={itemsUser} />}
+        
+        {isOperatorOrAdmin && <><NavFixed items={data.fixed} />
+        <NavMain items={data.navMain} /></>}
+        {!session && <NavFixed items={itemsWithoutLogin} />}
+        
 
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {isOperatorOrAdmin && items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-                {isOperatorOrAdmin && (
-                <SidebarMenuItem>
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="abm">
-                      <AccordionTrigger>Gestionar</AccordionTrigger>
-                        <AccordionContent>
-                        <div className="flex flex-col">
-                          <Link className="m-1" href="/abm/abmUser">
-                          <span className="sidebar-subitem">Gestionar Usuarios</span>
-                          </Link>
-                          <Link className="m-1" href="/abm/abmDriver">
-                          <span className="sidebar-subitem">Gestionar Conductores</span>
-                          </Link>
-                          <Link className="m-1" href="/abm/abmVehicle">
-                          <span className="sidebar-subitem">Gestionar Autos</span>
-                          </Link>
-                          <Link className="m-1" href="/abm/abmRole">
-                          <span className="sidebar-subitem">Gestionar Roles</span>
-                          </Link>
-                        </div>
-                        </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </SidebarMenuItem>)}
+      </SidebarContent>
+      <SidebarFooter>
 
-                {!session && itemsWithoutLogin.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+        <NavUser user={session?.user} />
 
-              {session && checkMultipleRoles(["ROLE_USER"],session.user?.roles) && itemsUser.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-
-                
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
+      </SidebarFooter>
 
 
-          <ModeToggle />
-        </SidebarFooter>
-      </Dialog>
+
+
+      <SidebarRail />
     </Sidebar>
   )
 }

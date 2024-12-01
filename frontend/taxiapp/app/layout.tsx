@@ -2,11 +2,20 @@
 import "./global.css";
 import Navbar from "../components/Navbar/Navbar";
 import SessionAuthProvider from "@/context/SessionAuthProvider";
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Metadata } from "next"
 import { Toaster } from "@/components/ui/sonner"
 import Providers from "./providers";
+
+
+export const metadata: Metadata = {
+  title: 'TaxiApp',
+  description:
+    "Aplicación de taxis -  backoffice",
+};
+
 
 
 export default function RootLayout({
@@ -31,8 +40,9 @@ export default function RootLayout({
                 <main className="h-screen w-screen">
 
                   <Navbar />
-
-                  {children}
+                  
+                    {children}
+                  
                   <Toaster richColors position="bottom-center" closeButton />
 
                 </main>

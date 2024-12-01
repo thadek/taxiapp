@@ -87,6 +87,7 @@ public class VehicleController {
     /**
      * Find Vehicle by driver id
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR','ROLE_DRIVER')")
     @GetMapping("/find-by-driver/{driverId}")
     public ResponseEntity<VehicleDTO> findByDriverId(@Valid @PathVariable UUID driverId) {
         Vehicle vehicle = vehicleServiceImpl.findByDriverId(driverId);
@@ -97,8 +98,9 @@ public class VehicleController {
     /**
      * Find Vehicle by driver email
      */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_OPERATOR','ROLE_DRIVER')")
     @GetMapping("/find-by-driver-email/{driverEmail}")
-    public ResponseEntity<VehicleDTO> findByDriverId( @PathVariable String driverEmail) {
+    public ResponseEntity<VehicleDTO> findByDriverEmail( @PathVariable String driverEmail) {
         Vehicle vehicle = vehicleServiceImpl.findByDriverEmail(driverEmail);
         return new ResponseEntity<>(modelMapper.map(vehicle, VehicleDTO.class), HttpStatus.OK);
     }

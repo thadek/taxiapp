@@ -14,6 +14,7 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { ModeToggle } from '../mode-toggle';
 
 
 
@@ -27,22 +28,10 @@ const Navbar = () => {
 
     return (
         <div className="w-full">
-        <NavigationMenu  >
+        <NavigationMenu  className="p-3 flex justify-between">
             <SidebarTrigger />
+            <ModeToggle />
            
-            <NavigationMenuList >
-             {  /* <NavigationMenuItem>
-                    <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <NavigationMenuLink>Link</NavigationMenuLink>
-                    </NavigationMenuContent>
-                </NavigationMenuItem*/}
-                <NavigationMenuItem>
-                <LoginContainer />
-                </NavigationMenuItem>
-
-                
-            </NavigationMenuList>
         </NavigationMenu>
         </div>
     );

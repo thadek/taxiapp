@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { getSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, QueryClient } from '@tanstack/react-query';
 import { Spinner } from '@nextui-org/react';
 import { Ride } from '@/types/ride.type';
 import { loadPlace } from '@/app/utils/loadPlace';
@@ -16,6 +16,8 @@ import { useTheme } from "next-themes";
 import PendingRideCard from './PendingRideCard';
 import { Logo } from '@/components/ui/logo';
 import { CarFront } from 'lucide-react';
+import { getQueryClient } from '../get-query-client';
+
 
 
 
@@ -23,11 +25,8 @@ import { CarFront } from 'lucide-react';
 
 
 const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
-  const theme = useTheme();
 
-  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
-
-
+  const queryClient = getQueryClient();
 
   const fetchRidesAndPlaces = async () => {
     const session = await getSession();
@@ -69,12 +68,20 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
     const handleWebSocketMessage = (message: any) => {
 
 
-      if (message?.eventType === "CREATED_BY_USER" || message?.eventType === "UPDATED_BY_USER" || message?.eventType === "CANCELLED_BY_USER") {
-        toast.promise(refetch(), {
-          loading: 'Actualizando...',
-          success: 'Actualizado',
-          error: 'Error al actualizar',
-        });
+      if (message?.eventType === "CREATED_BY_USER"
+        || message?.eventType === "UPDATED_BY_USER"
+        || message?.eventType === "CANCELLED_BY_USER"
+        || message?.eventType === "ACCEPTED_BY_DRIVER"
+        || message?.eventType === "PROGRAMMED_BY_USER"
+        || message?.eventType === "PROGRAMMED_BY_OPERATOR"
+        || message?.eventType === "CREATED_BY_OPERATOR"
+        || message?.eventType === "CANCELLED_BY_OPERATOR"
+        || message?.eventType === "DRIVER_ASSIGNED_BY_OPERATOR"
+        || message?.eventType === "UPDATED_BY_SYSTEM"
+        || message?.eventType === "REJECTED_BY_DRIVER") {
+        refetch()
+
+       
 
       }
     };
@@ -90,30 +97,29 @@ const RidesToConfirm = ({ webSocketMsg }: { webSocketMsg: any }) => {
 
   return (
 
-    <Card className="col-span-1  w-full">
+    <Card className="col-span-1  w-full ">
       <CardHeader>
         <CardTitle>Viajes pendientes a confirmar</CardTitle>
       </CardHeader>
-      <CardContent className="p-5 flex flex-col gap-5 w-full h-full">
-
+      <CardContent className="p-5 flex flex-col gap-5 w-full  max-h-[600px] overflow-y-auto   scrollbar-thin scrollbar-thumb-slate-900">
         <AnimatePresence>
           {isPending && (
             <div className="text-gray-500 flex text-center items-center justify-center w-full min-h-96">
               <Spinner />
             </div>
           )}
-          {isSuccess && rides && rides.map((trip: Ride) => (<PendingRideCard key={trip.id} trip={trip} />))}
-          {
-            isSuccess && rides && rides.length === 0 && (
-              <div className="text-gray-500 flex text-center items-center flex-col justify-center w-full h-full min-h-5 ">
-                <CarFront className='w-14 h-14'/>
-                No hay viajes pendientes por confirmar.
-              </div>
-            )
-          }
+          {isSuccess && rides && rides.map((trip: Ride) => (
+            <PendingRideCard key={trip.id} trip={trip} />
+          ))}
+          {isSuccess && rides && rides.length === 0 && (
+            <div className="text-gray-500 flex text-center items-center min-h-[400px] flex-col justify-center w-full   ">
+              <CarFront className="w-14 h-14" />
+              No hay viajes pendientes por confirmar.
+            </div>
+          )}
         </AnimatePresence>
       </CardContent>
-    </Card >
+    </Card>
 
   );
 

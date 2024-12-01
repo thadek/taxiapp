@@ -24,6 +24,7 @@ public class RideUserResponse {
     private Date ride_start;
     private Date ride_end;
     private String comments;
+    private Integer rating;
 
 
 }

@@ -92,6 +92,9 @@ interface Role {
       fetchDriversAndUsers();
     }, []);
 
+    const availableUsers = users.filter(user => !drivers.some(driver => driver.id === user.id));
+
+
     const handleSaveNewDriver = async () => {
       const session = await getSession();
       if (!session) {
@@ -138,8 +141,9 @@ interface Role {
       }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string | null) => {
-      const { name, value, type, checked } = e.target;
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, id: string | null) => {
+      const target = e.target as HTMLInputElement;
+      const { name, value, type, checked } = target;
       const inputValue = type === 'checkbox' ? checked : value;
       if (id) {
         setDrivers(prevDrivers =>
@@ -300,26 +304,26 @@ interface Role {
       <div className='table-container'>
       {!newDriver && (
         <Button onClick={handleInsert} className="text-secondary shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:bg-yellow-500 font-bold px-4 p-4 rounded m-4">
-          + Insert New Driver
+          + Agregar nuevo conductor
         </Button>
       )}
       <div className='mx-4 rounded-2xl bg-background shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'>
       <Table>
         <TableHeader className='text-black'>
           <TableRow>
-              <TableHead>Id</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Last Name</TableHead>
+              <TableHead>#</TableHead>
+              <TableHead>Nombre</TableHead>
+              <TableHead>Apellido</TableHead>
               <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>License Id</TableHead>
-              <TableHead>Rating</TableHead>
-              <TableHead>Is Available</TableHead>
-              <TableHead>Is Disabled</TableHead>
-              <TableHead>Deleted</TableHead>
+              <TableHead>Telefono</TableHead>
+              <TableHead>ID de Licencia</TableHead>
+              <TableHead>Calificación</TableHead>
+              <TableHead>Disponible</TableHead>
+              <TableHead>Desactivado</TableHead>
+              <TableHead>Eliminado</TableHead>
               <TableHead>Roles</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -354,11 +358,11 @@ interface Role {
                       onChange={(e) => handleInputChange(e, data.id)}
                     />
                   ) : (
-                    data.isAvailable ? 'Yes' : 'No'
+                    data.isAvailable ? 'Si' : 'No'
                   )}
                 </TableCell>
-                <TableCell>{data.is_disabled ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{data.deleted ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{data.is_disabled ? 'Si' : 'No'}</TableCell>
+                <TableCell>{data.deleted ? 'Si' : 'No'}</TableCell>
                 <TableCell>{data.roles?.map(role => (
                   <Badge key={role.id} className="m-1 text-secondary">
                     {role.name.replace('ROLE_', '')}
@@ -368,15 +372,15 @@ interface Role {
                 <TableCell>
                   {editingDriverId === data.id ? (
                     <>
-                      <Button onClick={() => handleSaveEdit(data.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Save</Button>
-                      <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancel</Button>
+                      <Button onClick={() => handleSaveEdit(data.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Guardar</Button>
+                      <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancelar</Button>
                     </>
                   ) : (
                     <>
-                      <Button onClick={() => handleEdit(data.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Edit</Button>
+                      <Button onClick={() => handleEdit(data.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Editar</Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button onClick={() => setSelectedDriverId(data.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Delete</Button>
+                          <Button onClick={() => setSelectedDriverId(data.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Eliminar</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
@@ -392,9 +396,9 @@ interface Role {
                         </AlertDialogContent>
                       </AlertDialog>
                       {data.is_disabled ? (
-                        <Button onClick={() => handleEnable(data.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Enable</Button>
+                        <Button onClick={() => handleEnable(data.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Activar</Button>
                       ) : (
-                        <Button onClick={() => handleDisable(data.id)} className="bg-orange-500 m-1 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">Disable</Button>
+                        <Button onClick={() => handleDisable(data.id)} className="bg-orange-500 m-1 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">Desactivar</Button>
                       )}
                     </>
                   )}
@@ -404,15 +408,20 @@ interface Role {
             {newDriver && (
               <TableRow>
                 <TableCell>
-                  <input
-                    type="text"
-                    id={`user_id-new`}
+                  <select
+                    id="user_id-new"
                     name="id"
                     value={newDriver.id}
                     onChange={(e) => handleInputChange(e, null)}
                     className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500"
-                    placeholder="User ID"
-                  />
+                  >
+                    <option value="">Select User</option>
+                    {availableUsers.map(user => (
+                      <option key={user.id} value={user.id}>
+                        {user.name} {user.lastname}
+                      </option>
+                    ))}
+                  </select>
                 </TableCell>
                 <TableCell colSpan={5}></TableCell> {/* Espacio para los campos del usuario */}
                 <TableCell>

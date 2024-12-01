@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useQueryClient } from '@tanstack/react-query';
+import CancelRide from "@/components/Dashboard/PendingRides/CancelButton";
 
 
 
@@ -67,51 +68,7 @@ const AssignRideToVehicle = ({ rideId,vehicleId,setCancelButtonProps, assignButt
 }
 
 
-const CancelRide = ({ rideId, setAssignButtonProps,cancelButtonProps,setCancelButtonProps }: { rideId: string, setAssignButtonProps: Dispatch<ButtonProps>,cancelButtonProps:ButtonProps,setCancelButtonProps:Dispatch<ButtonProps> }) => {
 
-
-    const { data: session } = useSession();
-    const queryClient = useQueryClient();
-
-   
-
-    const mutation = useMutation({
-        mutationFn: async ({ rideId }: { rideId: string }) => {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/rides/${rideId}/operator-cancel`,
-                {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${session?.token}`,
-                    },
-                }
-            );
-            if (!response.ok) throw new Error('Failed to cancel ride');
-            return await response.json();
-        },
-    });
-
-    const handleCancel = () => {
-        setAssignButtonProps({ ...setAssignButtonProps, isDisabled: true })
-        setCancelButtonProps({ ...cancelButtonProps, isLoading: true })
-        setTimeout(() => {
-            mutation.mutate({ rideId: rideId })
-            queryClient.refetchQueries({ queryKey: ['ridesToConfirm'] })
-        }, 100)
-    }
-
-    if (mutation.error) {
-        return (
-            <Button variant="flat" color="danger" isDisabled>Error al cancelar</Button>
-        )
-    }
-    return (
-        <>
-            <Button isIconOnly onPress={() => handleCancel()} {...cancelButtonProps}><X className="" /></Button>
-        </>
-    );
-
-}
 
 
 export default function PendingRideCard({ trip }: { trip: Ride }) {
@@ -154,10 +111,10 @@ export default function PendingRideCard({ trip }: { trip: Ride }) {
             <ShineBorder
                 key={trip.id}
                 color={["blue", "purple", "pink", "teal", "cyan", "indigo"]}
-                borderWidth={1}
+                borderWidth={2}
                 className="w-full  p-0 flex flex-col items-start rounded-lg"
             >
-                <div className="bg-slate-900 w-full p-3 rounded-lg">
+                <div className="bg-slate-200 dark:bg-slate-900 w-full p-3 rounded-lg">
                     <div className="font-semibold">{trip.originName} → {trip.destinationName}</div>
                     <div className="text-sm text-gray-500">Pasajero: {trip.client.name} - {trip.client.lastname} - {trip.client.phone}</div>
                     <div className="text-sm text-gray-500">Comentarios: {trip.comments}</div>

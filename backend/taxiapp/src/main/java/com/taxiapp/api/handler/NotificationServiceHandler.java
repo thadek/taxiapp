@@ -6,9 +6,11 @@ import com.google.firebase.messaging.Notification;
 import com.taxiapp.api.events.ride.RideStatusChangeEvent;
 import com.taxiapp.api.model.RideNotification;
 import com.taxiapp.api.service.IUserService;
+import com.taxiapp.api.service.impl.NotificationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -19,8 +21,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class NotificationServiceHandler {
 
     private final Logger logger = LoggerFactory.getLogger(NotificationServiceHandler.class);
-    private final IUserService userService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationServiceImpl notificationService;
 
     @Async
     @TransactionalEventListener
@@ -29,28 +31,33 @@ public class NotificationServiceHandler {
             case CREATED_BY_USER -> {
                 logger.info("Ride created by user");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Created", "A new ride has been created.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Created", "A new ride has been created.");
             }
             case PROGRAMMED_BY_USER -> {
                 logger.info("Ride programmed by user");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Programmed", "Your ride has been programmed.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Programmed", "Your ride has been programmed.");
             }
             case CANCELLED_BY_USER -> {
                 logger.info("Ride cancelled by user");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
-                if(event.getRide().getVehicle().getDriver() != null){
-                    sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Cancelled", "A ride has been cancelled.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
+                if(event.getRide().getVehicle() != null){
+                    notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Cancelled", "A ride has been cancelled.");
                 }
             }
             case MODIFIED_BY_USER -> {
                 logger.info("Ride modified by user");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Modified", "Your ride has been modified.");
-                if(event.getRide().getVehicle().getDriver() != null){
-                    sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Modified", "A ride has been modified.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Modified", "Your ride has been modified.");
+                if(event.getRide().getVehicle() != null){
+                    notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Modified", "A ride has been modified.");
                 }
+            }
+            case RATED_BY_USER -> {
+                logger.info("Ride rated by user");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Rated", "Your ride has been rated.");
             }
         }
     }
@@ -63,45 +70,41 @@ public class NotificationServiceHandler {
                 logger.info("Ride created by operator");
 
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                
-
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Created", "A new ride has been created.");
 
             }
             case PROGRAMMED_BY_OPERATOR -> {
                 logger.info("Ride programmed by operator");
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Programmed", "Your ride has been programmed.");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Programmed", "Your ride has been programmed.");
             }
             case MODIFIED_BY_OPERATOR -> {
                 logger.info("Ride modified by operator");
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Modified", "Your ride has been modified.");
-                if(event.getRide().getVehicle().getDriver() != null){
-                    sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Modified", "A ride has been modified.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Modified", "Your ride has been modified.");
+                if(event.getRide().getVehicle() != null){
+                    notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Modified", "A ride has been modified.");
                 }
             }
             case DRIVER_ASSIGNED_BY_OPERATOR -> {
                 logger.info("Driver assigned by operator");
-                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));           
-                sendNotification(event.getRide().getClient().getEmail(), "Driver Assigned", "A driver has been assigned to your ride.");
-                sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Driver Assigned", "You have been assigned to a ride.");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Driver Assigned", "A driver has been assigned to your ride.");
+                notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Driver Assigned", "You have been assigned to a ride.");
 
             }
             case INTERRUPTED_BY_OPERATOR -> {
                 logger.info("Ride interrupted by operator");
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Interrupted", "Your ride has been interrupted.");
-                if(event.getRide().getVehicle().getDriver() != null){
-                    sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Interrupted", "A ride has been interrupted.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Interrupted", "Your ride has been interrupted.");
+                if(event.getRide().getVehicle() != null){
+                    notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Interrupted", "A ride has been interrupted.");
                 }
             }
-            case CANCELED_BY_OPERATOR -> {
+            case CANCELLED_BY_OPERATOR -> {
 
-                //TODO: avisar al usuario y chofer (si corresponde) que el viaje ha sido cancelado
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
                 logger.info("Ride cancelled by operator");
-                 sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
-                if(event.getRide().getVehicle().getDriver() != null){
-                    sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Cancelled", "A ride has been cancelled.");
-
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
+                if(event.getRide().getVehicle() != null){
+                    notificationService.sendNotification(event.getRide().getVehicle().getDriver().getEmail(), "Ride Cancelled", "A ride has been cancelled.");
                 }
             }
         }
@@ -114,52 +117,46 @@ public class NotificationServiceHandler {
             case ACCEPTED_BY_DRIVER -> {
                 logger.info("Ride accepted by driver");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Accepted", "Your ride has been accepted by the driver.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Accepted", "Your ride has been accepted by the driver.");
             }
             case STARTED_BY_DRIVER -> {
                 logger.info("Ride started by driver");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Started", "Your ride has started.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Started", "Your ride has started.");
             }
             case COMPLETED_BY_DRIVER -> {
                 logger.info("Ride completed by driver");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Completed", "Your ride has been completed.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Completed", "Your ride has been completed.");
             }
             case INTERRUPTED_BY_DRIVER -> {
                 logger.info("Ride interrupted by driver");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Interrupted", "Your ride has been interrupted.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Interrupted", "Your ride has been interrupted.");
             }
             case CANCELLED_BY_DRIVER -> {
                 logger.info("Ride cancelled by driver");
                 messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
-                sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Cancelled", "Your ride has been cancelled.");
+            }
+            case REJECTED_BY_DRIVER -> {
+                logger.info("Ride rejected by driver");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
+                notificationService.sendNotification(event.getRide().getClient().getEmail(), "Ride Rejected", "The driver can't take your ride, please wait until the operator assigns another driver.");
+            }
+
+        }
+    }
+
+    @Async
+    @EventListener
+    public void handleSystemScheduledEvent(RideStatusChangeEvent event) {
+        switch (event.getEventType()) {
+            case UPDATED_BY_SYSTEM -> {
+                logger.info("Ride updated by system");
+                messagingTemplate.convertAndSend("/topic/rides",new RideNotification(event.getEventType(),event.getRide()));
             }
         }
     }
-    //TODO: este metodo deberia ir en otra clase
-    private void sendNotification(String userEmail, String title, String body) {
-        String userFcmToken = getUserFcmToken(userEmail);
 
-        Message message = Message.builder()
-                .setToken(userFcmToken)
-                .setNotification(Notification.builder()
-                        .setTitle(title)
-                        .setBody(body)
-                        .build())
-                .build();
-
-        try {
-            String response = FirebaseMessaging.getInstance().send(message);
-            logger.info("Successfully sent message: " + response);
-        } catch (Exception e) {
-            logger.error("Error sending FCM message", e);
-        }
-    }
-
-    //TODO: idem anterior
-    private String getUserFcmToken(String userEmail) {
-        return userService.findByEmail(userEmail).getFcmToken();
-    }
 }

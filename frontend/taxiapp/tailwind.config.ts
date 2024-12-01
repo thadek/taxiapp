@@ -116,6 +116,9 @@ const config: Config = {
   		}
   	}
   },
-  plugins: [require('tailwindcss-animate'), nextui()],
+  variants:{
+	scrollbar: ['rounded']
+  },
+  plugins: [require('tailwindcss-animate'), nextui(),require('tailwind-scrollbar')],
 };
 export default config;

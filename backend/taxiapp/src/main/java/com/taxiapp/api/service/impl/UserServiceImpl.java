@@ -317,4 +317,19 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         }
     }
 
+    /**
+     * Delete FCM token
+     * @param email
+     */
+    @Override
+    public void deleteFcmToken(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setFcmToken(null);
+            userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("User", "email", email);
+        }
+    }
 }

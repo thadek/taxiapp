@@ -244,23 +244,23 @@ const ABMVehicle: React.FC = () => {
       <div className='table-container'>
       {!newVehicle && (
         <Button onClick={handleInsert} className="text-secondary bg-secondary-foreground shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:bg-yellow-500 font-bold px-4 p-4 rounded mt-4 mx-4">
-          + Insert New Vehicle
+          + Agregar nuevo vehículo
         </Button>
       )}
       <div className='m-4 rounded-2xl bg-background shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
+            <TableHead>#</TableHead>
             <TableHead>Driver ID</TableHead>
-            <TableHead>License Plate</TableHead>
-            <TableHead>Brand</TableHead>
-            <TableHead>Model</TableHead>
-            <TableHead>Year</TableHead>
+            <TableHead>Patente</TableHead>
+            <TableHead>Marca</TableHead>
+            <TableHead>Modelo</TableHead>
+            <TableHead>Año</TableHead>
             <TableHead>Color</TableHead>
-            <TableHead>Details</TableHead>
-            <TableHead>Disabled</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>Detalles</TableHead>
+            <TableHead>Desactivado</TableHead>
+            <TableHead>Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -277,7 +277,7 @@ const ABMVehicle: React.FC = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Drivers</SelectLabel>
-                          <SelectItem value="none">No Driver</SelectItem>
+                          <SelectItem value="null">No Driver</SelectItem>
                           {availableDrivers.map(driver => (
                             <SelectItem key={driver.id} value={driver.id.toString()}>
                               {driver.name}
@@ -378,15 +378,15 @@ const ABMVehicle: React.FC = () => {
               <TableCell>
               {editingVehicleId === vehicle.id ? (
                 <>
-                  <Button onClick={() => handleSaveEdit(vehicle.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Save</Button>
-                  <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancel</Button>
+                  <Button onClick={() => handleSaveEdit(vehicle.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Guardar</Button>
+                  <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancelar</Button>
                 </>
               ) : (
                 <>
-                  <Button onClick={() => handleEdit(vehicle.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Edit</Button>
+                  <Button onClick={() => handleEdit(vehicle.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Editar</Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button onClick={() => setSelectedVehicleId(vehicle.id.toString())} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Delete</Button>
+                      <Button onClick={() => setSelectedVehicleId(vehicle.id.toString())} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Eliminar</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
@@ -402,9 +402,9 @@ const ABMVehicle: React.FC = () => {
                     </AlertDialogContent>
                   </AlertDialog>
                   {vehicle.isDisabled ? (
-                    <Button onClick={() => handleEnable(vehicle.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Enable</Button>
+                    <Button onClick={() => handleEnable(vehicle.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Activar</Button>
                   ) : (
-                    <Button onClick={() => handleDisable(vehicle.id)} className="bg-orange-500 m-1 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">Disable</Button>
+                    <Button onClick={() => handleDisable(vehicle.id)} className="bg-orange-500 m-1 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">Desactivar</Button>
                   )}
                 </>
               )}

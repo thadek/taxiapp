@@ -251,23 +251,23 @@ const ABMUser: React.FC = () => {
       <div className='table-container'>
       {!newUser && (
         <Button onClick={handleInsert} className="text-secondary shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] hover:bg-yellow-500 font-bold px-4 p-4 rounded mt-4 mx-4">
-          + Insert New User
+          + Agregar nuevo usuario
         </Button>
       )}
       <div className='m-4 rounded-2xl bg-background shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Id</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Last Name</TableHead>
-            <TableHead>Username</TableHead>
+            <TableHead>#</TableHead>
+            <TableHead>Nombre</TableHead>
+            <TableHead>Apellido</TableHead>
+            <TableHead>Usuario</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Is Disabled</TableHead>
-            <TableHead>Deleted</TableHead>
+            <TableHead>Telefono</TableHead>
+            <TableHead>Desactivado?</TableHead>
+            <TableHead>Eliminado</TableHead>
             <TableHead>Roles</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -369,17 +369,17 @@ const ABMUser: React.FC = () => {
               <TableCell>
                   {editingUserId === user.id ? (
                     <>
-                      <Button onClick={() => handleSaveEdit(user.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Save</Button>
-                      <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancel</Button>
+                      <Button onClick={() => handleSaveEdit(user.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Guardar</Button>
+                      <Button onClick={handleCancelEdit} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Cancelar</Button>
                     </>
                   ) : (
                     <>
-                      <Button onClick={() => handleEdit(user.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Edit</Button>
-                      <Button onClick={() => handleDelete(user.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Delete</Button>
+                      <Button onClick={() => handleEdit(user.id)} className="bg-blue-500 m-1 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">Editar</Button>
+                      <Button onClick={() => handleDelete(user.id)} className="bg-red-500 m-1 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded">Eliminar</Button>
                       {user.is_disabled ? (
-                        <Button onClick={() => handleEnable(user.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Enable</Button>
+                        <Button onClick={() => handleEnable(user.id)} className="bg-green-500 m-1 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">Activar</Button>
                       ) : (
-                        <Button onClick={() => handleDisable(user.id)} className="bg-orange-500 m-1 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">Disable</Button>
+                        <Button onClick={() => handleDisable(user.id)} className="bg-orange-500 m-1 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">Desactivar</Button>
                       )}
                     </>
                   )}
