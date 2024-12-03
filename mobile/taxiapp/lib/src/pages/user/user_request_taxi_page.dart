@@ -1,144 +1,10 @@
-/*
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 import 'package:taxiapp/screens/map_screen.dart'; // Asegúrate de que la ruta de importación sea correcta
-
-class UserRequestTaxiPage extends StatefulWidget {
-  @override
-  _UserRequestTaxiPageState createState() => _UserRequestTaxiPageState();
-}
-
-class _UserRequestTaxiPageState extends State<UserRequestTaxiPage> {
-  final storage = FlutterSecureStorage();
-
-  LatLng? _pickupLocation;
-  LatLng? _dropoffLocation;
-
-  void _openMapScreen() async {
-    // Navega a MapScreen y espera a que se seleccionen las ubicaciones
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MapScreen(
-          onLocationSelected: (pickup, dropoff) {
-            setState(() {
-              _pickupLocation = pickup;
-              _dropoffLocation = dropoff;
-            });
-            // No es necesario cerrar el MapScreen aquí, se cierra dentro de MapScreen
-          },
-        ),
-      ),
-    );
-  }
-
-  void _requestRide() async {
-    if (_pickupLocation == null || _dropoffLocation == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, selecciona las ubicaciones primero.')),
-      );
-      return;
-    }
-
-    try {
-      // Recuperar el token del almacenamiento seguro
-      String? token = await storage.read(key: 'auth_token');
-
-      if (token == null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Token no encontrado')));
-        return;
-      }
-
-      // Formatear las coordenadas
-      String pickupLocation = '${_pickupLocation!.latitude.toStringAsFixed(6)},${_pickupLocation!.longitude.toStringAsFixed(6)}';
-      String dropoffLocation = '${_dropoffLocation!.latitude.toStringAsFixed(6)},${_dropoffLocation!.longitude.toStringAsFixed(6)}';
-
-      print('Pickup Location: $pickupLocation');
-      
-      print('Dropoff Location: $dropoffLocation');
-      
-      final response = await http.post(
-        Uri.parse('http://192.168.56.1:8080/api/v1/rides/request'), // Ajusta la URL según corresponda
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'pickupLocation': pickupLocation,
-          'dropoffLocation': dropoffLocation,
-          'isBooked': false,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        // Solicitud exitosa
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Taxi solicitado con éxito')));
-      } else {
-        // Error en la solicitud
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al solicitar taxi: ${response.reasonPhrase}')),
-        );
-      }
-    } catch (e) {
-      // Manejo de errores
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Solicitar Taxi'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: _openMapScreen,
-              child: Text('Seleccionar ubicaciones en el mapa'),
-            ),
-            SizedBox(height: 10),
-            if (_pickupLocation != null && _dropoffLocation != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Ubicación de recogida: ${_pickupLocation!.latitude.toStringAsFixed(6)}, ${_pickupLocation!.longitude.toStringAsFixed(6)}',
-                  ),
-                  Text(
-                    'Ubicación de destino: ${_dropoffLocation!.latitude.toStringAsFixed(6)}, ${_dropoffLocation!.longitude.toStringAsFixed(6)}',
-                  ),
-                ],
-              ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _requestRide,
-              child: Text('Solicitar Taxi'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                textStyle: TextStyle(fontSize: 20),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
--------------------------------------
-*/
-
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:latlong2/latlong.dart';
-import 'dart:convert';
-import 'package:taxiapp/screens/map_screen.dart'; // Asegúrate de que la ruta de importación sea correcta
+import 'package:intl/intl.dart'; // Para formatear la fecha y hora
 
 // Clase para manejar la búsqueda de direcciones con Mapbox
 class MapboxSearchService {
@@ -191,6 +57,8 @@ class _UserRequestTaxiPageState extends State<UserRequestTaxiPage> {
   LatLng? _dropoffLocation;
   List<MapBoxPlace>? _places;
   bool _isPickupSearch = true;
+  bool _isScheduled = false;
+  DateTime? _scheduledDateTime;
 
   void _openMapScreen() async {
     await Navigator.push(
@@ -240,17 +108,23 @@ class _UserRequestTaxiPageState extends State<UserRequestTaxiPage> {
       String pickupLocation = '${_pickupLocation!.latitude.toStringAsFixed(6)},${_pickupLocation!.longitude.toStringAsFixed(6)}';
       String dropoffLocation = '${_dropoffLocation!.latitude.toStringAsFixed(6)},${_dropoffLocation!.longitude.toStringAsFixed(6)}';
 
+      Map<String, dynamic> requestBody = {
+        'pickupLocation': pickupLocation,
+        'dropoffLocation': dropoffLocation,
+        'isBooked': _isScheduled,
+      };
+
+      if (_isScheduled && _scheduledDateTime != null) {
+        requestBody['rideStart'] = _scheduledDateTime!.toIso8601String();
+      }
+
       final response = await http.post(
         Uri.parse('http://192.168.56.1:8080/api/v1/rides/request'), // Ajusta la URL según corresponda
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({
-          'pickupLocation': pickupLocation,
-          'dropoffLocation': dropoffLocation,
-          'isBooked': false,
-        }),
+        body: jsonEncode(requestBody),
       );
 
       if (response.statusCode == 200) {
@@ -278,12 +152,39 @@ class _UserRequestTaxiPageState extends State<UserRequestTaxiPage> {
     });
   }
 
+  Future<void> _selectDateTime(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          _scheduledDateTime = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Solicitar Taxi'),
-        backgroundColor: Colors.blue.shade900,
+        backgroundColor: const Color(0xFF1f2937),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboro', fontWeight: FontWeight.bold),
       ),
       body: Stack(
         children: [
@@ -292,25 +193,54 @@ class _UserRequestTaxiPageState extends State<UserRequestTaxiPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Buscar Lugar de Recogida:', style: TextStyle(fontSize: 16)),
+                Text('Buscar Lugar de Recogida:', style: TextStyle(fontSize: 16, color: Colors.white)),
                 TextField(
                   controller: _pickupController,
-                  decoration: InputDecoration(hintText: 'Buscar dirección o lugar...'),
+                  decoration: InputDecoration(hintText: 'Buscar dirección o lugar...', hintStyle: TextStyle(color: Colors.grey)),
                   onChanged: (value) {
                     _isPickupSearch = true;
                     _searchLocation(value);
                   },
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
                 SizedBox(height: 10),
-                Text('Buscar Lugar de Destino:', style: TextStyle(fontSize: 16)),
+                Text('Buscar Lugar de Destino:', style: TextStyle(fontSize: 16, color: Colors.white)),
                 TextField(
                   controller: _dropoffController,
-                  decoration: InputDecoration(hintText: 'Buscar dirección o lugar...'),
+                  decoration: InputDecoration(hintText: 'Buscar dirección o lugar...', hintStyle: TextStyle(color: Colors.grey)),
                   onChanged: (value) {
                     _isPickupSearch = false;
                     _searchLocation(value);
                   },
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Text('Programar viaje:', style: TextStyle(fontSize: 16, color: Colors.white)),
+                    Switch(
+                      value: _isScheduled,
+                      onChanged: (value) {
+                        setState(() {
+                          _isScheduled = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                if (_isScheduled)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Seleccionar fecha y hora:', style: TextStyle(fontSize: 16, color: Colors.white)),
+                      ElevatedButton(
+                        onPressed: () => _selectDateTime(context),
+                        child: Text(_scheduledDateTime == null
+                            ? 'Seleccionar fecha y hora'
+                            : DateFormat('yyyy-MM-dd – kk:mm').format(_scheduledDateTime!)),
+                      ),
+                    ],
+                  ),
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: _openMapScreen,
@@ -332,18 +262,18 @@ class _UserRequestTaxiPageState extends State<UserRequestTaxiPage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _requestRide,
-                  child: Text('Solicitar Taxi'),
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                     textStyle: TextStyle(fontSize: 20),
                   ),
+                  child: Text('Solicitar Taxi'),
                 ),
               ],
             ),
           ),
           if (_places != null)
             Positioned(
-              top: 100, // Ajusta esta posición según sea necesario
+              top: _isPickupSearch ? 150 : 250, // Ajusta esta posición según sea necesario
               left: 16,
               right: 16,
               child: Material(
@@ -355,7 +285,7 @@ class _UserRequestTaxiPageState extends State<UserRequestTaxiPage> {
                   itemBuilder: (context, index) {
                     var place = _places![index];
                     return ListTile(
-                      title: Text(place.placeName),
+                      title: Text(place.placeName, style: TextStyle(color: Colors.black)), // Color del texto de la lista
                       onTap: () => _onLocationSelect(place),
                     );
                   },

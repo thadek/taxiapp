@@ -1,7 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
+import 'track_trip_page.dart';
 
 class UserTripHistoryPage extends StatefulWidget {
   @override
@@ -36,7 +37,7 @@ class _UserTripHistoryPageState extends State<UserTripHistoryPage> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
-        _trips = data['content'];
+        _trips = data['content'].where((trip) => trip['status'] == 'COMPLETED' || trip['status'] == 'CANCELLED').toList();
         _isLoading = false;
       });
     } else {
@@ -50,8 +51,17 @@ class _UserTripHistoryPageState extends State<UserTripHistoryPage> {
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message, style: TextStyle(color: Colors.white)),
         backgroundColor: color,
+      ),
+    );
+  }
+
+  void _navigateToTrackTripPage(BuildContext context, Map<String, dynamic> trip) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TrackTripPage(trip: trip),
       ),
     );
   }
@@ -60,23 +70,47 @@ class _UserTripHistoryPageState extends State<UserTripHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Trip History'),
-        backgroundColor: Colors.blue.shade900,
+        title: Text('Historial de Viajes'),
+        backgroundColor: const Color(0xFF1f2937),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _trips.isEmpty
-              ? Center(child: Text('No trips found'))
+              ? Center(child: Text('No tienes viajes en el historial', style: TextStyle(fontSize: 18, color: Colors.white)))
               : ListView.builder(
                   itemCount: _trips.length,
                   itemBuilder: (context, index) {
                     final trip = _trips[index];
                     return Card(
-                      margin: EdgeInsets.all(10),
+                      color: Color(0xFF1f2937),
                       child: ListTile(
-                        title: Text('Trip to ${trip['dropoff_location']}'),
-                        subtitle: Text('Date: ${trip['created_at']}'),
-                        trailing: Text(trip['price'] != null ? '\$${trip['price']}' : 'Pending'),
+                        title: Text(
+                          'Viaje ${trip['id']}',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Recogida: ${trip['pickup_location']}',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Text(
+                              'Destino: ${trip['dropoff_location']}',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Text(
+                              'Estado: ${trip['status']}',
+                              style: TextStyle(color: trip['status'] == 'COMPLETED' ? Colors.green : Colors.red),
+                            ),
+                            if (trip['status'] == 'COMPLETED')
+                              ElevatedButton(
+                                onPressed: () => _navigateToTrackTripPage(context, trip),
+                                child: Text('Calificar Viaje'),
+                              ),
+                          ],
+                        ),
                       ),
                     );
                   },

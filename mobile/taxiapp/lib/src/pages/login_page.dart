@@ -104,6 +104,9 @@ class LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         final userData = jsonDecode(response.body);
         String role = userData['roles'][0]['name'];
+        String email = userData['email'];
+
+        storage.write(key: 'user_email', value: email);
 
         if (role == 'ROLE_ADMIN') {
           Navigator.pushReplacement(
@@ -136,9 +139,9 @@ class LoginPageState extends State<LoginPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             colors: [
-              Colors.orange.shade900,
-              Colors.orange.shade800,
-              Colors.orange.shade400,
+              Color(0xFF0f172a).withOpacity(1.0), // Color más oscuro
+              Color(0xFF0f172a).withOpacity(0.8), // Color intermedio
+              Color(0xFF0f172a).withOpacity(0.4), // Color más claro
             ],
           ),
         ),
@@ -154,15 +157,15 @@ class LoginPageState extends State<LoginPage> {
                   FadeInUp(
                     duration: Duration(milliseconds: 1000),
                     child: Text(
-                      "Login",
-                      style: TextStyle(color: Colors.white, fontSize: 40),
+                      "TaxiApp",
+                      style: TextStyle(color: Colors.white, fontSize: 40, fontFamily: 'FontLogo'),
                     ),
                   ),
                   SizedBox(height: 10),
                   FadeInUp(
                     duration: Duration(milliseconds: 1300),
                     child: Text(
-                      "Welcome Back",
+                      "Bienvenido de nuevo!",
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                   ),
@@ -212,7 +215,7 @@ class LoginPageState extends State<LoginPage> {
                                   child: TextFormField(
                                     controller: _emailController,
                                     decoration: InputDecoration(
-                                      hintText: "Email or Phone number",
+                                      hintText: "Correo electrónico",
                                       hintStyle: TextStyle(color: Colors.grey),
                                       border: InputBorder.none,
                                     ),
@@ -235,7 +238,7 @@ class LoginPageState extends State<LoginPage> {
                                     controller: _passwordController,
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                      hintText: "Password",
+                                      hintText: "Contraseña",
                                       hintStyle: TextStyle(color: Colors.grey),
                                       border: InputBorder.none,
                                     ),
@@ -257,13 +260,13 @@ class LoginPageState extends State<LoginPage> {
                           child: MaterialButton(
                             onPressed: _login,
                             height: 50,
-                            color: Colors.orange[900],
+                            color: Colors.blue[900],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: Center(
                               child: Text(
-                                "Login",
+                                "Iniciar sesión",
                                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                               ),
                             ),

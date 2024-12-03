@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
-import 'package:stomp_dart_client/stomp.dart';
-import 'package:stomp_dart_client/stomp_config.dart';
-import 'package:stomp_dart_client/stomp_frame.dart';
 import 'src/pages/login_page.dart';
 import 'src/pages/register_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +34,15 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 118, 72, 49)),
+            seedColor: const Color.fromARGB(255, 252, 252, 253),
+            surface: const Color(0xFF0f172a), // Fondo
+          ),
+          scaffoldBackgroundColor: const Color(0xFF0f172a), // Fondo de la aplicación
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: const Color(0xFF1f2937), // Fondo de la barra de navegación
+            selectedItemColor: const Color(0xFFFFFFFF), // Color del ítem seleccionado
+            unselectedItemColor: const Color(0xFF9CA3AF), // Color de los ítems no seleccionados
+          ),
         ),
         home: MyHomePage(),
       ),
@@ -49,108 +52,30 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   
-  final String token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkB0YXhpYXBwLmNvbSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTczMTI1MDY4MiwiZXhwIjoxNzMxMzM3MDgyfQ.Bf6OSZZz_jPBF4YtHAE0fTno2N4ttVXLKRm7_EOQGII'; // Replace with the actual JWT token
-  late StompClient stompClient;
+  final storage = FlutterSecureStorage();
+  String? token;
+
+  MyAppState() {
+    _loadToken();
+  }
+
+  Future<void> _loadToken() async {
+    token = await storage.read(key: 'jwt_token');
+    if (token == null) {
+      print('Token not found');
+    }
+  }
 
   void startSendingLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Verificar si los servicios de ubicación están habilitados
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      print('Location services are disabled.');
-      return;
-    }
-
-    // Verificar y solicitar permisos de ubicación
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        print('Location permissions are denied');
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      print('Location permissions are permanently denied, we cannot request permissions.');
-      return;
-    }
-
-    // Inicializar el cliente STOMP
-    _initStompClient();
-
-    // Escuchar el stream de posiciones y enviar la ubicación
-    Geolocator.getPositionStream(
-      locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 10,
-      ),
-    ).listen((Position position) {
-      if (stompClient.connected) {
-        stompClient.send(
-          destination: '/app/location',
-          body: json.encode({
-            'x': position.latitude,
-            'y': position.longitude,
-          }),
-        );
-      }
-    });
-  }
-
-  void _initStompClient() {
-    stompClient = StompClient(
-      config: StompConfig.SockJS(
-        url: 'http://192.168.56.1:8080/api/v1/ws', // Asegúrate de que esta URL sea correcta
-        onConnect: _onConnect,
-        onWebSocketError: (dynamic error) => print(error.toString()),
-        stompConnectHeaders: {'token': token},
-        webSocketConnectHeaders: {'token': token},
-      ),
-    );
-
-    stompClient.activate();
-  }
-
-  void _onConnect(StompFrame frame) {
-    print('Connected: $frame');
-    stompClient.subscribe(
-      destination: '/topic/locations',
-      callback: (StompFrame frame) {
-        if (frame.body != null) {
-          final data = json.decode(frame.body!);
-          print('Received: $data');
-          // Aquí puedes actualizar tu UI con los datos recibidos
-        }
-      },
-    );
+    // Eliminar la lógica de envío de ubicación
   }
 
   Future<void> sendLocation(double latitude, double longitude) async {
-    try {
-      var url = Uri.parse('http://192.168.56.1:8080/api/v1/locations');
-      var response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'latitude': latitude,
-          'longitude': longitude,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        print('Location sent successfully');
-      } else {
-        print('Failed to send location: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error sending location: $e');
+    if (token == null) {
+      print('Token not found');
+      return;
     }
+    // Eliminar la lógica de envío de ubicación
   }
 }
 
@@ -214,9 +139,9 @@ class _MyHomePageState extends State<MyHomePage> {
             selectedIndex = index;
           });
         },
-        selectedItemColor: Colors.blue, // Color del ítem seleccionado
-        unselectedItemColor: Colors.grey, // Color de los ítems no seleccionados
-        backgroundColor: Colors.white, // Color de fondo del BottomNavigationBar
+        selectedItemColor: const Color(0xFFFFFFFF), // Color del ítem seleccionado (blanco)
+        unselectedItemColor: const Color(0xFF9CA3AF), // Color de los ítems no seleccionados (gris claro)
+        backgroundColor: const Color(0xFF18181b), // Color de fondo del BottomNavigationBar/ Color de fondo del BottomNavigationBar
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -244,20 +169,30 @@ class GeneratorPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            '¡Bienvenido a TaxiApp!',
+            'TaxiApp',
             style: TextStyle(
-              fontSize: 24,
+              fontFamily: 'FontLogo',
+              fontSize: 40,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
+              color: Colors.white,
             ),
-          ),
+          ),  
           SizedBox(height: 20),
           Text(
             'Tu solución para encontrar un taxi rápido y seguro.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 20),
+          Text(
+            'Inicia sesion o crea tu cuenta para comenzar.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
             ),
           ),
           SizedBox(height: 20),

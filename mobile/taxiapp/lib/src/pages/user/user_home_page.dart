@@ -52,32 +52,41 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   void _showNotificationDialog(String? title, String? body) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title ?? 'Notification'),
-          content: Text(body ?? 'No message body'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: const Color(0xFF1f2937), // Fondo del pop-up
+        title: Text(
+          title ?? 'Notification',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          body ?? 'No message body',
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OK', style: TextStyle(color: Colors.white)),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Home'),
-        backgroundColor: Colors.blue.shade900,
+        title: Text('TaxiApp'),
+        backgroundColor: const Color(0xFF1f2937),
+        titleTextStyle: TextStyle(fontFamily: 'FontLogo', fontSize: 30),
       ),
+
       body: Center(
         child: _pages.elementAt(_selectedIndex),
       ),
@@ -101,8 +110,9 @@ class _UserHomePageState extends State<UserHomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue.shade900,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: const Color(0xFFFFFFFF), // Color del ítem seleccionado (blanco)
+        unselectedItemColor: const Color(0xFF9CA3AF), // Color de los ítems no seleccionados (gris claro)
+        backgroundColor: const Color(0xFF18181b), // Color de fondo del BottomNavigationBar
         onTap: _onItemTapped,
       ),
     );

@@ -66,9 +66,9 @@ class RegisterPageState extends State<RegisterPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             colors: [
-              Colors.orange.shade900,
-              Colors.orange.shade800,
-              Colors.orange.shade400,
+              Color(0xFF0f172a).withOpacity(1.0), // Color más oscuro
+              Color(0xFF0f172a).withOpacity(0.8), // Color intermedio
+              Color(0xFF0f172a).withOpacity(0.4), // Color más claro
             ],
           ),
         ),
@@ -84,15 +84,15 @@ class RegisterPageState extends State<RegisterPage> {
                   FadeInUp(
                     duration: Duration(milliseconds: 1000),
                     child: Text(
-                      "Register",
-                      style: TextStyle(color: Colors.white, fontSize: 40),
+                      "TaxiApp",
+                      style: TextStyle(color: Colors.white, fontSize: 40, fontFamily: 'FontLogo'),
                     ),
                   ),
                   SizedBox(height: 10),
                   FadeInUp(
                     duration: Duration(milliseconds: 1300),
                     child: Text(
-                      "Create your account",
+                      "Crear una cuenta",
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                   ),
@@ -133,9 +133,9 @@ class RegisterPageState extends State<RegisterPage> {
                               ),
                               child: Column(
                                 children: <Widget>[
-                                  _buildTextField(_usernameController, 'Username', false),
-                                  _buildTextField(_passwordController, 'Password', true),
-                                  _buildTextField(_emailController, 'Email', false, isEmail: true),
+                                  _buildTextField(_usernameController, 'Nombre de usuario', false),
+                                  _buildTextField(_passwordController, 'Contraseña', true),
+                                  _buildTextField(_emailController, 'Correo electronico', false, isEmail: true),
                                   _buildTextField(_nameController, 'Nombre', false),
                                   _buildTextField(_lastnameController, 'Apellido', false),
                                   _buildTextField(_phoneController, 'Teléfono', false),
@@ -149,7 +149,7 @@ class RegisterPageState extends State<RegisterPage> {
                             child: MaterialButton(
                               onPressed: _register,
                               height: 50,
-                              color: Colors.orange[900],
+                              color: Colors.blue[900],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
