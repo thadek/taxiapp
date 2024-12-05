@@ -25,24 +25,9 @@ export default function Login() {
       redirect:false,
     });
 
-    if (responseNextAuth?.error) {
-      if(responseNextAuth.error === "fetch failed") {
-        toast.error("Error de conexión");
-        return;
-      }
-
-      if(responseNextAuth.error === "User not found") {
-       toast.error("Usuario no encontrado");
-        return;
-      }
-
-      if(responseNextAuth.error === "Incorrect password") {
-        toast.error("Contraseña incorrecta");
-        return;
-      }
-
-     toast.error(`${responseNextAuth.error}`);
-      return;
+    if (responseNextAuth?.error) {   
+     toast.error(`Las credenciales no son correctas`);
+      return
     }
 
     toast.success("Sesión iniciada correctamente");
