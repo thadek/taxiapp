@@ -22,6 +22,7 @@ interface Driver {
   id: number;
   name: string;
   is_disabled: boolean;
+  lastname?: string;
 }
 
 interface Vehicle {
@@ -252,7 +253,7 @@ const ABMVehicle: React.FC = () => {
         <TableHeader>
           <TableRow>
             <TableHead>#</TableHead>
-            <TableHead>Driver ID</TableHead>
+            <TableHead>Conductor</TableHead>
             <TableHead>Patente</TableHead>
             <TableHead>Marca</TableHead>
             <TableHead>Modelo</TableHead>
@@ -272,12 +273,12 @@ const ABMVehicle: React.FC = () => {
                   <>
                     <Select onValueChange={(value) => handleDriverChange(value, vehicle.id)}>
                       <SelectTrigger className="w-full bg-gray-200 border-2 border-gray-200 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500">
-                        <SelectValue placeholder="Select a driver" />
+                        <SelectValue placeholder="Seleccioná un conductor" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>Drivers</SelectLabel>
-                          <SelectItem value="null">No Driver</SelectItem>
+                          <SelectLabel>Conductores</SelectLabel>
+                          <SelectItem value="null">Sin conductor</SelectItem>
                           {availableDrivers.map(driver => (
                             <SelectItem key={driver.id} value={driver.id.toString()}>
                               {driver.name}
@@ -288,7 +289,7 @@ const ABMVehicle: React.FC = () => {
                     </Select>
                   </>
                 ) : (
-                  vehicle.driver ? vehicle.driver.id : 'N/A'
+                  vehicle.driver ? `${vehicle.driver.name} ${vehicle.driver.lastname}`  : 'N/A'
                 )}
               </TableCell>
               <TableCell>

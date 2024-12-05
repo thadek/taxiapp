@@ -258,7 +258,7 @@ const ABMUser: React.FC = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>#</TableHead>
+            
             <TableHead>Nombre</TableHead>
             <TableHead>Apellido</TableHead>
             <TableHead>Usuario</TableHead>
@@ -273,7 +273,7 @@ const ABMUser: React.FC = () => {
         <TableBody>
           {Array.isArray(users) && users.map(user =>(
             <TableRow key={user.id} className={user.deleted ? 'deleted' : ''}>
-              <TableCell>{user.id}</TableCell>
+             
               <TableCell>
                 {editingUserId === user.id ? (
                   <input

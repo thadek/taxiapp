@@ -172,8 +172,8 @@ export default function Dashboard() {
         </Card>
         <Card shadow="sm" className="bg-white dark:bg-slate-950 border-none hover:scale-105 transition-transform duration-200">
           <CardBody className="text-center">
-            <p className="text-lg font-semibold text-foreground">Viajes aceptados</p>
-            <p className="text-4xl font-bold text-success">{acceptedRides.length}</p>
+            <p className="text-lg font-semibold text-foreground">Viajes completados</p>
+            <p className="text-4xl font-bold text-success">{completedRides.length}</p>
           </CardBody>
         </Card>
         <Card shadow="sm" className="bg-white dark:bg-slate-950 border-none hover:scale-105 transition-transform duration-200">

@@ -330,7 +330,7 @@ const Reports: React.FC = () => {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" onClick={() => page > 0 && handlePageChange(page - 1)} />
+                  <PaginationPrevious title="atras" href="#" onClick={() => page > 0 && handlePageChange(page - 1)} />
                 </PaginationItem>
                 {Array.from({ length: totalPages }, (_, index) => (
                   <PaginationItem key={index}>

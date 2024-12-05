@@ -74,7 +74,7 @@ interface Role {
           
           setDrivers(driversData.content);
           setUsers(usersData.content);
-          console.log('driversData:', driversData);
+          //console.log('driversData:', driversData);
     
           const combined = driversData.content.map((driver: Driver) => {
             const user = usersData.content.find((user: User) => user.id === driver.id);
@@ -82,7 +82,7 @@ interface Role {
           });
     
           setCombinedData(combined);
-          console.log('combined:', combined);
+          //console.log('combined:', combined);
     
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -311,7 +311,7 @@ interface Role {
       <Table>
         <TableHeader className='text-black'>
           <TableRow>
-              <TableHead>#</TableHead>
+              
               <TableHead>Nombre</TableHead>
               <TableHead>Apellido</TableHead>
               <TableHead>Username</TableHead>
@@ -329,7 +329,7 @@ interface Role {
           <TableBody>
             {Array.isArray(combinedData) && combinedData.map((data) => (
               <TableRow key={data.id} className={data.deleted ? 'deleted' : ''}>
-                <TableCell>{data.id}</TableCell>
+                
                 <TableCell>{data.name}</TableCell>
                 <TableCell>{data.lastname}</TableCell>
                 <TableCell>{data.username}</TableCell>

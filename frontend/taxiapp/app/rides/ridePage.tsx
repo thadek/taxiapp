@@ -74,7 +74,7 @@ const handleStatus = (status: string) => {
         'CANCELLED': <X size={'15px'}/>,
         'PROGRAMMED': <Calendar size={'15px'}/>,
         'DRIVER_ASSIGNED': <CarIcon />,
-        'STARTED': < Spinner/>,
+        'STARTED': < Spinner size="sm"/>,
         'COMPLETED': <CheckIcon />
     }
 
@@ -190,7 +190,7 @@ const fetchTrips = async (page = 0, searchTerm = '') => {
                                     disabled={page === 0}
                                     variant={page === 0 ? 'secondary' : 'outline'}
                                 >
-                                    <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+                                    <ChevronLeft className="mr-2 h-4 w-4" /> Anterior
                                 </Button>
                                 <span>Pagina {data?.page.number} de {data?.page.totalPages}</span>
                                 <Button
@@ -198,7 +198,7 @@ const fetchTrips = async (page = 0, searchTerm = '') => {
                                     disabled={data?.page.number === data?.page.totalPages}
                                     variant={data?.page.number === data?.page.number ? 'secondary' : 'outline'}
                                 >
-                                    Next <ChevronRight className="ml-2 h-4 w-4" />
+                                    Siguiente <ChevronRight className="ml-2 h-4 w-4" />
                                 </Button>
                             </div>
                         </CardContent>
